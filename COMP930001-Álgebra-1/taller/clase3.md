@@ -77,4 +77,4 @@ Las llamadas recursivas tienen que acercarse al caso base.
 
 ## Ejercicios:
 
-- `Fibonacci`: Si n == 0 = 0, si n == 1 = 1, sino `fib(n-1)+fib(n-2)`.
+- [`Fibonacci`](./clase3_ejercicios.hs) : Si n == 0 = 0, si n == 1 = 1, sino `fib(n-1)+fib(n-2)`.
