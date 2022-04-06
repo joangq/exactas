@@ -62,3 +62,19 @@ De otra forma, podemos reescribirlo con guardas:
 esPar n | n == 0 = True
         | otherwise = not (esPar (n-1))
 ```
+
+---
+
+## ¿Cómo pensar recursivamente?
+
+Necesitamos:
+- El paso `recursivo`, donde asumimos que tenemos el resultado para el caso anterior, combinándolo con el resultado del caso actual para llegar al resultado final.
+- Uno o varios casos base, para permitir que la función recursiva tenga un punto en el que termine de ejecutarse. 
+
+Las llamadas recursivas tienen que acercarse al caso base.
+
+---
+
+## Ejercicios:
+
+- `Fibonacci`: Si n == 0 = 0, si n == 1 = 1, sino `fib(n-1)+fib(n-2)`.
