@@ -153,13 +153,13 @@ Otra forma de reescribir lo anterior puede ser la siguiente, usando pattern matc
 suma (vx, vy) (wx, wy) = (vx + wx, vy+wy)
 ```
 
-Ejercicios:
+[Ejercicios:](./clase-02.md)
 
-- `estanRelacionados`: Dados dos numeros reales, decidir si estan relacionados considerando la relacion de equivalencia en R, cuyas clases de equivalencia son: (-inf, 3], (3,7), (7,+inf).
-- `prodInt`: calcula el producto interno entre dos vectores de R2
-- `todoMenor`: dados dos vectores de R2 decide si es cierto que cada coordenada del primer vector es menor a la coordenada correspondiente del segundo vector
-- `distanciaPuntos`: calcula l aidstancia entre dos puntos de R2
-- `sumaTerna`: dada una terna de numeros enteros, calcula la suma de sus tres elementos
-- `posicPrimerPar`: dada una terna de enteros, devuelve la posición del primer númer par si es que hay alguno, y devuelve 4 si son todos impares
-- `crearPar :: a -> b (a,b)`: crea un par a partir de sus dos componentes dadas por separado (debe funcionar para elementos de cualquier tipo)
-- `invertir :: (a,b) -> (b,a)`: invierte los elementos del par pasado como par{ametro (debe funconar para elementos de cualquier tipo)
+- [`estanRelacionados`](./clase-02.md): Dados dos numeros reales, decidir si estan relacionados considerando la relacion de equivalencia en R, cuyas clases de equivalencia son: (-inf, 3], (3,7), (7,+inf).
+- [`prodInt`](./clase-02.md): calcula el producto interno entre dos vectores de R2
+- [`todoMenor`](./clase-02.md): dados dos vectores de R2 decide si es cierto que cada coordenada del primer vector es menor a la coordenada correspondiente del segundo vector
+- [`distanciaPuntos`](./clase-02.md): calcula l aidstancia entre dos puntos de R2
+- [`sumaTerna`](./clase-02.md): dada una terna de numeros enteros, calcula la suma de sus tres elementos
+- [`posicPrimerPar`](./clase-02.md): dada una terna de enteros, devuelve la posición del primer númer par si es que hay alguno, y devuelve 4 si son todos impares
+- [`crearPar :: a -> b (a,b)`](./clase-02.md): crea un par a partir de sus dos componentes dadas por separado (debe funcionar para elementos de cualquier tipo)
+- [`invertir :: (a,b) -> (b,a)`](./clase-02.md): invierte los elementos del par pasado como par{ametro (debe funconar para elementos de cualquier tipo)
