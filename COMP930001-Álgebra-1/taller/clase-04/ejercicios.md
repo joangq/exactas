@@ -1,5 +1,5 @@
 [@Joan-GQ](https://github.com/Joan-GQ)
-```
+```haskell
 -- Ejemplo de sumatoria
 sumatoria :: Int -> Int
 sumatoria 1 = 1
