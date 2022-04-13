@@ -1,4 +1,5 @@
 [@Joan-GQ](https://github.com/Joan-GQ)
+
 ```haskell
 -- Ejemplo de sumatoria
 sumatoria :: Int -> Int
@@ -46,4 +47,11 @@ sumAux n m | n == 1 = m
 
 dobleSuma 0 0 = 1
 dobleSuma n m = (sumAux n m) * n + sumAux n m
+```
+---
+
+[@bdaugero](https://github.com/bdaugero)
+
+```haskell
+
 ```
