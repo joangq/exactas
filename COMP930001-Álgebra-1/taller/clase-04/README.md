@@ -11,4 +11,4 @@
 sumatoria n = n + sumatoria(n - 1)
 ```
 
-### [Ejercicios](/ejercicios.md)
+### [Ejercicios](./ejercicios.md)
