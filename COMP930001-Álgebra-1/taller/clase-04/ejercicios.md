@@ -47,6 +47,10 @@ sumAux n m | n == 1 = m
 
 dobleSuma 0 0 = 1
 dobleSuma n m = (sumAux n m) * n + sumAux n m
+
+-- Suma potencias
+sumaPotencias q 0 0 = 1
+sumaPotencias q n m = (sumAux n q) * (sumAux m q)
 ```
 ---
 
