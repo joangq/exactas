@@ -25,25 +25,45 @@ Si queremos añadir elementos al comienzo de la lista, usamos el operador `:`, d
 
 ## Recursión con listas
 
-Supongamos que queremos implementar una función `sumatoria :: [Int] -> Int`, de forma tal que calcule la sumatoria de todos los elementos de una lista de enteros, de forma recursiva.
+1.  Supongamos que queremos implementar una función `sumatoria :: [Int] -> Int`, de forma tal que calcule 
+    la sumatoria de todos los elementos de una lista de enteros, de forma recursiva.
 
-Si tuviéramos, por ejemplo, la siguiente lista: `[1,2,3,4,5,6,7]`, queremos calcular:
+    Si tuviéramos, por ejemplo, la siguiente lista: `[1,2,3,4,5,6,7]`, queremos calcular:
 
-_sumatoria [1,2,3,4,5,6,7] = 1+2+3+4+5+6+7_
+    _sumatoria [1,2,3,4,5,6,7] = 1+2+3+4+5+6+7_
 
-Podemos pensarlo como:
+    Podemos pensarlo como:
 
-_sumatoria [1,2,3,4,5,6,7] = 1 + sumatoria [2,3,4,5,6,7]_
+    _sumatoria [1,2,3,4,5,6,7] = 1 + sumatoria [2,3,4,5,6,7]_
 
-O, mejor expresado en un ejemplo más pequeño:
+    O, mejor expresado en un ejemplo más pequeño:
 
-_sumatoria [1,2,3] = 1 + sumatoria [2,3] = 1 + 2 + sumatoria[3]_
+    _sumatoria [1,2,3] = 1 + sumatoria [2,3] = 1 + 2 + sumatoria[3]_
 
-Por ende, es fácil ver que el caso base de la recursión, será la sumatoria de la lista de un solo elemento. Luego, podemos escribir lo siguiente:
+    Por ende, es fácil ver que el caso base de la recursión, será la sumatoria de la lista de un solo
+    elemento.
+    Luego, podemos escribir lo siguiente:
 
-```haskell
-sumatoria :: [Int] -> Int
-sumatoria [] = 0
-sumatoria xs = head xs + sumatoria (tail xs)
-```
+    ```haskell
+    sumatoria :: [Int] -> Int
+    sumatoria [] = 0
+    sumatoria xs = head xs + sumatoria (tail xs)
+    ```
+    ---
+    
+2.  Supongamos ahora que queremos implementar una función que, dada una lista, devuelva el largo de la lista.
+    Podemos pensar lo siguiente
 
+    ```haskell
+    longitud :: [Int] -> Int
+    longitud [] = 0
+    longitud xs = 1 + longitud (tail xs)
+    ```
+    ---
+    
+3.  Ahora queremos una función `pertenece` que nos dice si un `n` es un elemento de una lista.
+    ```haskell
+    pertenece :: Integer -> [Integer] -> Bool
+    pertenece n xs = n == head xs || pertenece n (tail xs)
+    ```
+    ---
