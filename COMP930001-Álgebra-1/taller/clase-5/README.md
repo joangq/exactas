@@ -1,6 +1,6 @@
 <div align='center'>
   <h1>Clase 5</h1>
-  <h5>23/04/22</h5>
+  <h5>20/04/22</h5>
 </div>
 
 Queremos implementar una función `sumaDivisores n` que sume todos los divisores `d` de `n`.
