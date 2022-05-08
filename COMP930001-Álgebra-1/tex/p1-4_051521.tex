@@ -1,0 +1,155 @@
+% 15-05-2021
+% Parcial I - Álgebra I
+% Ejercicio 4 resuelto
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{contour}
+\usepackage{ulem}
+
+\usepackage{multicol}
+
+\newcommand{\divides}{\mid}
+\newcommand{\notdivides}{\nmid}
+\newcommand{\nln}{\par\vspace{3mm}}
+
+\renewcommand{\ULdepth}{1.8pt}
+\contourlength{0.8pt}
+
+\newcommand{\myuline}[1]{%
+  \uline{\phantom{#1}}%
+  \llap{\contour{white}{#1}}%
+}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+
+Determinar todos los valores posibles de $(2a^2 - b^2 : a^2 - 3b^2)$
+
+Sabiendo que, $5 \divides a$ y $(a:b) = 6$\par
+\nln
+\textit{\myuline{Resolución}}:
+\nln
+Primero, \textit{coprimicemos} a y b
+
+\begin{align*}
+    \hspace{5mm} &a' = a \cdot \frac{1}{(a:b)} \hspace{2.5mm} \land \hspace{2.5mm}  b' = b \cdot \frac{1}{(a:b)}
+    &\hspace{5mm} \mid \hspace{5mm} a' \hspace{1mm} \bot \hspace{1mm} b'
+    \\
+    \\
+    \Rightarrow \hspace{3mm} &a = a' (a:b)  \hspace{5.2mm} \land \hspace{2.5mm}  b = b' (a:b) 
+    &\hspace{5mm} \mid \hspace{5mm} a' \hspace{1mm} \bot \hspace{1mm} b'
+\end{align*}
+
+\nln Luego, reescribimos:
+\begin{align*}
+    &d = (2a^2 - b^2 : a^2 - 3b^2) \\ \Rightarrow \hspace{3mm}
+    &d = (2(6 \cdot a')^2 - (6 \cdot b')^2 : (6 \cdot a')^2 - 3(6 \cdot b')^2) \\ \Rightarrow \hspace{3mm}
+    &d = (6^2 (2 {a'}^2 - {b'}^2) :  6^2 ({a'}^2 - 3{b'}^2))  \\ \Rightarrow \hspace{3mm}
+    &d = 6^2 \underbrace{(2 {a'}^2 - {b'}^2 : {a'}^2 - 3{b'}^2)}_{\Gamma}
+\end{align*}
+
+\nln Por ende, es necesario ver los \textit{d} tales que:
+
+\begin{align*}
+     &\begin{cases}
+       d \mid 2 {a'}^2 - {b'}^2 \\ 
+       d \mid {a'}^2 - 3{b'}^2
+     \end{cases}
+     \Rightarrow
+     \begin{cases}
+       d \mid (2 {a'}^2 - {b'}^2) - 2 \cdot ({a'}^2 - 3{b'}^2) \\ 
+       d \mid 3 \cdot (2{a'}^2 - {b'}^2) - ({a'}^2 - 3{b'}^2)
+     \end{cases}
+     \\ \\
+     \Rightarrow
+     \hspace{3mm}&\begin{cases}
+       d \mid 5{a'}^2 \\ 
+       d \mid 5{b'}^2
+     \end{cases}
+     \Rightarrow \hspace{3mm}
+     (5{a'}^2 : 5{b'}^2) \hspace{3mm}
+     \Rightarrow \hspace{3mm} 5 ({a'}^2 : {b'}^2)
+\end{align*}
+
+Ahora queda ver los valores que puede tomar $({a'}^2:{b'}^2)$:
+
+\begin{align*}
+    d \mid {a'}^2 \Rightarrow d \mid a' \hspace{2.5mm} \land \hspace{2.5mm} d \mid {b'}^2 \Rightarrow d \mid b'
+\end{align*}
+
+% ------------------------------------------------------------------------------------------------------------------
+
+Ésto vale porque $a \bot b$ implica que $\text{Div}_{+}(a) \bigcap \text{Div}_{+}(b) = 1$, es decir que
+$a$ y $b$ no comparten factores entre sí. Luego, $a^2$ y $b^2$ tienen los mismos factores, sólo que \textit{al cuadrado}. Sin embargo, nada de \textit{elevarlos al cuadrado} agregó factores \textit{distintos} a alguno de ambos.
+\nln
+\textit{\myuline{Ejemplo}}:
+\begin{align*}
+    35 \hspace{1mm} \bot \hspace{1mm} 12 \Longleftrightarrow \text{Div}_{+}(a) \bigcap \text{Div}_{+}(b) = 1
+\end{align*}
+
+\begin{align*}
+    &\text{Div}_{+}(35) = \{1, 5, 7, 35\} \Rightarrow 35 = 5 \cdot 7 \\
+    &\text{Div}_{+}(12) = \{1, 2, 3, 4, 6, 12\} \Rightarrow 12 = 2^2 \cdot 3
+    \\ \\
+    &\Rightarrow 35^2 = (5 \cdot 7)^2 = 5^2 \cdot 7^2 \\
+    &\Rightarrow 12^2 = (2^2 \cdot 3)^2 = 2^4 \cdot 3^2
+    \\ \\
+    &\text{Elevar al cuadrado no agregó factores distintos a ninguno de los números.}
+    \\ \\
+    &\text{Div}_{+}(35^2) = \{1, 5, 7, 25, 35, 49, 175, 245, 1225\} \\
+    &\text{Div}_{+}(12^2) = \{1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24, 36, 48, 72, 144\}
+    \\ \\
+    &\text{Y elevar a un exponente }\textit{n}\text{ tampoco añade factores distintos.}
+    \\ \\
+    &\Rightarrow 35^n = (5 \cdot 7)^2 = 5^n \cdot 7^n \\
+    &\Rightarrow 12^n = (2^2 \cdot 3)^2 = 2^{2n} \cdot 3^n
+    \\ \\
+    &\text{Sólo añade más de los mismos factores que tenían.}
+\end{align*}
+
+% ------------------------------------------------------------------------------------------------------------------
+
+Por ende, podemos concluír que:
+
+\begin{align*}
+    \therefore ({a'}^2 : {b'}^2) = 1 \Longleftrightarrow {a'} \hspace{1mm} \bot \hspace{1mm} {b'}
+\end{align*}
+
+Lo cual, implica:
+
+\begin{align*}
+    &\Rightarrow \hspace{3mm} 5 ({a'}^2 : {b'}^2) = 5 \\
+    &\Rightarrow \hspace{3mm} (2 {a'}^2 - {b'}^2 : {a'}^2 - 3{b'}^2) \in \{1,5\} \\
+    \\
+    &\text{Pues si } a'=1, \text{ } b'=0: \\
+    &\Rightarrow \hspace{3mm} (2 {a'}^2 - {b'}^2 : {a'}^2 - 3{b'}^2) = \\
+    &\hspace{8.5mm} (2 : 1) = 1 \\
+\end{align*}
+
+Además, $d = 6^2 \cdot \Gamma$
+\begin{align*}
+    &\text{Luego,} \hspace{3mm} d = 6^2 \cdot 1 \hspace{2.5mm} \lor \hspace{2.5mm} d = 6^2 \cdot 5 \\
+    &\text{Pero, } \hspace{3mm} d \neq 6^2 \cdot 5 \\
+    &\text{Pues, } \hspace{3mm} 5 \mid a \hspace{2.5mm} \land \hspace{2.5mm} (a:b) = 6 \Rightarrow 5 \nmid b \\
+    &\text{Ya que, de lo contrario } (a:b) = 6 \cdot 5
+\end{align*}
+
+Juntando todo, podemos concluír que $d \neq 6^2 \cdot 5 \Rightarrow d = 6^2 \cdot 1$, pues
+\begin{align*}
+    \text{v}_{5}(d) = 1 \\
+    &\Longleftrightarrow \text{v}_{5}(2a^2 - b^2) \geqslant  1 \\ 
+    &\Longleftrightarrow \text{v}_{5}(2a^2) \geqslant  1 \hspace{2.5mm} \land \hspace{2.5mm} \text{v}_{5}(b^2) \geqslant 1
+\end{align*}
+Pero como sé que $b \nmid 5$, entonces $\text{v}_{5}(b^2) = \text{v}_{5}(3b^2) = 0$
+\nln
+Por lo que podemos afirmar con certeza: 
+\myuline{$d = {6}$}${}^2$
+
+\end{document}
