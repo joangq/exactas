@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{enumerate}
+\usepackage{enumitem}% http://ctan.org/pkg/enumitem
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multicol}
+
+
+
+\setlength\parindent{0pt}
+
+\begin{document}
+
+\begin{enumerate}[start=7]
+  \item Probar que para todo $\it{n} \in \mathbb{N}$ se tiene
+  
+  \begin{enumerate}
+    \begin{enumerate}[start=5, label=\roman*), itemsep=0.4ex, before={\everymath{\displaystyle}}]%
+      \item $ \prod_{i=1}^{n}\frac{n+i  }{2i-3} = 2^{n}(1-2n) $ \label{eq-1}
+    \end{enumerate}
+    
+\end{enumerate}
+  
+\end{enumerate}
+\vspace{10.0}
+Primero, establecemos $p(n)$
+\begin{align*}
+    p(n): \prod_{i=1}^{n}\frac{n+i}{2i-3} = 2^{n}(1-2n)
+\end{align*}
+
+Luego, probamos $p(1)$
+
+\begin{alignat*}{2}
+       p(1):& \hspace{20}\prod_{i=1}^{1}\frac{1+1}{2i-3} &&= 2^{1}\cdot(1-2\cdot1) \\
+       p(1):& \hspace{30}\frac{2}{2\cdot1-3} &&= 2\cdot(-1) \\
+       p(1):& \hspace{50}-2 &&= -2
+\end{alignat*}
+
+Por ende, $p(1)$ es verdadero. Ahora probemos el paso inductivo.
+\\
+\\
+$\overbrace{p(n)}^{\it{Verdad \hspace{1} por \hspace{1} H.I.}} \hspace{-15} \Rightarrow p(n+1): $
+
+\begin{alignat*}{2}
+    p(n+1):& \prod_{i=1}^{n+1}\frac{n+1+i}{2i-3} &&= 2^{n+1}(1-2(n+1)) \\
+    p(n+1):& \prod_{i=1}^{n+1}\frac{n+1+i}{2i-3} &&= n\cdot2^{n+2}+2^{n+1}
+\end{alignat*}
+
+Habiendo expandido completamente el término de la derecha, procedamos ahora a reescribir el término de la izquierda.
+
+\begin{align*}
+    \prod_{i=1}^{n+1}\frac{n+1+i}{2i-3} = \frac{\prod_{i=1}^{n+1}n+1+i}{\prod_{i=1}^{n+1}2i-3}
+\end{align*}
+
+\newpage
+
+Luego, reescribimos los términos del numerador y el denominador respectivamente. 
+\\\\
+Primero, el denominador:
+\begin{align*}
+      &\prod_{i=1}^{n+1}2i-3 =            \\
+    = &\prod_{i=1}^{n}2i-3 \cdot 2(n+1)-3 \\ 
+    = &\prod_{i=1}^{n}2i-3 \cdot 2n-1
+\end{align*}
+
+Luego, para el numerador, hacemos un cambio de variable.\\Tal que $i+1 = j \Rightarrow j = 2$
+
+\begin{align*}
+      &\prod_{i=1}^{n+1}n+1+i =                                           \\
+    = &\prod_{j=2}^{n+2}n+j                                               \\ 
+    = &\prod_{j=1}^{n}n+j \cdot (n+n+1) \cdot (n+n+2) \cdot \frac{1}{n+1} \\
+    = &\prod_{j=1}^{n}n+j \cdot (2n+1) \cdot (2n+2) \cdot \frac{1}{n+1}
+\end{align*}
+
+Nótese que para que la igualdad se cumpla, añadimos dos términos ($2n+1$ y $2n+2$) multiplicando al productorio original. Pero como además el nuevo productorio está desplazado una unidad en $j$, nos sobra el término inicial de $\prod_{j=1}^{n} n+j$ por lo que se lo quitamos, dividiendo al mismo por dicho término ($n+1$).
+\\\\
+Ahora, como $\prod_{j=1}^{n} n+j = \prod_{i=1}^{n} n+i+1$ es nuestra hipótesis inductiva, podemos reemplazar tal que:
+
+\begin{align*}
+     \frac{\prod_{i=1}^{n+1}n+1+i}{\prod_{i=1}^{n+1}2i-3} =
+     \underbrace{\frac{\prod_{i=1}^{n}n+1+i}{\prod_{i=1}^{n}2i-3}}_{\textrm{Hipótesis}}
+     \cdot (2n+1) \cdot (2n+2) \cdot \frac{1}{n+1} \cdot \frac{1}{2n-1}
+\end{align*}
+
+Luego,
+
+\begin{align*}
+     \therefore \frac{\prod_{i=1}^{n+1}n+1+i}{\prod_{i=1}^{n+1}2i-3} = 2^{n}(1-2n)
+     \cdot (2n+1) \cdot (2n+2) \cdot \frac{1}{n+1} \cdot \frac{1}{2n-1}
+\end{align*}
+
+\end{document}
