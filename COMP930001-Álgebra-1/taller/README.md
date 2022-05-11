@@ -13,5 +13,5 @@
 <li><h3><a href="./clase-5/README.md">Clase 5 - (20/04/2022)</a></h3></li>
 <li><h3><a href="./clase-6/README.md">Clase 6 - (27/04/2022)</a></h3></li>
 <li><h3><a href="./clase-07/README.md">Clase 7 - (04/05/2022)</a></h3></li>
-<li><h3><a href="./clase-08/">Clase 8 - (11/05/2022)</a></h3></li>
+<li><h3><a href="./clase-08/README.md">Clase 8 - (11/05/2022)</a></h3></li>
 </ul>
