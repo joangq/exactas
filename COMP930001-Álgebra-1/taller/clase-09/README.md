@@ -63,6 +63,9 @@ division3 a d | a >= 0 = division a d
 
 ```
 
+---
+
+
 ```haskell
 -- a positivo; b positivo (o cero)
 mcd :: Int -> Int -> Int
@@ -90,3 +93,6 @@ emcd' a b = (g,t', s' - q * t')
   (g,s',t') = emcd' b (mod a b)
   q = div a b
 ```
+---
+
+### ![Ejercicios extra](./ejercicios.md)
