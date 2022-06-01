@@ -62,3 +62,24 @@ division3 a d | a >= 0 = division a d
                 (q',r') = division' (a+d) d
 
 ```
+
+```haskell
+-- a positivo; b positivo (o cero)
+mcd :: Int -> Int -> Int
+mcd a 0 = a
+mcd a b = mcd b r
+ where
+    (_,r) = division a b
+    
+    
+
+emcd :: Int -> Int -> (Int, Int, Int)
+emcd a 0 = (a,1,0)
+emcd a b = (g,s,t)
+ where
+   g = mcd a b
+   (g',s',t') = emcd b r
+   (q,r) = division a b
+   s = t'
+   t = (s' - t' * q)
+```
