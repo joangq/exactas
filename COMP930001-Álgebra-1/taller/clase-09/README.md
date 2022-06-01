@@ -82,4 +82,11 @@ emcd a b = (g,s,t)
    (q,r) = division a b
    s = t'
    t = (s' - t' * q)
+   
+emcd' :: Int -> Int -> (Int, Int, Int)
+emcd' a 0 = (a,1,0)
+emcd' a b = (g,t', s' - q * t')
+ where
+  (g,s',t') = emcd' b (mod a b)
+  q = div a b
 ```
