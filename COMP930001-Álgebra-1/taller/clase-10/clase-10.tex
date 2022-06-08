@@ -1,0 +1,453 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{contour}
+\usepackage{ulem}
+\usepackage{multicol}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{caption}
+\usepackage{blindtext}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{xcolor}
+\usepackage{inconsolata}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+    
+\definecolor{LightGray}{gray}{0.95}
+
+\DeclareCaptionLabelFormat{alglabel}{\bfseries\csname ALG@name\endcsname:}
+\captionsetup[algorithm]{labelformat=alglabel}
+
+\newcommand{\mono}[1]{\textbf{\texttt{#1}}}
+
+\newcommand{\nln}{\par\vspace{3mm}}
+\setlength\parindent{0pt}
+
+\renewcommand{\thesection}{\Roman{section}.} 
+
+\title{
+  Sistemas Lineales de Congruencia \\
+  \large Notas de décima clase \textbf{--} Taller de Álgebra \\}
+\author{Joan Gonzalez}
+\date{8 de Junio de 2022}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{Objetivo}
+El objetivo principal de esta clase es obtener un programa en el lenguaje Haskell que permita resolver sistemas lineales de ecuaciones de congruencia sobre los enteros, del siguiente tipo:
+
+\begin{equation*}
+\left\{\begin{matrix}
+ &a_1 \cdot X &\equiv &b_1 \; &(\text{mod } m_1)  \\
+ &a_2 \cdot X &\equiv &b_2 \; &(\text{mod } m_2)  \\
+ &\vdots      &\vdots &\vdots &\vdots             \\
+ &a_n \cdot X &\equiv &b_n \; &(\text{mod } m_n)  \\
+\end{matrix}\right.
+\end{equation*}
+\nln
+
+Si recordamos las clases de Álgebra, nos daremos cuenta que de alguna forma vamos a querer aplicar el \href{https://es.wikipedia.org/wiki/Teorema_chino_del_resto?oldformat=true}{Teorema Chino del Resto (\textsc{tcr})} para resolver simultáneamente todas las ecuaciones del sistema.
+Sin embargo, para ello primero necesitamos que las ecuaciones estén dadas de manera simplificada y que los módulos del sistema de ecuaciones de congruencia sean coprimos dos a dos.
+
+\section{Coprimizando ecuaciones}
+Empecemos primero estableciendo qué significa que queramos resolver las ecuaciones y darlas de forma \textit{simplificada}. Consideremos la ecuación:
+
+\begin{equation} \label{modularEquation}
+    a \cdot X \equiv b \; (\text{mod } m)
+\end{equation}
+
+Sabemos que tiene solución $\iff d = (a:m) \mid b$. Si esto se cumple, entonces podemos reducir la ecuación a través de:
+
+\begin{equation} \label{coprimes}
+    \frac{a}{d} \cdot X \equiv \frac{b}{d} \; (\text{mod } \frac{m}{d}) \; = \; 
+    a' \cdot X \equiv b' \; (\text{mod } m')
+\end{equation}
+\nln
+
+Como dividimos por el máximo común divisor entre $a$ y $b$, ahora hemos \textit{coprimizado} la ecuación. Por lo que ésta, tiene una propiedad adicional respecto a la primera: $(a':m')=1$.
+Usando ésto a nuestro favor, ahora la ecuación tendrá una solución, y será una combinación lineal de $a'$ y $m'$, de forma tal que:
+
+\begin{equation}
+    s \cdot a' + t \cdot m' = 1
+\end{equation}
+\nln
+
+Si ahora tomamos congruencia módulo $m'$, entonces la ecuación es equivalente a:
+
+\begin{equation} \label{modularSolution}
+    X \equiv s \cdot b \; (\text{mod } m')
+\end{equation}
+
+Donde $b = a' \; (\text{mod } m')$.
+\\\\
+Teniendo esto en cuenta, escribamos algunas funciones en Haskell que nos permitan dar una solución a una ecuación de congruencia.
+\newpage
+
+Primero, haremos uso extensivo del \href{https://es.wikipedia.org/wiki/Algoritmo_de_Euclides?oldformat=true}{Algoritmo de Euclides} y dado que lo programamos en la \href{https://github.com/Joan-GQ/exactas/tree/main/COMP930001-\%C3\%81lgebra-1/taller/clase-09}{clase 9}, simplemente reutilizaremos parcialmente ese código:
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+%bgcolor=LightGray,
+]{haskell}
+emcd :: Int -> Int -> (Int, Int, Int)
+emcd a 0 = (a,1,0)
+emcd a b = (g,s,t)
+         where
+            (g,s',t') = emcd b (mod a b)
+            q = div a b
+            s = t'
+            t = s' - t' * q
+
+mcd :: Int -> Int -> Int
+mcd a 0 = a
+mcd a b = mcd b (mod a b)
+\end{minted}
+\nln
+
+Donde \mono{emcd} es el algoritmo \textit{extendido} de Euclides, que devuelve una terna $(g,s,t)$ dados $a,b \in \mathbb{Z}$ donde $s \cdot a + t \cdot b = g$, y \mono{mcd} da el máximo común divisor entre $a$ y $b$.
+
+\nln
+Además, representaremos a las ecuaciones de la forma (\ref{modularEquation}) a través del tipo de dato \mono{(Int, Int, Int)}, en general:
+
+\begin{equation*}
+    a \cdot X \equiv b \; (\text{mod } m) \leftrightsquigarrow \text{\mono{(a,b,m)}}
+\end{equation*}
+
+Análogamente, representaremos las soluciones (clases de congruencia) de la forma (\ref{modularSolution}) a través del tipo de dato \mono{(Int, Int)}, en general:
+
+\begin{equation*}
+    X \equiv s \cdot b \; (\text{mod } m') \leftrightsquigarrow \text{\mono{(b,m)}}
+\end{equation*}
+
+Así, definimos:
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+type Ecuacion = (Int, Int, Int)
+type Solucion = (Int, Int)
+\end{minted}
+\newpage
+
+Luego, queremos:
+\begin{enumerate}
+    \item Una función que tome una \mono{Ecuacion} y la convierta en una \mono{Ecuacion} \\equivalente, como se muestra en (\ref{coprimes}).
+    \item Una función que tome una \mono{Ecuacion} y la convierta en \mono{Solucion} de forma tal que la nueva ecuación coprimizada tenga la propiedad de $(a':m')=1$ como se muestra en (\ref{modularSolution}).
+    \item Una \textit{composición} de funciones, que tome una \mono{Ecuacion} y de directamente la \mono{Solucion} correspondiente a la misma.
+\end{enumerate}
+
+Formalizando y dándole cuerpo a dichas funciones, podemos escribir:
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+equivalente :: Ecuacion -> Ecuacion
+equivalente (a,b,m) | mod b d /= 0 = undefined
+                    | otherwise = (div a d, div b d, div m d)
+                    where d = mcd a m
+
+coprimizar :: Ecuacion -> Solucion
+coprimizar (a,b,m) = (c, m)
+                   where
+                    (_,s,_) = emcd a m
+                    c = mod (s*b) m
+
+solucion :: Ecuacion -> Solucion
+solucion e = coprimizar (equivalente e)
+\end{minted}
+\newpage
+
+\section{Sistemas de ecuaciones de congruencia}
+Si volvemos a nuestro problema original, queríamos resolver sistemas que tengan la forma:
+
+\begin{equation} \label{modularEquationSystem}
+\left\{\begin{matrix}
+ &a_1 \cdot X &\equiv &b_1 \; &(\text{mod } m_1)  \\
+ &a_2 \cdot X &\equiv &b_2 \; &(\text{mod } m_2)  \\
+ &\vdots      &\vdots &\vdots &\vdots             \\
+ &a_n \cdot X &\equiv &b_n \; &(\text{mod } m_n)  \\
+\end{matrix}\right.
+\end{equation}
+\nln
+
+Ahora bien, a través de nuestra capacidad de simplificar las ecuaciones de este sistema a sus clases de congruencia equivalentes, podemos reescribirlo como:
+
+\begin{equation}
+\left\{\begin{matrix} \label{modularEquationSystemSimplified}
+ X &\equiv &r_1 \; &(\text{mod } {m'}_1)  \\
+ X &\equiv &r_2 \; &(\text{mod } {m'}_2)  \\
+ &\vdots   &\vdots &\vdots                \\
+ X &\equiv &r_n \; &(\text{mod } {m'}_n)  \\
+\end{matrix}\right.
+\end{equation}
+\nln
+
+Sin embargo, no podemos aún usar el Teorema Chino del Resto, ya que cabe la posibilidad de que los $m_i$ sean coprimos dos a dos, como lo requerimos. Esto quiere decir que puede existir un primo $p \in \mathbb{Z}$ tal que $p$ divide al menos a dos de los módulos $\{{m'}_1, {m'}_2, \cdots, {m'}_n\}$. Luego, el sistema no tiene módulos coprimos dos a dos, ya que $p$ divide al menos a dos de dichos módulos. A $p$ lo consideramos un primo \textit{malo} del sistema.
+\nln
+Encontremos todos los primos malos para un sistema de ecuaciones de congruencia simplificado. Si encontramos un primo malo, necesitaremos \textit{extraerlo} de todas las ecuaciones para encontrar un sistema equivalente. A modo de ejemplo, tomemos la siguiente ecuación de congruencia:
+
+\begin{equation*}
+    X \equiv r \; (\text{mod } m)
+\end{equation*}
+
+Sabiendo que $p \in \mathbb{Z} \;\land\; p^k \mid m$. Luego la ecuación es equivalente al sistema:
+
+\begin{equation*}
+\left\{\begin{matrix}
+X &\equiv &r' \; &(\text{mod } p^k)  \\
+X &\equiv &r \; &(\text{mod } \frac{m}{p^k})  \\
+\end{matrix}\right.
+\end{equation*}
+
+Donde $r'$ es la congruencia módulo $p^k$ de $r$, ya que puede ocurrir que $r \geqslant p^k$.
+\nln
+
+En este sistema, si $m$ es una potencia de $p$, entonces $m = p^k$ para algún $k$. Por ende, la última ecuación de congruencia del sistema, queda:
+
+\begin{equation*}
+    X \equiv 0 \; (\text{mod } 1)
+\end{equation*}
+
+Y como no nos aporta información respecto de nuestro problema inicial, podemos eliminarla.
+\newpage
+
+Apliquemos ahora lo ejemplificado a un caso más cercano a lo que nos interesa resolver. Tomemos el siguiente sistema:
+
+\begin{equation*}
+S = 
+\left\{\begin{matrix}
+ X &\equiv &r_1 \; &(\text{mod } m_1)  \\
+ X &\equiv &r_2 \; &(\text{mod } m_2)  \\
+ X &\equiv &r_3 \; &(\text{mod } m_3)  \\
+ X &\equiv &r_4 \; &(\text{mod } m_4)  \\
+ X &\equiv &r_5 \; &(\text{mod } m_5)  \\
+\end{matrix}\right.
+\end{equation*}
+\nln
+
+Ahora, si existe un primo malo $p$ que divide a $m_1$, $m_3$ y a $m_5$, donde $m_3 = p^k$ para algún $k$, entonces:
+
+\begin{equation*}
+S \rightsquigarrow S' =  
+\left\{\begin{matrix}
+ &X &\equiv &r_1 \; &(\text{mod } &{p^{k_1}})             \\
+ &X &\equiv &r_1 \; &(\text{mod } &m_1 / p^{k_1})         \\
+ &X &\equiv &r_2 \; &(\text{mod } &m_2)                   \\
+ &X &\equiv &r_3 \; &(\text{mod } &p^{k_3})               \\
+ &X &\equiv &r_4 \; &(\text{mod } &m_4)                   \\
+ &X &\equiv &r_5 \; &(\text{mod } &p^{k_5})               \\
+ &X &\equiv &r_5 \; &(\text{mod } &m_5 / p^{k_5})         \\
+\end{matrix}\right.
+\end{equation*}
+
+En el sistema equivalente a $S$, $S'$ ahora hay ecuaciones que tienen sus módulos dados por potencias de $p$, y ecuaciones a las que les \textit{extrajimos} las potencias de $p$. Reordenemos el sistema para que sea más fácil de verlas visualmente, tal que:
+
+\begin{equation*}
+S' =  
+\left\{\begin{matrix}
+ &X &\equiv &r_1 \; &(\text{mod } &{p^{k_1}})             \\
+ &X &\equiv &r_3 \; &(\text{mod } &p^{k_3})               \\
+ &X &\equiv &r_5 \; &(\text{mod } &p^{k_5})               \\
+ 
+ \vspace{1mm}
+ 
+ &X &\equiv &r_4 \; &(\text{mod } &m_4)                   \\
+ &X &\equiv &r_1 \; &(\text{mod } &m_1 / p^{k_1})         \\
+ &X &\equiv &r_2 \; &(\text{mod } &m_2)                   \\
+ &X &\equiv &r_5 \; &(\text{mod } &m_5 / p^{k_5})         \\
+\end{matrix}\right.
+\end{equation*}
+\nln
+
+Ahora las ecuaciones que tienen como módulo algún $p^k$ pueden empezar a simplificarse. Veamos que si $k_{\alpha} \leqslant k_{\beta}$ entonces veamos que el siguiente sistema puede simplificarse:
+
+\begin{equation*}
+\left\{\begin{matrix}
+X &\equiv &r_{\alpha} \; &(\text{mod } p^{k_{\alpha}})  \\
+X &\equiv &r_{\beta} \; &(\text{mod } p^{k_{\beta}})  \\
+\end{matrix}\right.
+\end{equation*}
+\nln
+
+Si $r_{\alpha} \equiv r_{\beta} (\text{mod } p^{k_{\alpha}}) \Longrightarrow $ Las soluciones de la segunda ecuación, están contenidas en la primera. Luego, la primer ecuación puede eliminarse.
+\nln
+Si $r_{\alpha} \not \equiv r_{\beta} (\text{mod } p^{k_{\alpha}}) \Longrightarrow $ Las ecuaciones no comparten soluciones en común.
+\newpage
+
+Juntando todo, dado un sistema simplificado de ecuaciones de congruencia $S$, podemos \textit{desdoblarlo} en un sistema equivalente, extrayendo los primos malos $p_i$ que pueden estar presentes en los módulos de $S$. Luego, para cada primo malo $p$, desdoblamos las ecuaciones que lo tengan como factor de su módulo en distintas ecuaciones, y resumimos los subsistemas hasta librarnos de todas las ecuaciones que no nos aporten información.
+\nln
+Programemos ésto en Haskell. Primero, representemos a un sistema de ecuaciones de congruencia general (\ref{modularEquationSystem}) con el tipo de dato \mono{[Ecuacion]}, tal que:
+
+\begin{equation*}
+\text{\mono{[(a1, b1, m1), ... , (an, bn, mn)]}}\leftrightsquigarrow
+\left\{\begin{matrix}
+ &a_1 \cdot X &\equiv &b_1 \; &(\text{mod } m_1)  \\
+ &\vdots      &\vdots &\vdots &\vdots             \\
+ &a_n \cdot X &\equiv &b_n \; &(\text{mod } m_n)  \\
+\end{matrix}\right. 
+\end{equation*}
+
+Además, representemos al sistema simplificado (\ref{modularEquationSystemSimplified}) a través de \mono{[Solucion]}:
+
+\begin{equation*}
+\text{\mono{[(r1, m1), ... , (rn, mn)]}}\leftrightsquigarrow
+\left\{\begin{matrix}
+ &X &\equiv &r_1 \; &(\text{mod } m_1)  \\
+ &\vdots      &\vdots &\vdots &\vdots   \\
+ &X &\equiv &r_n \; &(\text{mod } m_n)  \\
+\end{matrix}\right. 
+\end{equation*}
+\nln
+Queremos,
+
+\begin{enumerate}
+    \item Una función que tome un sistema general \mono{[Ecuacion]} y de otro sistema \mono{[Solucion]} coprimizado.
+    
+    \item Una función que tome un sistema simplificado \mono{[Solucion]} y devuelva un sistema equivalente \mono{[Solucion]} donde se hayan extraido todos los primos malos del original.
+    
+    \item Una función que tome un sistema simplificado sin primos malos con módulos coprimos dos a dos \mono{[Solucion]} y lo resuelva, dando la \mono{Solucion}.
+    
+    \item Una composición de funciones, que tome un sistema general \mono{[Ecuacion]} y devuelva la \mono{Solucion} del sistema.
+\end{enumerate}
+\newpage
+
+Resolviendo en orden, podemos directamente resolver el primero de nuestros objetivos.
+Teniendo en cuenta que un sistema está representado como una lista de \mono{Ecuaciones}, podemos recursivamente crear una lista de \mono{Soluciones}, aplicando la función \mono{solucion} que creamos previamente.
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+soluciones :: [Ecuacion] -> [Solucion]
+soluciones [] = []
+soluciones (e:es) = (solucion e) : (soluciones es)
+\end{minted}
+
+
+\section{Primos malos}
+Ahora bien, para extraer todos los primos malos de un sistema simplificado, primero debemos conocer \textit{cuales} son esos primos malos. Pero para conocer quienes son, primero necesitamos una lista de los módulos del sistema.
+\nln
+Extraer los módulos no es particularmente difícil, podemos adjuntar cada segundo elemento de cada tupla de las \mono{Soluciones} a una nueva lista de enteros, tal que:
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+modulos :: [Solucion] -> [Int]
+modulos [] = []
+modulos ((r,m):es) = m:(modulos es)
+\end{minted}
+
+Ahora, teniendo la lista de los módulos de un sistema simplificado $S$, queda preguntar: Dado un $n \in \mathbb{Z}$, ¿Es $n$ un primo malo de $S$? Luego, es lo mismo que hacer dos preguntas separadas:
+
+\begin{enumerate}
+    \item ¿Es $n$ primo?
+    \item Usando la definición de \textit{primo malo}, \\¿Divide $n$ al menos a dos módulos de $S$?
+\end{enumerate}
+
+\newpage
+
+La primera parte de este subproblema también la podemos solucionar rápidamente utilizando parcialmente lo que vimos en la \href{https://github.com/Joan-GQ/exactas/blob/7080e45aacc6e77417ea028c6b2f73361f658925/COMP930001-\%C3\%81lgebra-1/taller/clase-05/ejercicios.hs#L29}{clase 5} 
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+esPrimo :: Int -> Bool
+esPrimo 1 = False
+esPrimo n = (menorDivisor n) == n
+          where
+            menorDivisor n = menorDivisorDesde n 2
+            menorDivisorDesde n k | mod n k == 0 = k
+                                  | otherwise = menorDivisorDesde n (k+1)
+\end{minted}
+
+Luego, usando \mono{esPrimo} podemos determinar si un número es un primo o no.
+\nln
+Queda determinar si $n$ es un primo malo. Ahora bien, preguntar si un número divide al menos a otros dos de una lista, es un caso particular de preguntar: Dada una lista de números $[m_1, m_2, \cdots, m_n]$, ¿Cuántos son múltiplos de $n$?
+\nln 
+Es decir, si podemos contar la cantidad de múltiplos respecto de $n$ en la lista de módulos, luego sólo queda comparar que esa cantidad sea mayor o igual a 2.
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+cantidadMultiplos :: [Int] -> Int -> Int
+cantidadMultiplos [] _ = 0
+cantidadMultiplos (m:ms) n | mod m n == 0 = 1 + cantidadMultiplos ms n
+                           | otherwise = cantidadMultiplos ms n
+                           
+esPrimoMalo :: [Solucion] -> Int -> Bool
+esPrimoMalo sist n = (esPrimo n) && sist n >= 2
+                   where multiplos = cantidadMultiplos (modulos sist)
+\end{minted}
+
+Teniendo \mono{esPrimoMalo} ahora por cada módulo $m \in \{ m_1, m_2, \cdots, m_n \}$ queda ver si $m$ es un primo malo. \newpage
+
+Para ello, primero hagamos una funcion auxiliar \mono{todosLosPrimosMalosHasta} que, dada una lista y un máximo, nos de una lista de todos los números que sean primos malos (de esa lista) por debajo de ese máximo. Así, podemos escribir:
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+todosLosPrimosMalosHasta :: [Solucion] -> Int -> [Int]
+todosLosPrimosMalosHasta _ 0 = []
+todosLosPrimosMalosHasta sist n | esPrimoMalo sist n = n:malos
+                                | otherwise = malos
+                                where
+                                malos = todosLosPrimosMalosHasta sist (n-1)
+\end{minted}
+
+Luego, hallar todos los primos malos de una lista, es cuestión de llamar a \mono{todosLosPrimosMalosHasta} dando la lista y su máximo. Por lo que podemos escribir lo siguiente:
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+]{haskell}
+todosLosPrimosMalos [] = []
+todosLosPrimosMalos sist = todosLosPrimosMalosHasta sist limite
+                         where limite = maximum (modulos sist)
+\end{minted}
+
+Donde \mono{maximum} es una función del propio \mono{Prelude} de Haskell que devuelve el número más grande en una lista.
+\nln
+Con ésto resuelto, queda resolver el sistema equivalente sin primos malos, dando una \mono{Solucion}.
+
+\end{document}
