@@ -13,9 +13,19 @@
 \usepackage{caption}
 \usepackage{blindtext}
 \usepackage{hyperref}
+\usepackage{fontspec}
 \usepackage{minted}
 \usepackage{xcolor}
 \usepackage{inconsolata}
+%\usemintedstyle{rainbow_dash}
+%\usemintedstyle{igor}
+%\usemintedstyle{trac} %*
+\usemintedstyle{arduino} %**
+%\usemintedstyle{colorful}
+%\usemintedstyle{friendly}
+%\usemintedstyle{xcode}
+
+\setmonofont{Fira Code Light}
 
 \hypersetup{
     colorlinks=true,
@@ -450,5 +460,4 @@ Donde \mono{maximum} es una función del propio \mono{Prelude} de Haskell que de
 \nln
 Con ésto resuelto, queda resolver el sistema equivalente sin primos malos, dando una \mono{Solucion}.
 
-% TODO: Terminar el resto de la resolución
 \end{document}
