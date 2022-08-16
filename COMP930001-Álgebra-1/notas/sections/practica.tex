@@ -1,0 +1,117 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\part[Práctica]{\decorate{Práctica}}
+\section{Problemas}
+
+\subsection{Final 03/08/2022} {
+
+\begin{enumerate}
+    \item { Calcular la cantidad de funciones inyectivas
+        \begin{equation*}
+            f: \{1,2,...,20\} \rightarrow {1,2,...,50}
+        \end{equation*}
+        que verifican simultáneamente:
+        
+        \begin{itemize}
+            \item $f(1) < f(3)$
+            \item $f(2) < f(3)$
+        \end{itemize}
+    }
+    
+    \item { Sea $(a_n)$ $n \in \N$ la sucesión definida recursivamente por:
+        \begin{align*}
+            & a_1 = 42 \\
+            & a_2 = 90 \\
+            & a_n = 3a_{n-1} + (29^n - 11^n) a_{n-2} \text{  si n $\geq$ 3}
+        \end{align*}
+        
+        Probar que $(6^n : a_n) = 2 \cdot 3^n$ para todo $n \in \N$.
+    }
+    
+    \item { Sea $w \in \text{G}_{15}$ tal que $w \notin \text{G}_3 \land w \notin \text{G}_5$. Hallar el argumento del número complejo
+        \begin{equation*}
+            (2 + w^3 + \bar{w}^3 + w^6 + \bar{w}^6 + i (2 + w^5 + w^{-5} ))^{31}
+        \end{equation*}
+    }
+    
+    \item { Factorizar el polinomio
+        \begin{equation*}
+            3X^2 + 210X + 5 \in (\Z / 239 \Z)[X]
+        \end{equation*}
+    como producto de polinomios irreducibles en $(\Z / 239 \Z)[X]$.
+    \\\\ \ul{Nota:} El el número 239 es primo.
+    }
+    
+\end{enumerate}
+
+\newpage
+
+\begin{enumerate}
+    \item $ $
+    \item $ $
+    \item $ $
+    \item { Factorizar en irreducibles en $(\Z / 239 \Z)[X]$ al siguiente polinomio:
+        \begin{equation*}
+            f(x) = 3X^2 + 210X + 5 \in (\Z / 239 \Z)[X]
+        \end{equation*}
+        
+        Al ser un polinomio cuadrático, miro su discriminante tal que:
+        
+        \begin{equation*}
+            \Delta = b^2 - 4 \cdot a \cdot c \Longrightarrow \Delta = \overline{210}^2 - \bar{4} \cdot \bar{3} \cdot \bar{5} = \overline{64}
+        \end{equation*}
+        
+        Donde $\overline{64}$ es la clase de equivalencia del 64 módulo 239.
+        \nln
+        Queda ver que el discriminante sea un cuadrado perfecto módulo 239, es decir que $\Delta = w^2$. Noto que $\overline{64} = \bar{8}^2$, y como $8 \leq 239$, entonces 64 es un cuadrado perfecto módulo 239.
+        \nln
+        Por ende, puedo plantear:
+        \begin{equation*}
+            \bar{x}_{1,2} = \frac{-\bar{b} \pm \bar{w}}{\overline{2a}} \hspace{10mm}\text{   con $\bar{a} \neq \bar{0} \land \bar{2} \neq \bar{0}$}
+        \end{equation*}
+        \nln
+        Luego,
+        
+        \begin{align*}
+            & \text{Con $a = \bar{3}$, $b = \overline{210} = \overline{-29}$, $c = \bar{5}$ } \\
+            & \bar{x}_{1,2} = \frac{-\bar{b} \pm \bar{w}}{\overline{2a}} \\\\
+            & \bar{x}_{1,2} = \frac{-\bar{29} \pm \bar{8}}{\overline{6}} \\\\
+            \Longrightarrow \hspace{2mm} & x_1 \equiv \overline{37} \cdot {\bar{6}}^{-1} \text{ (mod 239)} \\
+            & x_2 \equiv \overline{21} \cdot {\bar{6}}^{-1} \text{ (mod 239)} \\
+        \end{align*}
+        \nln
+        Queda ver qué número es el inverso multiplicativo de 6 módulo 239. Es decir, buscamos un $\alpha$ tal que $\alpha \cdot 5 \equiv 1$ (mod 239)
+        
+        \newpage Para eso usamos el \hyperref[inverso_mod_n]{Teorema de Euler}, tal que:
+        
+        \begin{equation*}
+            6 ^ {-1} \equiv 6 ^ {\varphi (239) - 1} \hspace{1mm} \text{(mod 239)}
+        \end{equation*}
+        
+        Pero como 239 es primo, entonces $\varphi (239) = 239 - 1 = 238$. Luego,
+        
+        \begin{equation*}
+            6 ^ {\varphi (239) - 1} \equiv 6 ^ {237} \equiv 40 \hspace{1mm} \text{(mod 239)}
+        \end{equation*}
+        
+        Podemos comprobarlo, ya que $6 \cdot 40 \equiv 240 \equiv 1 $ (mod 239). Juntando todo, los valores de $x_1$ y $x_2$ son:
+        
+        \begin{align*}
+            \Longrightarrow \hspace{2mm} & x_1 \equiv \overline{37} \cdot {\bar{6}}^{-1} \equiv \overline{37} \cdot \overline{40} \equiv \overline{46} \text{ (mod 239)}\\
+            & x_2 \equiv \overline{21} \cdot {\bar{6}}^{-1}  \equiv \overline{21} \cdot \overline{40} \equiv \overline{123} \text{ (mod 239)}\\
+        \end{align*}
+        
+        Por ende, como $46$ y $123$ son soluciones, y $46$, $123$ $\in \Z/239\Z$, entonces $f(x)$ es reducible en $(\Z/239\Z)[X]$ de la siguiente forma:
+        
+        \begin{equation*}
+            f(x) = (X-123)(X-46) \hspace{1mm} \in (\Z/239\Z)[X]
+        \end{equation*}
+        
+        Siendo ésta su factorización en irreducibles en $(\Z/239\Z)[X]$, ya que cada uno de sus factores es irreducible por ser de grado 1.
+        
+    }
+\end{enumerate}
+
+}
+\end{document}

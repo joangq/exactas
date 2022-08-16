@@ -1,0 +1,269 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\part[Fórmulas y Definiciones]{\decorate{Fórmulas y Definiciones}}
+
+\section{Grupos y Anillos} {
+    \subsection{Definición -- Grupo} {
+        
+    }
+    
+    \subsection{Definición -- Orden} {
+        Sea $G$ un grupo. Sea $a$ un elemento de $G$, tal que $a \in G$, definimos:
+        \begin{enumerate}
+            \item {
+                $|G|$ es la cantidad de elementos en $G$.
+                \\ Decimos que es el \textit{orden} o la \textit{cardinalidad} de $G$
+                \nln \ul{Ejemplos:} 
+                \begin{itemize}
+                    \item $|\Z| = \infty$
+                    \item $|\Z/9\Z| = $\#\{$\bar{0},\bar{1},\bar{2},\bar{3},\bar{4},\bar{5},\bar{6},\bar{7},\bar{8}$\}$ = 9$
+                \end{itemize}
+            }
+            
+            \item $|a|$ es el entero positivo más chico tal que $a^n$ sea el elemento identidad. %es decir $na = 0$%
+            Decimos que es el \textit{orden} o el \textit{periodo} de $a$.
+            
+            \nln
+            
+            \ul{Ejemplo:}
+            
+            \begin{itemize}
+                \item En $\Z/12\Z$, $|5|$ = 2, pues $5^{2} \equiv$ 1 (mod 12)
+            \end{itemize}
+            
+            
+        \end{enumerate}
+    }
+}
+    
+    \subsection{Definición -- Anillo} {
+        Sea $R$ un anillo. Luego $R$ es un conjunto, donde se definen dos operaciones binarias: \textit{adición} y \textit{multiplicación}, tales que \ul{para todo $a$, $b$, $c$ en $R$} se cumpla:
+            \begin{enumerate}
+                \item { \textbf{Conmutatividad de la adición:} \\ 
+                $a + b = b + a$ }
+                
+                \item { \textbf{Asociatividad de la adición} \\ 
+                $(a+b)+c = a + (b+c)$ }
+                
+                \item { \textbf{Existencia de neutro aditivo} \\
+                Existe un elemento 0 en $R$ tal que $a + 0 = a$  $\forall a \in R$ }
+                
+                \item { \textbf{Existencia de inverso aditivo} \\
+                $\exists$ $-a$ tal que $ a + (-a) = 0$ }
+                
+                \item { \textbf{Asociatividad de la multiplicación} \\ $a (bc) = (ab) c$ }
+                
+                \item { \textbf{Distribución de la multiplicación respecto de la adición} \\ $a(b+c) = ab + ac \land (b+c)a = ba+ca$ }
+            \end{enumerate}
+            
+        \subsubsection{Conmutatividad de la multiplicación} {
+            Sea $R$ un anillo. Luego, si \ul{para todo $a$, $b$, $c$ en $R$} se cumple: $ab = ba$ \\ Entonces se dice que $R$ es un \textit{anillo conmutativo}.
+        }
+        
+        \subsubsection{Elemento identidad} {
+            Sea $R$ un anillo, y sea $e$ un elemento de $R$, luego si $e \neq 0$ y
+            se cumple que
+            \begin{equation*} { ae = a \;\; \forall a \in R } \end{equation*}
+            Entonces decimos que $e$ es el \textit{elemento identidad}. En particular, es la identidad de la multiplicación. También recibe el nombre de \textit{unidad} ó \textit{unity}, en inglés.
+        }
+        
+        \subsubsection{Elemento inversible} {
+            Sea $R$ un anillo, y sea $a$ un elemento de $R$, $a \neq 0$. Luego si existe un elemento $a^{-1} \in R$ tal que
+            \begin{equation*} { a \cdot a^{-1} = e} \end{equation*}
+            Donde $e$ es el elemento identidad de $R$. \nln
+            Luego, $a^{-1}$ es el \textit{inverso multiplicativo} de $a$. Decimos que $a$ es \textit{inversible}. 
+            
+            
+            \nln Además, se cumple que:
+            
+            \begin{enumerate}
+                \item El inverso multiplicativo es único para cada inversible de $R$.
+                \item El conjunto de los inversibles en $R$ forman un grupo. Se suele notar $U(R)$.
+            \end{enumerate}
+            
+            \nln
+            \ul{Nota:} Otro nombre para los elementos inversibles es \textit{unidad} ó \textit{unit}, en inglés, diferenciándose de \textit{unity}, que es el nombre que recibe el elemento identidad. Es por eso que \ul{en éste texto \textit{unidad} sólo refiere al elemento identidad.}
+            
+        }
+        
+    } 
+
+\newpage
+
+\section{Números Naturales} {
+    \subsection{Suma de Gauss} {
+        Para todo $n \in \N$ vale que:
+        \begin{equation*}
+           \sum_{k=1}^n {k} =  1 + 2 + \cdots + (n-1) + n = \frac{n(n+1)}{2}
+        \end{equation*}
+    } \label{suma_gauss}
+    
+    \subsection{Serie geométrica} {
+        Para todo $n \in \N$ y algún $q \in \N$ vale que:
+        \begin{equation*}
+            \sum_{i=0}^n {q^i} = q^0 + q^1 + q^2 + \cdots + q^n =
+            \left\{
+                \begin{array}{lr}
+                    n+1, & \text{si } q = 1 \\\\
+                    \frac{q^{n+1}-1}{q-1} & \text{si } q \neq 1
+                \end{array}
+            \right.
+        \end{equation*}
+    } \label{serie_geometrica}
+    
+    
+}
+\newpage
+
+\section{Combinatoria} {
+    \subsection{Cardinalidad de un conjunto} {
+        
+    }
+    
+    \subsection{Cantidad de funciones inyectivas} {
+        \cite{teresa} Sean $A_m$ y $B_n$ conjuntos finitos, con $m$ y $n$ elementos respectivamente, donde $m \leq n$ . Entonces la cantidad de funciones inyectivas $f : A_m \rightarrow B_n$
+        que hay es:
+            \begin{equation*}
+                n \cdot (n-1) \cdots (n-m+1) = \frac{n!}{(n-m)!}
+            \end{equation*}
+            
+        Cabe mencionar que no hay una fóormula tan simple como las anteriores para
+        contar la cantidad de funciones sobreyectivas que hay de un conjunto $A_n$ de
+        $n$ elementos en un conjunto $B_m$ de $m$ elementos, con $n \geq m$ cualesquiera.
+        Existen fórmulas pero son más complicadas e involucran en general
+        contar la cantidad de elementos de muchos conjuntos.
+    } \label{cantidad_inyectivas}
+    
+    \subsection{Número combinatorio} {
+        Sea $n \in N_0$ y sea $A_n$ un conjunto con $n$ elementos. Para $0 \leq k \leq n$ , la
+        cantidad de subconjuntos con $k$ elementos del conjunto $A_n$, o  equivalentemente, la cantidad de maneras que hay de elegir $k$ elementos en el conjunto $A_n$, es:
+            \begin{equation*}
+                \begin{pmatrix} n\\k \end{pmatrix} = \frac{n!}{k!(n-k)!}
+            \end{equation*}
+            
+        \subsubsection{Forma recursiva} {
+            \begin{equation*}
+                \begin{pmatrix} n+1\\k \end{pmatrix} = 
+                \begin{pmatrix} n\\k-1 \end{pmatrix} +
+                \begin{pmatrix} n\\k \end{pmatrix}
+            \end{equation*}
+        }
+        
+}
+
+    \subsection{Binomio de Newton} {
+        La fórmula del binomio de Newton produce polinomios con los coeficientes
+        correspondientes a los números del triángulo de Pascal, tal que:
+        \begin{equation*}
+            (x+y)^n = \sum_{k=0}^n \begin{pmatrix}n\\k\end{pmatrix} x^k y^{n-k}
+        \end{equation*}
+        
+        \nln \ul{Ejemplos:}
+        \begin{align*}
+            (x+y)^0 =& \;1                                                  \\
+            (x+y)^1 =& \;x+y                                                \\
+            (x+y)^2 =& \;x^2+2xy+y^2                                        \\
+            (x+y)^3 =& \;x^3+3x^2y+3xy^2+y^3                                \\
+            (x+y)^4 =& \;x^4 + 4x^3y +6x^2y^2 + 4xy^3 + y^4                 \\
+            (x+y)^5 =& \;x^5 + 5x^4y + 10x^3y^2 +10x^2y^3 + 5xy^4 + y^5
+        \end{align*}
+    }
+}
+\newpage
+\section{$\Z$ y $\Z / p\Z$} {
+
+\subsection{Ecuaciones de Congruencia} {
+Para $a,c \in \Z$, las ecuaciones de la forma
+\begin{equation*}
+    aX \equiv c \; \text{(mod m)}
+\end{equation*}
+
+Tienen solución si y sólo si $(a:m)=1$
+}
+ \label{lcez}
+ 
+\subsection{Inversibles en $\Z/n\Z$} {
+    \cite{teresa} es un Corolario de las \hyperref[lcez]{Ecuaciones de Congruencia.} \\
+    Sea $n \in \N$ y $r \in \Z /n \Z$ entonces $n$ es inversible \ul{si y solo si} $r$ es coprimo con $n$. 
+    
+    \nln Es decir:
+    \begin{equation*}
+        \text{$r$ inversible mod $n$ $\iff$ $rx = 1$ (mod $n$) tiene solución $\iff$ $(r:n)=1$}
+    \end{equation*} 
+    
+    \nln
+    Un corolario de esto es que si $r,p \in \N$ y $p primo$, luego $r$ siempre es inversible módulo $p$.
+
+} \label{inversibles_znz}
+
+\subsection{Pequeño Teorema de Fermat} {
+\begin{enumerate}
+    \item { Dados $a$, $p$ $\in \Z$ y $p$ primo, entonces:
+        \begin{equation*}
+            a^p \equiv a \hspace{1mm} \text{(mod p)}
+        \end{equation*}
+    }
+    \item { Además, si $p \notdivides a$
+        \begin{equation*}
+            a^{p-1} \equiv 1 \hspace{1mm} \text{(mod p)}
+        \end{equation*}
+    }
+\end{enumerate}
+}
+
+\subsection{Función $\varphi (n)$ de Euler} {
+Dado $n \in \N$, entonces:
+\begin{equation*}
+    \varphi (n) = n \prod_{p \divides n}{1 - \frac{1}{p}}
+\end{equation*}
+}
+
+\subsection{Teorema de Euler} {
+Si $a$, $n$ $\in \N$ tal que $(a : n) = 1$, entonces
+\begin{equation*}
+    a ^ {\varphi (n)} \equiv 1 \text{ (mod n)} 
+\end{equation*}
+}
+
+\subsection{Inverso multiplicativo módulo n} {
+Si $a$, $n$ $\in \N$ tal que $(a : n) = 1$ y $a$ inversible, entonces
+\begin{equation*}
+    a^{-1} \equiv a ^ {\varphi (n) -1} \text{ (mod n)} 
+\end{equation*}
+
+\ul{Demostración:} Por Teorema de Euler sabemos que:
+
+\begin{equation*}
+    a ^ {\varphi (n)} \equiv 1 \text{ (mod n)} 
+\end{equation*}
+
+Luego, multiplicando todo por $a^-1$ obtenemos:
+
+\begin{equation*}
+    a^{-1} \cdot a ^ {\varphi (n)} \equiv 1 \cdot {a^{-1}} \text{ (mod n)} 
+\end{equation*}
+
+\begin{equation*}
+    a ^ {\varphi (n) -1} \equiv {a^{-1}} \text{ (mod n)} 
+\end{equation*}
+
+} \label{inverso_mod_n}
+
+\subsection{Potencias módulo m} {
+Dados $a,n,m \in \N$, si $a$ es invertible módulo $m$, entonces
+\begin{equation*}
+    a^n \equiv 0 \T{(mod m)}
+\end{equation*}
+
+Nunca tiene soluciones.
+} \label{potencias_mod_n}
+
+}
+
+\section{Números Complejos} {
+    \subsection{Fórmula de De Moivre} {
+        
+    } \label{moivre}
+}
+\end{document}

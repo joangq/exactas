@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{jig} % Global config
+\usepackage{subfiles} % Best loaded last in the preamble
+
+% Custom configurations
+\customuline
+\customtitles
+\tocname{Índice}
+\custompartname{Parte}
+\bibsectname{}
+\resetsections
+\hyperblack
+
+\begin{document}
+
+% Title page
+\subfile{sections/titlepage}
+
+% Reset pagestyle
+\pagestyle{plain}
+\pagenumbering{arabic}
+\hyperblue
+
+% Subfiles
+\subfile{sections/conjuntos}    \newpage
+\subfile{sections/induccion}    \newpage
+\subfile{sections/enteros}      \newpage
+\subfile{sections/complejos}    \newpage
+\subfile{sections/practica}     \newpage
+\subfile{sections/extra}        \newpage
+
+
+% Bibliography
+\newpage
+\part{Bibliografía}
+\bibliographystyle{unsrt}
+\bibliography{bibliography.bib}
+
+
+\end{document}

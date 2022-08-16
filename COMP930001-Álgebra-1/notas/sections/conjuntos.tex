@@ -1,0 +1,115 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\part[Teoría]{\decorate{Teoría}}
+\section{Conjuntos, Relaciones y Funciones} {
+    \subsection{Grupos}  { \cite{gallian}
+        El término \textit{grupo} fue usado por Évariste Galois alrededor del año 1830 para describir conjuntos de funciones inyectivas en conjuntos finitos, que pudieran ser agrupadas para formar un conjunto cerrado con la operación de \textit{composición} de funciones. Aunque el término existía previamente, a partir del siglo XX empezó a cobrar relevancia, ya que resultó útil para hablar sobre lo que ahora es una \textit{estructura algebraica}.
+        
+        \nln
+        \ul{Definición} -- Una estructura algebraica está compuesta por:
+        \begin{itemize}
+            \item Un conjunto no vacío, denominado el \textit{dominio} de la estructura.
+            \item Un conjunto de operaciones definidas sobre los elementos del dominio.
+            \item Un conjunto finito de axiomas o identidades.
+        \end{itemize}
+        
+        Una \textit{operación binaria} sobre los elementos de un dominio $G$ es simplemente un método (o una fórmula) a través de la cual los elementos de un par ordenado de elementos de $G$ se combinan para dar un nuevo elemento perteneciente a $G$, a esto se lo conoce como \textit{ley de composición}.
+        
+        \nln
+        Las operaciones binarias más conocidas son la adición o suma y la multiplicación, o producto de los números enteros. La división de números enteros no es una operación binaria que siga la ley de composición, ya que no necesariamente un entero dividido por otro resulta en un nuevo entero.
+        
+        \nln
+        Luego, un \textit{grupo} es una estructura algebraica compuesta por un dominio, donde se define una operación binaria asociativa tal que exista el elemento identidad para dicha operación. Además, todo elemento debe tener inverso, y cualquier par de elementos deben poder ser combinados a través de la misma operación sin salirse del dominio. 
+        
+        \clearpage
+        \ul{Definición} -- Grupo:
+        Sea $G$ un dominio donde se define una operación binaria que asigna a cada par ordenado $(a,b)$ con $a,b$ $\in G$, otro elemento de $G$ designado $ab$. Decimos que $G$ es un grupo bajo ésta operación si las siguientes propiedades se cumplen:
+        
+        \begin{enumerate}
+            \item { \textbf{Asociatividad} -- La operación es asociativa, tal que
+            \\ $(ab)c = a(bc)$ $\;$ $\forall a,b,c \in G$}
+            \item { \textbf{Identidad} -- Existe un elemento $e$, llamado \textit{identidad} en $G$ tal que 
+            \\ $ae = ea = a$ $\;$ $\forall a \in G$}
+            \item \textbf{Inverso} -- Para cada elemento $a \in G$ existe un elemento $a^{-1}$ en $G$, llamado \textit{inverso} tal que
+            \\ $ab = ba = e$
+        \end{enumerate}
+        
+        Adicionalmente, si un grupo tiene la propiedad de que para todo par ordenado $(a,b)$ se cumple $ab = ba$ es decir, la \textbf{conmutatividad}, entonces decimos que se trata de un
+        grupo \textit{Abeliano}.
+        
+        \nln
+        \ul{Ejemplos:}
+        \begin{itemize}
+            \item Los conjuntos numéricos $\Z$, $\mathbb{Q}$ y $\R$ son todos grupos con la adición. En cada caso, el elemento neutro es el 0, y el inverso de $a$ es siempre $-a$.
+            
+            \item Ahora bien, $\Z$ con la multiplicación \ul{no} es un grupo. Siendo el número 1 la identidad, falla la propiedad del inverso para cada elemento de $\Z$. Por ejemplo, no existe $b \in \Z$ tal que $5b = 1$.
+        \end{itemize}
+        
+        Ahora bien, aunque los ejemplos dados de grupos son fundamentalmente distintos, comparten algunas propiedades que podemos deducir. Ya desde su definición podemos plantearnos algunas preguntas. Por ejemplo,
+        
+        \begin{itemize}
+            \item Todo grupo tiene \textit{algún} elemento identidad. 
+            \\ ¿Podría un grupo tener \textit{más} de una?
+            
+            \item Todo elemento de un grupo tiene su inverso. 
+            \\ ¿Podría tener más de uno?
+        \end{itemize}
+        
+        Los ejemplos sugieren que la respuesta es \textit{no} a ambas preguntas, pero en sí no prueban nada. Es imposible probar que cada grupo tiene una única identidad sólo mirando los ejemplos, ya que cada ejemplo tiene propiedades inherentes que no comparte con otros grupos. Para poder responder a algunas de esas preguntas, miremos primero a los siguientes teoremas:
+        
+        \begin{enumerate}
+            \item \textbf{Unicidad de la identidad:} \\
+            En un grupo $G$, existe un único elemento identidad.
+            
+            \newpage
+            \ul{Demostración:}
+            Supongamos que $e$ y $e'$ son ambas identidades en $G$. Luego,
+            \begin{itemize}
+                \item $ae = a$ para todo $a \in G$
+                \item $e'a = a$ para todo $a \in G$
+                \item[$\implies$] $e'e = e \; \land \; e'e = e'$
+                \item[$\implies$] Por ende, $e$ al igual que $e'$ son iguales. Teniendo este teorema en cuenta, cuando hablamos de \ul{la} identidad de un grupo, y la denotamos con la letra $e$ (Del alemán \textit{einheit}, identidad), sabemos que estamos hablando de la única que existe en el grupo.
+            \end{itemize}
+            
+            \item \textbf{Cancelación de términos} \\
+            En un grupo $G$, se pueden cancelar a la derecha y a la izquierda. Es decir, vale lo siguiente:
+            \begin{equation*}
+                ba = ca \implies b = c \land ab = ac \implies b = c
+            \end{equation*}
+            
+            \ul{Demostración:}
+            Supongamos que $ba = ca$. Asumamos que $a'$ es el inverso de $a$. Luego, multiplicar a la derecha por $a'$ resulta en $(ba)a' = (ca)a'$. A través de la asociatividad, sabemos que $b(aa') = c(aa')$. Luego, $be = ce$ y por ende $b = c$. La prueba para la multiplicación por la izquierda es análoga.
+            
+            Una consecuencia de éste teorema es la unicidad de los inversos.
+            
+            \item \textbf{Unicidad de los inversos} \\
+            Para cada elemento $a \in G$, si $G$ es un grupo, entonces existe un único elemento $b \in G$ tal que $ab = ba = e$
+            
+            \ul{Demostración:}
+            Supongamos que $b$ y $c$ son ambos inversos de $a$. Luego, $ab = e \land ac = e$ es verdadero, además $ac = e$ tal que $ab = ac$. Cancelando en ambos lados, llegamos a que $b = c$.
+        \end{enumerate}
+    }
+    
+    \subsection{Grupos finitos y cíclicos}
+    
+    \subsection{Anillos} {
+        \cite{gallian} Anteriormente, vimos que los conjuntos sobre los que se define una sola operación pueden ser denominados grupos si se cumplen las propiedades de asociatividad, identidad e inverso sobre la operación definida. Ahora bien, sobre bastantes conjuntos podemos definir dos operaciones binarias, en particular la adición y la multiplicación. Los ejemplos típicos pueden ser los enteros módulo n ($\Z/n\Z$), los números reales ($\R$), los polinomios ($K[X]$) y las matrices. Cuando considerábamos a estos conjuntos como dominios de grupos, sólo mirabamos una sola operación, la adición; ahora nos gustaría ver la adición y la multiplicación simultáneamente definida en dichos dominios. En este caso, la estructura algebraica pertinente es la de los \textit{anillos}, término utilizado por primera vez por David Hilbert en 1897.
+        
+        \newpage
+        \ul{Definición} -- Anillo: Sea $R$ un conjunto con dos operaciones binarias. En particular, la adición y la multiplicación, de forma tal \ul{que para todo $a,b,c$ $\in R$} se cumplan las siguientes propiedades:
+        \begin{enumerate}
+            \item \textbf{Conmutatividad de la adición}                          \\ $a+b = b+a$
+            \item \textbf{Asociatividad de la adición}                           \\ $(a+b)+c = a+(b+c)$
+            \item \textbf{Existencia del neutro aditivo}                         \\ $a+0 = a$
+            \item \textbf{Existencia del inverso aditivo}                        \\ $a + (-a) = 0$
+            \item \textbf{Asociatividad de la multiplicación}                    \\ $a(bc) = (ab)c$
+            \item \textbf{Distribución de la multiplicación respecto de la adición} \\ $a(b+c) = ab +ac \land (b+c)a = ba+ca$
+        \end{enumerate}
+        
+        
+        De esta manera, un anillo es un grupo Abeliano con la adición, multiplicación asociativa y distributiva a la izquierda y a la derecha sobre la adición. Nótese que la multiplicación no tiene por qué ser conmutativa. Cuando lo es, decimos que se trata de un \textit{anillo conmutativo}. De la misma manera, notemos que un anillo no necesita tener un elemento identidad en la multiplicación. Cuando lo tiene, decimos que es un \textit{anillo con unidad}, o \textit{con 1}. Un elemento distinto del 0 de un anillo conmutativo con unidad, no necesariamente tiene inverso multiplicativo. Cuando lo tiene, decimos que es \textit{inversible}. Es decir, si $a$ es inversible en un anillo $R$, entonces existe $a^{-1}$.
+    }
+}
+
+\end{document}

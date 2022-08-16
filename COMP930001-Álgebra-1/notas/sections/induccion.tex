@@ -1,0 +1,161 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+    \section{Números Naturales e Inducción}
+{
+\cite{sasyk} El conjunto de los números naturales $\mathbb{N} = {1,2,3,4 ...}$ se define axiomáticamente a partir de la teoría de conjuntos (Axiomas de Peano, 1890~1899 y \textit{Models of the Arithmetic}, Heane)
+\nln
+Luego, $(N, +, \cdot )$ se definen axiomáticamente:
+\nln
+
+La suma (+) es conmutativa: $a+b = b+a$ \\
+y asociativa: $\hspace{26mm} a+(b+c)=(a+b)+c$
+\nln
+El producto ($\cdot$) es conmutativo: $a \cdot b = b \cdot a$ \\
+y asociativo $\hspace{30.7mm} a \cdot (b \cdot c)=(a \cdot b) \cdot c$
+\nln
+Además, el \textit{neutro multiplicativo} es el $1$:\\
+$1 \cdot a = a \cdot 1 = a$
+\nln
+Y finalmente, el producto es distributivo respecto de la suma:\\
+$a \cdot (b+c) = a \cdot b + a \cdot c$
+\nln 
+Sobre el conjunto de los números naturales $\mathbb{N}$ podemos hacer predicados, tal que $p(n)$ con $n \in \mathbb{N}$ es una proposición que versa sobre los $\mathbb{N}$.
+\nln
+\ul{Ejemplos de proposiciones:}
+
+\begin{itemize}
+    \item $\text{p}(n) : n \geqslant 7 \hspace{5mm} \text{p}(5) = \text{Falso}  \hspace{5mm}  \text{p}(23) = \text{Verdadero}$
+    \item $\text{p}(n): n^2 + 1 \geqslant n \hspace{5mm} \text{p}(n) = \text{Verdadero siempre}$
+    \item $\text{p}(n): x^n + y^n = z^n$ con $x,y,z \in \mathbb{Z}$, $n \in \mathbb{N}$ y no todos 1 $\lor$ -1. Tiene soluciones $\iff n = 2$. 
+    \item $\text{p}(n): $ Todo número par es la suma de dos primos.
+\end{itemize}
+
+\newpage
+}
+
+\subsection{Principio de Inducción}
+
+Sea $\text{A} \in \mathbb{N}$ conjunto, tal que $1 \in \text{A}$. Si $n \in$ A $\Rightarrow n+1 \in $ A, entonces A $= \mathbb{N}$.
+
+Muchas veces A es el conjunto dado por una proposición. Por ejemplo:
+\begin{equation*}
+    \text{A} = \{n:\text{p}(n) \text{ es verdadero}\}
+\end{equation*}
+Uno quiere demostrar que $p$ es siempre verdadera, y para eso se intenta demostrar que A = $\mathbb{N}$, mostrando que $1 \in $ A (O sea, p(1) es verdadero) y que si p($n$) es verdad, entonces p($n$) también lo es. Es decir,
+
+\begin{equation*}
+    \text{p}(1) \land \text{p}(n) \Longrightarrow \text{p}(n+1)
+\end{equation*}
+
+\nln
+
+\ul{Ejemplo:} Demostrar que $\text{p}(n)$ es verdadero siempre.
+
+\begin{equation}
+    \text{p}(n): \frac{(2n)!}{n!^2} \leqslant (n+1)!
+\end{equation}
+\nln 
+
+\ul{Caso base:} 
+
+\begin{equation}
+    \text{p}(1): \frac{(2)!}{1!^2} \leqslant (1+1)!
+\end{equation}
+\begin{equation*}
+    \iff \frac{2}{1} \leqslant 2 \Longrightarrow \text{p(1) es verdadero.}
+\end{equation*}
+\nln
+
+\ul{Paso Inductivo:} Veamos que p(h) $\implies$ p(h+1). \\
+Nuestra \textit{hipótesis inductiva} es que p(h) es verdadero. Queremos ver que si es verdadero, entonces p(h+1) también lo es.
+
+\nln
+\begin{equation}
+    \text{p}(h+1) : \frac{(2h+2)!}{(h+1)!^2} \leqslant (h+2)!
+\end{equation}
+\begin{equation*}
+   \iff \underbrace {\frac{(2h)!}{h!^2}}_{\text{p}(h)} \cdot \frac{(2h+1)(2h+2)}{(h+1)^2} \leqslant (h+1)! \cdot (h+2)
+\end{equation*}
+\nln
+
+Luego, uso lo que sé de la hipótesis inductiva. Basta con probar que:
+
+\begin{align*}
+         & (h+1)! \cdot \frac{(2h+1)(2h+2)}{(h+1)^2}    \leqslant (h+1)!(h+2)   \\ 
+    \iff & \hspace{25.3mm} \frac{2(2h+1)}{h+1}      \leqslant h+2               \\
+    \iff & \hspace{30.3mm} 4h+2 \leqslant (h+1)(h+2)                            \\
+    \iff & \hspace{38.3mm} 0 \leqslant h(h-1)
+\end{align*}
+\\
+
+Resta ver que $h(h-1) \geqslant 0$, pero ésto es verdadero ya que $h \in \N \Rightarrow h \geqslant 1$ entonces $h(h-1)$ es como mínimo 0, y luego es producto de números positivos, que siempre será mayor a cero. Como ésto último es verdadero, entonces p($h+1$) es verdadero y p($h+1$) $\implies$ p($h$) $\implies$ \ul{p($h$) vale $\forall h \in \N$.}
+
+% Completar con ejemplo de sumatoria %
+% Completar con 7v) práctica 2 %
+
+\newpage
+
+\subsection{Inducción corrida}
+Sea $p$ una proposición tal que:
+\begin{itemize}
+    \item p($n_0$) es verdadera para algún $n_0 \in \N$
+    \item p($h$) es verdadero $\implies$ p($h+1$) es verdadero
+    \item Entonces, p($h$) es verdadero $\forall n \geqslant n_0$
+\end{itemize}
+\nln
+\ul{Ejemplo:} Sea $p$ la siguiente proposición \nln
+$\text{p}(n) : 2^n \geqslant n^3$                   \nln
+Luego, 
+
+\begin{itemize}
+    \item p(1) es verdad
+    \item p(2) es falso
+    \item p(3) es falso
+    \item p(4) es falso
+    \item p(5) es falso
+    \item p(10) es falso
+    \item p(11) es verdad
+\end{itemize}
+
+Demostremos $2^n \geqslant n^3 \hspace{3mm} \forall n \geqslant 10$.    \\
+Si $n_0 = 10 \implies p(n_0) = \text{Verdadero}$                        \nln
+Luego, si p($h$) es verdadero, quiero ver que p($h+1$) es verdad.
+
+\begin{equation}
+    p(h+1): 2^{h+1} \geqslant (h+1)^3
+\end{equation}
+\begin{equation*}
+    \iff  2^{h}\cdot 2  \geqslant 2 \cdot h^3 \geq (h+1)^3
+\end{equation*}
+
+Alcanza con ver que
+
+\begin{equation}
+    2h^3 \geqslant (h+1)^3
+\end{equation}
+
+Sea cierto para $h \geqslant 10$. Para demostrar esto, es lo mismo ver que:
+
+\begin{equation} \label{qh-induccion-corrida}
+    \text{q}(h): h^3 - 3h^2 - 3h -1 \geq 0
+\end{equation}
+
+Vemos que q(10) verdadero, pues $2(10^3) \geqslant 11^3$. Ahora tomemos q($h$) como hipótesis inductiva a nuestro nuevo problema de inducción, y probemos (\ref{qh-induccion-corrida}).
+
+\begin{equation}
+    \T{q}(h+1) = (h+1)^3 - 3(h+1)^2 - 3(h+1) - 1 \geq 0
+\end{equation}
+
+\begin{equation*}
+    h^3 + 3h^2 + 3h + 1 - 3h^2 - 6h - 3 -3h - 3 -1 \geq 0
+\end{equation*}
+
+\begin{equation*}
+    \underbrace{h^3 - 3h^2 -3h - 1}_{\text{Hipótesis}} - 6h - 3 + 3h^2 + 3h + 1 \geq 0
+\end{equation*}
+
+\subsection{Inducción completa}
+
+\end{document}
+
