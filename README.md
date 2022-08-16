@@ -7,3 +7,4 @@
 
 - [Taller de Álgebra](./COMP930001-Álgebra-1/taller/)
 - [Álgebra](./COMP930001-Álgebra-1/)
+- [Algoritmos y Estructuras de Datos I](./COMP930003-AED1/)
