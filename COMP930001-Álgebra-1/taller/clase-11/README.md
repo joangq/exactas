@@ -1,7 +1,7 @@
 <div align='center'>
   <h1>Clase 11</h1>
   <h5>15/06/22</h5>
-  <h2>Sistemas lineales de Congruencia</h2>
+  <h2>Números complejos</h2>
 </div>
 
 
