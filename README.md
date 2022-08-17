@@ -1,5 +1,5 @@
 <div align='center'>
-  <h1>Exactas</h1>
+  <img src="assets/logo-exactas.png">
   <h5>Una repo para subir notas de las clases</h5>
 </div>
 
