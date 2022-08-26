@@ -281,7 +281,76 @@ Tomemos como ejemplo la siguiente tripla:
 
 Como en ambos casos vale que \textcolor{blue}{\{$c = |a|$\}} entonces la condición también vale luego del condicional y por ende la postcondición se cumple.
 \nln 
-Pero ahora, ¿Cómo podemos saber si la tripla es válida? Es decir, teniendo un condicional, ¿Cómo podemos saber cuál es su precondición más debil?
+Pero ahora, ¿Cómo podemos saber si la tripla es válida? Es decir, teniendo un condicional, ¿Cómo podemos saber cuál es su precondición más debil? Para ésto
+necesitamos añadir otro axioma de la precondición más debil.
+
+\begin{align}
+    &\text{Si \mono{S = if B then S1 else S2 endif}, entonces} \nonumber \\
+    &\text{wp}(S,Q)\;\equiv\;\text{def}(B)\;\yLuego\;((B\;\land\;\text{wp}(\text{\mono{S1}}, Q))\;\lor\;(\neg B\;\land\;\text{wp}(\text{\mono{S2}}, Q)))
+\end{align} \label{conditional_wp_axiom}
+
+Luego, de este axioma, se deduce el siguiente Teorema:
+
+\begin{align}
+    & \text{Si } P \rightarrow \text{def}(B) \text{ y las valen las triplas:} \nonumber \\
+    & \{P \land B\}\text{\mono{S1}} \{Q\} \nonumber \\
+    & \{P \land \neg B\}\text{\mono{S2}} \{Q\} \nonumber \\
+    & \nonumber \\
+    & \text{Entonces, } \nonumber \\
+    & \{P\} \text{\mono{if B then S1 else S2 endif}} \{Q\}
+\end{align} \label{conditional_wp_theorem}
+
+\newpage
+Analicemos por ejemplo la siguiente tripla: \nln
+\begin{proc}{alternativa}{\In x: \Z, \Out y: \Z}{}
+    \pre{P}
+    \mono{if} x\;$>$\;0  \par
+    \;\;\mono{y := x;}   \par
+    \mono{else}          \par
+    \;\;\mono{y := -x}   \par
+    \mono{endif}         \par
+    \post{Q: y \geq 2}
+\end{proc} \label{alternative_example_triplet}
+
+¿Qué condición $P$ será la más debil del condicional? Y, ¿Cómo podemos probar que la tripla obtenida es correcta?
+
+Priemro, para determinar wp($S$,$Q$) usamos el axioma visto \hyperref[conditional_wp_axiom]{recientemente}:
+
+\begin{align*}
+    \T{wp}(S,Q) &\equiv \T{def}(x > 0)\;\yLuego\;(x > 0\;\land\;x \geq 2)\;\lor\;(x \leq 0\;\land\;-x \geq 2) \\
+                &\equiv (x \geq 2) \lor (x \leq -2) \\
+                &\equiv |x| \geq 2 \rightarrow \text{\textcolor{blue}{\{$P: |x| \geq 2$\}}}
+\end{align*}
+
+Esto nos da la siguiente tripla:
+
+Analicemos por ejemplo la siguiente tripla: \nln
+\begin{proc}{alternativa}{\In x: \Z, \Out y: \Z}{}
+    \pre{P: |x| \geq 2}
+    \mono{if} x\;$>$\;0  \par
+    \;\;\mono{y := x;}   \par
+    \mono{else}          \par
+    \;\;\mono{y := -x}   \par
+    \mono{endif}         \par
+    \post{Q: y \geq 2}
+\end{proc} \label{alternative_example_triplet_2}
+
+Corroboremos su validez usando el \hyperref[conditional_wp_theorem]{Teorema anterior}:
+
+% TODO: Cambiar el color verde por otro verde un poco más oscuro, éste no se ve nada lmao
+\begin{align*}
+                 P \land B &\implicaLuego \T{wp}(\T{\mono{y := x}},Q) \\
+    |x| \geq 2 \land x > 0 &\implicaLuego \T{def}(x) \yLuego x \geq 2 \equiv x \geq 2 \\ 
+    |x| \geq 2 \land x > 0 &\implicaLuego x \geq 2 \implies \T{\textcolor{teal}{Verdadero \checkmark}}\\ 
+                                                                                      \\
+           P \land \neg B  &\implicaLuego \T{wp}(\T{\mono{y := -x}},Q) \\
+    |x| \geq 2 \land x \leq 0 &\implicaLuego \T{def}(x) \yLuego -x \geq 2 \equiv x \leq 2 \\
+    |x| \geq 2 \land x \leq 0 &\implicaLuego x \leq 2  \implies \T{\textcolor{teal}{Verdadero \checkmark}} \\ 
+\end{align*}
+
+Por ende, como ambas triplas valen entonces el condicional es correcto, y la tripla dada previamente es válida.
+
+% TODO: Corrección de secuencias
 
 \subsection{Ciclos -- Teorema del Invariante}
 
@@ -312,6 +381,8 @@ Las primeras tres demostraciones nos hablan de si se cumple la invariante $I$, y
 un ciclo, entonces habremos demostrado que el ciclo es \textit{parcialmente} correcto. Es decir, demostramos que si el ciclo termina, entonces cumplirá con $Q$. No obstante, las últimas
 dos demostraciones nos hablan de la seguridad de que el ciclo termine. Juntando todo, si demostramos que un ciclo cumple el Teorema del Invariante, y además demostramos que el ciclo
 siempre termina, entonces el ciclo será correcto.
+
+% TODO: wp de ciclos
 
 
 \end{document}
