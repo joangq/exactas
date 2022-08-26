@@ -1,0 +1,48 @@
+\documentclass[a4paper]{article}
+
+\setlength{\parskip}{0.1em}
+\newcommand{\tab}{~ \qquad}
+\input{Algo1Macros}
+
+\usepackage{caratula}
+\usepackage{jig}
+\usepackage{subfiles}
+
+% Configuración
+\bibsectname{}
+\customuline
+\hyperblack
+
+% Datos del documento
+\titulo{Notas de Algoritmos y Estructuras de Datos I}
+\subtitulo{Segundo Cuatrimestre 2022}
+\fecha{\today}
+\materia{Algoritmos y Estructuras de Datos I}
+\grupo{}
+\integrante{Gonzalez, Joan}{51/22}{jgquiroga@dc.uba.ar}
+
+% Documento
+\begin{document}
+
+% Cambio de numeración para las primeras páginas
+\pagestyle{empty}
+\pagenumbering{Alph}
+\subfile{sections/titlepage}
+
+% Reset pagestyle
+\pagestyle{plain}
+\pagenumbering{arabic}
+\hyperblue
+
+\part{Teoría}
+\subfile{sections/section_1}
+
+% Bibliography
+\newpage
+\part{Bibliografía}
+\bibliographystyle{unsrt}
+\bibliography{bibliography.bib}
+
+
+
+\end{document}

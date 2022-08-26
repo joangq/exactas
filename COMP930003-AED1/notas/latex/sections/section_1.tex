@@ -1,0 +1,317 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\section{Corrección de Programas}
+
+\subsection{SmallLang}
+
+Para poder hablar de corrección de \ul{programas}, introducimos un lenguaje imperativo simplificado.
+Usamos SmallLang \cite{gries}, que nos permite dar instrucciones y controlar el flujo de ejecución de dichas instrucciones
+con estructuras de control.
+
+\nln
+
+\ul{Instrucciones:}
+\begin{itemize}
+    \item Asignación -- \mono{x := E} \\
+          Le asignamos a \mono{x} el valor de la expresión \mono{E}. \\
+          Por ejemplo: \mono{ejemplo := a*b + 2}
+    
+    \item Nada -- \mono{skip}. \\
+          La instrucción indica que no debe ejecutarse nada.
+\end{itemize}
+
+De esta manera, \textbf{una instrucción es un programa}. Supongamos que \mono{S1} y \mono{S2}
+son programas, entonces \mono{S1; S2} es un programa también. Además, si \mono{B} es una expresión
+lógica, podemos usar estructuras de control.
+
+\nln
+
+\ul{Estructuras de control:}
+\begin{itemize}
+    \item Condicional -- \mono{if B then S1 else S2 endif} es un programa. 
+    \item Ciclo -- \mono{while B do S1 endwhile} es un programa.
+\end{itemize}
+
+\nln
+
+Un ejemplo de programa puede ser: \\
+
+\begin{center}
+    \begin{tabular}{l}
+        \mono{x := 0}                      \\
+        \mono{while (x $>\;$0)} \\ 
+        \mono{x := x+1;}                   \\ 
+        \mono{x := x*2}                    \\ 
+        \mono{endwhile}
+    \end{tabular}
+\end{center}
+
+\nln
+
+A medida que el programa se ejecuta, el valor de la variable \mono{x} va cambiando. Al conjunto de todos
+los valores de las variables de un programa en un punto específico de ejecución, lo llamamos \textbf{estado}.
+De esta manera, la \textbf{ejecución} de un programa es una sucesión de estados. \nln
+
+Por ejemplo, veamos los estados del siguiente programa: \nln
+
+
+\begin{center}
+    \begin{tabular}{l}
+        \textcolor{blue}{\mono{\textbraceleft a = \ensuremath{A_0}\textbraceright}} \\
+        \mono{c := a+2} \\
+        \textcolor{blue}{\mono{\textbraceleft a = \ensuremath{A_0} \y\;c = \ensuremath{A_0} + 2\textbraceright}} \\
+        \mono{result := c-1} \\
+        \textcolor{blue}{\mono{\textbraceleft a = \ensuremath{A_0} \y\;c = \ensuremath{A_0} + 2 \y\;result = (\ensuremath{A_0} + 2) - 1 = \ensuremath{A_0} + 1\textbraceright}} \label{correct_program_example}
+    \end{tabular}
+\end{center}
+\nln
+
+Como no sabemos el estado inicial de \mono{a}, usamos la metavariable $A_0$ para indicar su valor inicial.
+Al proceso de ir evaluando consecutivamente los estados en función de las asignaciones que realiza un programa, lo llamamos \textit{transformación} de estados.
+A través de la transformación de estados podemos determinar si un programa es correcto o no, dependiendo de su especificación.
+
+\nln
+
+Concretamente, decimos que un programa es \textbf{correcto} respecto de su especificación, si el programa comienza en un estado que cumpla la precondición, y termine
+su ejecución en un estado final que satisface la postcondición. Si el programa es correcto, entonces lo expresamos con la tripla de Hoare:
+
+\begin{equation}
+    \{P\}S\{Q\}
+\end{equation} \label{hoare_triplet}
+
+Donde $(P,Q)$ es la especificación, $P$ es la precondición, $Q$ es la postcondición y $S$ es el programa correcto.
+
+Para ejemplificar, tomemos la siguiente especificación:
+
+\begin{proc}{incrementar}{\Inout a: \Z}{}
+    \pre{a = A_0}
+    \post{a = A_0 + 1}
+\end{proc}
+
+\nln
+
+Y para ésta especificación, implementamos el siguiente programa:
+
+
+\begin{proc}{incrementar}{\Inout a: \Z}{}
+    \mono{c := a+2;}       \par
+    \mono{result := c-1;}  \par
+    \mono{a := result}     \par
+\end{proc} \label{specification_example_1}
+
+Pero por lo que hicimos \hyperref[correct_program_example]{previamente}, vemos que el resultado de este programa es:
+
+\begin{center}
+{\textcolor{blue}{\mono{\textbraceleft a = \ensuremath{A_0} \y\;c = \ensuremath{A_0} + 2 \y\;result = (\ensuremath{A_0} + 2) - 1 = \ensuremath{A_0} + 1\textbraceright}}}
+\end{center}
+
+\nln
+
+Por lo que el programa es correcto, ya que cumple con todo lo pedido. En particular, el resultado cumple la postcondición.
+
+Ahora bien, teniendo un programa correcto respecto de su especificación, nos gustaría decir lo podemos escribir en forma de tripla de Hoare $\{P\}S\{Q\}$, es decir, queremos
+escribir algo del estilo:
+
+\begin{proc}{incrementar}{\Inout a: \Z}{}
+    \pre{a = A_0}
+    \mono{c := a+2;}       \par
+    \mono{result := c-1;}  \par
+    \mono{a := result}     \par
+    \post{a = A_0 + 1}
+\end{proc} \label{specification_example_1_triplet}
+
+Sin embargo, para poder hacerlo, debemos corroborar que sea una tripla \ul{válida}. Decimos que una tripla de Hoare es válida si la precondición es la menos restrictiva para que se
+asegure la postcondición al final del programa. Ésta condición de \textit{menos restrictiva} tiene una notación especial, decimos que es la \textit{precondición más debil}, y la denotamos:
+
+\begin{align}
+    & \text{Predicado $P$ más debil para que $S$ cumpla $Q$} \Iff \text{wp}(S, Q) \label{wp_definition} \\
+    & \text{La tripla $\{P\}S\{Q\}$ es válida} \Iff P \implicaLuego \text{wp}(S,Q) \label{wp_validity}
+\end{align}
+
+Ahora bien, como sabemos que el programa implementado para la \hyperref[specification_example_1]{especificación} es correcto, es decir que se cumple la postcondición si se cumple la precondición,
+y además la precondición no restringe la entrada, podemos decir que la \hyperref[specification_example_1_triplet]{tripla} es válida. Pero, ¿Cómo haríamos con \textit{cualquier} especificación y programa
+correspondiente?
+
+Tomemos ahora como ejemplo la siguiente tripla:
+
+\begin{proc}{mayorIgualaSiete}{\Inout x: \Z}{}
+    \pre{P}
+    \mono{y := 2*x;}    \par
+    \mono{x := y+1}     \par
+    \post{Q: x \geq 7}
+\end{proc} \label{specification_example_2_triplet}
+
+¿Qué precondición $P$ hace que la tripla sea válida? Es decir, ¿Cuál es la precondición más débil de $S$ para que se cumpla $Q$?
+
+\begin{equation*}
+    \text{$P$ = \text{wp}($S$,$Q$)}
+\end{equation*}
+
+Para poder deducir esto, necesitamos usar los axiomas de la precondición más debil:
+
+\begin{enumerate}
+    \item wp(\mono{x := E}, $Q$) $\equiv$ def($E$) $\yLuego$ $Q_{E}^x$
+    \item wp(\mono{skip}, $Q$) $\equiv$ $Q$
+    \item wp($S1$\mono{;}$S2$, $Q$) $\equiv$ wp($S1$, wp($S2$,$Q$))
+\end{enumerate}
+
+\newpage Acá introdujimos un poco de notación nueva:
+
+\begin{itemize}
+    \item def($E$) -- Son las condiciones necesarias para que $E$ esté definida. Por ejemplo,
+    \begin{itemize}[label=$\cdot$]
+        \item def($x+y$) = def($x$) $\land$ def($y$)
+        \item def($\frac{x}{y}$) = def($x$) $\land$ (def($y$) $\yLuego$ $y \neq 0$)
+        \item def($\sqrt{x}$) = def($x$) $\yLuego$ $x \geq 0$
+        \item def($a[i]+3$) = (def($a$) $\land$ def($i$) $\yLuego$ $0 \leq i < |a|$)
+    \end{itemize}
+    Si además asumimos que def($a$) = True para cualquier $a$ variable, entonces:
+    \begin{itemize}[label=$\cdot$]
+        \item def($x+y$) = True
+        \item def($\frac{x}{y}$) = $y \neq 0$
+        \item def($\sqrt{x}$) = $x \geq 0$
+        \item def($a[i]+3$) = $0 \leq i < |a|$
+    \end{itemize} \nln
+
+    \item $Q_{E}^x$ -- Es el predicado que se obtiene reemplazando en $Q$ todas las apariciones \textbf{libres} de $x$ por $E$. Por ejemplo,  
+    \newcounter{saveeqn} % Create new equation counter
+    \setcounter{saveeqn}{\value{equation}} % Set the counter
+    \setcounter{equation}{0} % Reset the counter
+    \renewcommand{\theequation}{\Alph{equation}} % Change the equation numbering macro
+    \begin{align}
+        Q &\equiv 0 \leq i < j < n \yLuego a[i] \leq x < a[j]                   \nonumber \\
+        \rightarrow\;\; Q_{i+1}^i &\equiv 0 \leq i+1 < j < n \yLuego a[i+1] \leq x < a[j] \\
+        \nonumber \\
+        \nonumber \\
+        Q &\equiv 0 \leq i < n \yLuego (\forall j : \Z)(a[j] = x)               \nonumber \\
+        \rightarrow\;\; Q_{k}^{j} &\equiv 0 \leq i < n \yLuego (\forall j : \Z)(a[j] = x) %%
+        \label{qex_bound_variable}
+    \end{align}
+    \setcounter{equation}{\value{saveeqn}}
+    \renewcommand{\theequation}{\alph{equation}} % Reset the equation numbering
+\end{itemize}
+
+Nótese que en la relación de equivalencia \ref{qex_bound_variable}, no podemos cambiar la variable $j$ como lo indicaría el predicado, pues $j$ es es una variable ligada y no libre.
+\nln
+Teniendo esto en cuenta, estamos listos para determinar en la \hyperref[specification_example_2_triplet]{tripla anterior} cuál es la precondicion $P$ más débil para que la tripla sea válida.
+Empecemos analizando el programa desde el fin de la ejecución, es decir, desde la postcondición, hacia el principio:
+
+\begin{center}
+    \textcolor{blue}{\{$Q: x \geq 7$\}} \\
+    \mono{x := y+1} \\
+    \textcolor{blue}{\{wp(\mono{x:=y+1}, $Q$)\}}
+\end{center}
+\nln
+
+Pero, por lo que vimos previamente sabemos que:
+
+\begin{equation*}
+    \T{wp(\mono{x:=y+1}, $Q$)} \equiv \T{def($y+1$) $\yLuego$ $y+1 \geq 7$} \equiv y \geq 6
+\end{equation*}
+
+Por ende, 
+
+\begin{center}
+    \textcolor{blue}{\{$Q: x \geq 7$\}}   \\
+    \mono{x := y+1}                       \\
+    \textcolor{blue}{\{$y \geq 6$\}}      \\
+    \mono{y := 2*x;}                      \\
+    \textcolor{blue}{\{$P$\}}             \\
+\end{center}
+\nln
+
+Y vemos que el valor de $P$ debe ser, según lo visto:
+
+\begin{equation*}
+    P = \T{wp(\mono{x:=2*x}, $R: y \geq 6$) $\equiv$ def(\mono{2*x}) $\yLuego$ $R_{\T{\mono{2*x}}}^y$ $\equiv$ $x \geq 3$} 
+\end{equation*}
+
+Así, ya podemos reescribir las condiciones como una transformación de estados en orden, queda tal que:
+
+\begin{center}
+    \textcolor{blue}{\{$P: x \geq 3$\}}   \\
+    \mono{y := 2*x;}                      \\
+    \textcolor{blue}{\{$R: y \geq 6$\}}   \\
+    \mono{x := y+1}                       \\
+    \textcolor{blue}{\{$Q: x \geq 7$\}}   \\
+\end{center}
+\nln
+
+Y además, la tripla de Hoare válida para \mono{mayorIgualaSiete} queda:
+
+\begin{proc}{mayorIgualaSiete}{\Inout x: \Z}{}
+    \pre{P: x \geq 3}
+    \mono{y := 2*x;}    \par
+    \mono{x := y+1}     \par
+    \post{Q: x \geq 7}
+\end{proc} \label{specification_example_2_final}
+
+\subsection{Condicionales -- Alternativas}
+
+Lo visto hasta ahora corresponde a la corrección de programas cuyo flujo de control es sólo secuencial, veamos ahora el caso de los condicionales.
+Tomemos como ejemplo la siguiente tripla:
+
+\begin{proc}{alternativa}{\In a: \Z, \Out c: \Z}{}
+    \pre{P: a = A_0}
+    \mono{if} a\;$>$\;0  \par
+    \;\;\mono{c := a;}   \par
+    \mono{else}          \par
+    \;\;\mono{c := -a}   \par
+    \mono{endif}         \par
+    \post{Q: c = |a|}
+\end{proc} \label{specification_example_3_triplet}
+
+¿Es correcta la postcondición? ¿Cómo podemos saberlo? Debemos corroborar que se cumpla en \ul{ambos casos}.
+
+\begin{itemize}
+    \item \textbf{Rama positiva -- $a > 0$}
+          \begin{itemize}[label=$\;$]
+            \item Se cumple la condición $\rightarrow$ \textcolor{blue}{\{$a = A_0$ $\land$ $a > 0$\} $\equiv$ \{$a = A_0$ $\land$ $A_0 > 0$\}}
+            \item \mono{c := a;} $\rightarrow$ \textcolor{blue}{\{$a = A_0$ $\land$ $c = A_0$ $\land$ $A_0 > 0$\}}
+            \item[$\Rightarrow$] \textcolor{blue}{\{$c = |a|$\}}
+          \end{itemize}
+    \item \textbf{Rama negativa -- $a \leq 0$}
+    \begin{itemize}[label=$\;$]
+        \item No se cumple la condición $\rightarrow$ \textcolor{blue}{\{$a = A_0$ $\land$ $\neg(a > 0)$\} $\equiv$ \{$a = A_0$ $\land$ $A_0 \leq 0$\}}
+        \item \mono{c := a;} $\rightarrow$ \textcolor{blue}{\{$a = A_0$ $\land$ $c = -A_0$ $\land$ $A_0 \leq 0$\}}
+        \item[$\Rightarrow$] \textcolor{blue}{\{$c = |a|$\}}
+      \end{itemize}
+\end{itemize}
+
+Como en ambos casos vale que \textcolor{blue}{\{$c = |a|$\}} entonces la condición también vale luego del condicional y por ende la postcondición se cumple.
+\nln 
+Pero ahora, ¿Cómo podemos saber si la tripla es válida? Es decir, teniendo un condicional, ¿Cómo podemos saber cuál es su precondición más debil?
+
+\subsection{Ciclos -- Teorema del Invariante}
+
+Ahora es el turno de los ciclos, ¿Cómo podemos saber si son correctos o no? Recordemos que un ciclo en SmallLang se ve algo así:
+
+\begin{center}
+    \begin{tabular}{l}
+        \mono{while (B)}           \\ 
+        \mono{S;}                  \\ 
+        \mono{endwhile}
+    \end{tabular}
+\end{center}
+
+Donde \mono{B} es la \textit{guarda} y es una expresión lógica. Mientras \mono{B} sea verdadera, se repite el cuerpo del ciclo, que en este caso ejecuta
+al programa \mono{S}. A cada ejecución la llamamos \textit{iteración}. Decimos que el ciclo es correcto si \ul{termina} y además se cumple la \ul{invariante del ciclo.}
+\nln
+En particular, para que un ciclo sea correcto debemos demostrar que:
+\begin{enumerate}
+    \item Un predicado invariante $I$ es verdadero antes de que comience el ciclo, tal que $P \rightarrow I$.
+    \item La tripla $\{I \land B\}S_i\{I\}$ se cumple para cada instrucción $S_i$ del ciclo.
+    \item El predicado $P \land \neg B \rightarrow Q$ es verdadero. Es decir, que se cumpla la postcondición deseada.
+    \item El predicado $P \land B \rightarrow (t > 0)$ donde $t$ es la cantidad de iteraciones. Es decir, queremos ver que $t$ esté limitada inferiormente por 0, mientras
+    el ciclo no haya terminado.
+    \item La tripla $\{I \land B\}$\mono{t1 = t;}$S\;$$\{t < t1\}$ valga para $1 \leq i \leq n$ de forma tal que esté garantizado que $t$ decrezca por cada iteración del ciclo.
+\end{enumerate} \cite{gries} \label{correct_cycles_theorem}
+
+Las primeras tres demostraciones nos hablan de si se cumple la invariante $I$, y juntas forman el \textbf{Teorema del Invariante}. Si demostramos el Teorema del Invariante para
+un ciclo, entonces habremos demostrado que el ciclo es \textit{parcialmente} correcto. Es decir, demostramos que si el ciclo termina, entonces cumplirá con $Q$. No obstante, las últimas
+dos demostraciones nos hablan de la seguridad de que el ciclo termine. Juntando todo, si demostramos que un ciclo cumple el Teorema del Invariante, y además demostramos que el ciclo
+siempre termina, entonces el ciclo será correcto.
+
+
+\end{document}

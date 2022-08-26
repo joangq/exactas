@@ -8,3 +8,12 @@ COMP930001-Álgebra-1/notas/out/notas_algebra.log
 COMP930001-Álgebra-1/notas/out/notas_algebra.fls
 COMP930001-Álgebra-1/notas/out/notas_algebra.fdb_latexmk
 COMP930001-Álgebra-1/notas/out/notas_algebra.blg
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.gz

@@ -1,0 +1,116 @@
+\ProvidesPackage{jig}
+
+\usepackage{ulem} % Underline
+\usepackage{contour} % Contours
+\usepackage{hyperref} % Hyperlinks
+\usepackage{titlesec} % Title utilities (\filcenter)
+\usepackage[super,square]{natbib} % Bibliography
+\usepackage{adforn} % Fancy ornaments
+\usepackage{amsmath} % equation, equation*, \align*, \alignat ...
+\usepackage{amssymb} % Math symbols
+\usepackage{etoolbox} % Generic tools
+\usepackage{multicol} % Multiple columns
+\usepackage{enumitem} % [label = {[\Alph*]}]
+\usepackage{tasks} % Horizontal tasks
+
+% Custom newline
+\newcommand{\nln}{\par\vspace{3mm}}
+
+% Tiny bullet points
+\renewcommand\labelitemi{\tiny$\bullet$}
+
+% Indent length 0
+\setlength\parindent{0pt}
+
+% Custom underline %
+\newcommand{\customuline}
+{
+    \renewcommand{\ULdepth}{1.8pt} % Underline depth
+    \contourlength{0.8pt} % Contour length
+
+    \newcommand{\ul}[1]{%
+    \uline{\phantom{##1}}%
+    \llap{\contour{white}{##1}}%
+    }
+}
+
+
+% Hyperref
+% Black hypersetup
+\newcommand{\hyperblack} 
+{
+    \hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+    }
+}
+
+% Blue hypersetup
+\newcommand{\hyperblue}
+{
+    \hypersetup{
+        colorlinks,
+        citecolor=blue,
+        filecolor=blue,
+        linkcolor=blue,
+        urlcolor=blue
+    }
+}
+
+
+% Custom names
+% Custom table of contents name
+\newcommand{\tocname}[1]{\renewcommand{\contentsname}{\filcenter#1}}
+
+
+% Custom part name
+\newcommand{\custompartname}[1]{\renewcommand{\partname}{#1}}
+
+% Center part names
+\newcommand{\customtitles}
+{
+    \titleformat{\part}[display]{\filcenter\huge\bfseries}{\Large\partname\;\thepart}{0mm} {}
+}
+
+
+% Reset section on parts
+\newcommand{\resetsections}
+{
+    \makeatletter
+    \@addtoreset{section}{part}
+    \makeatother 
+}
+
+
+% Custom symbols
+\renewcommand{\geq}{\geqslant} % > -> >=
+\renewcommand{\leq}{\leqslant} % < -> <=
+
+\newcommand{\R}{\ensuremath{\mathbb{R}}} % Real numbers
+\newcommand{\N}{\ensuremath{\mathbb{N}}} % Natural numbers
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}} % Integers
+\newcommand{\C}{\ensuremath{\mathbb{C}}} % Complex numbers
+
+\newcommand{\divides}{\mid} % |
+\newcommand{\notdivides}{\nmid} % !|
+
+% Fast text command
+\newcommand{\T}[1]{
+    \text{#1}
+}
+
+% Syntactic reaplacement fot \texttt
+\newcommand{\mono}[1]{
+    \texttt{#1}
+}
+
+% Custom bibliography name
+\newcommand{\bibsectname}[1]{\renewcommand{\bibsection}{#1}}
+
+
+
+
+\endinput
