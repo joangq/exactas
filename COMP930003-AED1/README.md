@@ -15,14 +15,6 @@
                 <td><a href='https://github.com/Joan-GQ/exactas/raw/main/COMP930003-AED1/notas/latex/out/main.pdf'>PDF</a></td>
                 <td><a href='./notas/latex/'>LaTeX</a></td>
             </tr>
-            <tr>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-            </tr>
         </tbody>
     </table>
 </div>
