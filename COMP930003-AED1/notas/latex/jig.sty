@@ -13,6 +13,23 @@
 \usepackage{enumitem} % [label = {[\Alph*]}]
 \usepackage{tasks} % Horizontal tasks
 \usepackage{tikz} % Figures
+\usepackage{xcolor} % Colors!
+%\usepackage{mdsymbol} % Squigglyline
+
+\definecolor{dark_green}{RGB}{23, 179, 46}
+\definecolor{dark_red}{RGB}{173, 18, 7}
+
+% Checkmark and cross
+\newcommand{\xmark}{%
+\tikz[scale=0.23] {
+    \draw[line width=0.7,line cap=round] (0,0) to [bend left=6] (1,1);
+    \draw[line width=0.7,line cap=round] (0.2,0.95) to [bend right=3] (0.8,0.05);
+}}
+\newcommand{\cmark}{%
+\tikz[scale=0.23] {
+    \draw[line width=0.7,line cap=round] (0.25,0) to [bend left=10] (1,1);
+    \draw[line width=0.8,line cap=round] (0,0.35) to [bend right=1] (0.23,0);
+}}
 
 % Checkmark figure
 \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 

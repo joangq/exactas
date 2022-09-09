@@ -1,6 +1,60 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
+
+% TODO: Mover esto a un archivo aparte!
+\section{Especificación de Programas}
+
+La especificación de programas es la forma que tenemos de describir \text{qué} problema queremos resolver, sin describir \textit{cómo} queremos
+resolverlo.
+
+\subsection{Subespecificación y Sobreespecificación}
+
+Dada una especificación con una precondición $P$ y una postcondición $Q$ consideremos a $X = \{ x_1, x_2, x_3, ..., x_n\}$ el conjunto de todos valores de entrada de un programa, y $P_X$ el conjunto de predicados que
+cumplen la precondición $P$, podemos definir lo siguiente:
+
+\begin{itemize}
+    \item El programa está \ul{sobreespecificado} si $\exists x_i \in X \mid P(x_i) = \text{True} \land Q(x_i) = \text{False}$ 
+          \begin{gather*}
+            P_X = X = \{
+            \color{dark_green}\underset{\substack{\cmark}}{x_1}\color{black},
+            \color{red}\underset{\substack{\xmark\\\T{Está}\\\T{\textit{``de más"}}}}{x_2}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_3}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_4}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_5}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_6}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_7}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_8}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_9}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_{10}}\color{black},
+            \dots,
+            \color{dark_green}\underset{\substack{\cmark}}{x_n}\color{black}\}
+            \\
+            Q(x_1) = \T{True},\;Q(x_2) = \T{False},\;Q(x_3) = \T{True}\;\cdots\;Q(x_n) = \T{True}
+          \end{gather*}
+    \item El programa está \ul{subespecificado} si $\exists x_i \in X \mid Q(x_i) = \T{True} \land x_i \notin P_X$
+          \begin{gather*}
+            X= \{
+            \color{dark_green}\underset{\substack{\cmark}}{x_1}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_2}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_3}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_4}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_5}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_6}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_7}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_8}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_9}\color{black},
+            \color{dark_green}\underset{\substack{\cmark}}{x_{10}}\color{black},
+            \dots,
+            \color{dark_green}\underset{\substack{\cmark}}{x_n}\color{black}\}
+            \\
+            Q(x_i) = \T{True}\;\;\forall x_i \in X
+            \\
+            P_X = \{x_1, x_2, x_3\} \leftrightsquigarrow \T{Es \textit{``más chico''}}
+          \end{gather*}
+\end{itemize}
+
+
 \section{Corrección de Programas}
 
 \subsection{SmallLang}
@@ -50,7 +104,7 @@ Un ejemplo de programa puede ser: \\
 \nln
 
 A medida que el programa se ejecuta, el valor de la variable \mono{x} va cambiando. Al conjunto de todos
-los valores de las variables de un programa en un punto específico de ejecución, lo llamamos \textbf{estado}.
+los predicados que pueden ser verdaderos o falsos, según las variables del programa, lo llamamos \textbf{estado}.
 De esta manera, la \textbf{ejecución} de un programa es una sucesión de estados. \nln
 
 Por ejemplo, veamos los estados del siguiente programa: \nln
@@ -99,6 +153,7 @@ Y para ésta especificación, implementamos el siguiente programa:
     \mono{result := c-1;}  \par
     \mono{a := result}     \par
 \end{proc} \label{specification_example_1}
+
 
 Pero por lo que hicimos \hyperref[correct_program_example]{previamente}, vemos que el resultado de este programa es:
 
