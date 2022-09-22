@@ -4,8 +4,8 @@
 using namespace std;
 
 void rotar1(vector<int> &v) {
-    v.insert(v.begin(), v.back());
-    v.erase(prev(v.end()));
+    v.insert(v.end(), v.front());
+    v.erase(v.begin());
 }
 
 vector<int> rotar(vector<int> v, int k){
@@ -42,3 +42,4 @@ int main() {
 
     return 0;
 }
+
