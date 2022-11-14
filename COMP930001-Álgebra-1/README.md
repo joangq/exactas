@@ -5,6 +5,6 @@
 
 
 - [Resúmenes del libro de Teresa](./resumenes)
-- [Taller de Álgebra](./taller)
+- [Taller de Álgebra](./taller) - Programación funcional en Haskell
 - [Notas personales de Álgebra](./notas/out/notas_algebra.pdf) (Incompleto)
 - [Ejercicios de repaso para el Final](./final)
