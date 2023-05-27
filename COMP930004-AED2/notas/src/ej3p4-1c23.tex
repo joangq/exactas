@@ -1,0 +1,139 @@
+\documentclass{article}
+\usepackage{xcolor}
+\usepackage{pdflscape}
+\usepackage{everypage}
+\usepackage{lipsum}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[colorlinks]{hyperref}
+\usepackage[paperheight=297mm, paperwidth=210mm,
+includehead,
+nomarginpar,
+textwidth=15cm,
+headheight=0mm,
+]{geometry}
+
+\setlength{\parindent}{0cm}
+
+\newcommand{\doble}[2]{\def\arraystretch{1.25}\begin{tabular}{@{}c@{}}#1\\#2\end{tabular}}
+
+\begin{document}\pagenumbering{gobble}
+
+\newcommand{\daga}{$^\dagger$}
+\newcommand{\ddaga}{$^\ddagger$}
+\newcommand{\uno}{\hyperref[uno]{\daga}}
+\newcommand{\dos}{\hyperref[dos]{\ddaga}}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+% \doble{\href{https://github.com/joangq/exactas}{$\triangleright$ GitHub}}%
+%     {\href{https://github.com/joangq/exactas/blob/main/COMP930003-AED2/notas/src/ej3p4-1c23.tex}{$\triangleright$ Source{ }}}%
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[R]{\textbf{Cota superior de complejidad temporal en peor caso por estructura}}
+\fancyfoot{}
+\fancyfoot[R]{%
+\begin{minipage}[t]{0.48\textwidth}
+\begin{flushright}
+\href{https://github.com/joangq/exactas}{GitHub $\triangleleft$} \\
+\href{https://github.com/joangq/exactas/blob/main/COMP930003-AED2/notas/src/ej3p4-1c23.tex}{\LaTeX{ }Source $\triangleleft$} \\
+\end{flushright}
+\end{minipage}
+}
+
+\begin{table}[!ht]
+\centering
+\bgroup
+\def\arraystretch{2.0}
+  \begin{tabular}{|c|c|c|c|c|c|c|} 
+	  \hline
+	  Operación & \doble{Lista}{Enlazada} & \doble{Lista Enlazada}{Ordenada} & \doble{ABB}{(BST)} & AVL & Heap & Trie \\
+
+	  \hline\hline
+
+	  \multicolumn{1}{|c|}{Pertenece}			& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(\log n)$}			& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c|}{$O(|k|)$}			\\
+	  
+	  \multicolumn{1}{|c|}{Inserción}			& 
+	  \multicolumn{1}{ c }{$O(1)$\uno}			& 
+	  \multicolumn{1}{ c }{$O(1)$\uno}			& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(\log n)$}			& 
+	  \multicolumn{1}{ c }{$O(\log n)$}			& 
+	  \multicolumn{1}{ c|}{$O(|k|)$}			\\
+
+	  \multicolumn{1}{|c|}{Borrado}				& 
+	  \multicolumn{1}{ c }{$O(1)$\uno}			& 
+	  \multicolumn{1}{ c }{$O(1)$\uno}			& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(\log n)$}			& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c|}{$O(|k|)$}			\\
+
+	  \multicolumn{1}{|c|}{Buscar Mínimo}		& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(1)$\dos}			& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(\log n)$}			& 
+	  \multicolumn{1}{ c }{$O(1)$\dos}			& 
+	  \multicolumn{1}{ c|}{$O(n)$}				\\
+
+	  \multicolumn{1}{|c|}{Borrar Mínimo}		& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(1)$\uno\dos}		& 
+	  \multicolumn{1}{ c }{$O(n)$}				& 
+	  \multicolumn{1}{ c }{$O(\log n)$}			& 
+	  \multicolumn{1}{ c }{$O(\log n)$\dos}		& 
+	  \multicolumn{1}{ c|}{$O(|k|)$}			\\
+
+	  %\multicolumn{1}{|c|}{Buscar Máximo}		& 
+	  %\multicolumn{1}{ c }{$O()$}				& 
+	  %\multicolumn{1}{ c }{$O()$}				& 
+	  %\multicolumn{1}{ c }{$O()$}				& 
+	  %\multicolumn{1}{ c }{$O()$}				& 
+	  %\multicolumn{1}{ c }{$O()$}				& 
+	  %\multicolumn{1}{ c|}{$O()$}				\\
+	  
+	  \hline
+  \end{tabular}
+\egroup
+\end{table}
+
+Siendo $n$ la cantidad de elementos presentes en la colección. Y, en el caso del trie, siendo $|k|$ el largo de la clave (\textit{key}).
+
+\vfill
+
+{\label{uno} \setlength{\parindent}{-1mm} 
+\daga Considerando que, dado un iterador (puntero) al elemento, la inserción/remoción como tal --es decir, reacomodar los punteros de la estructura-- se realiza en $O(1)$. Buscar el elemento es $O(n)$.}
+
+\par
+\vspace{5mm}
+
+{\label{dos} \setlength{\parindent}{-1mm} 
+\ddaga Considerando que la estructura preserva el orden total de \textit{menor o igual.} ($\bullet \leqslant \bullet $). Es decir, dados $a$, $b$ elementos pertenecientes a la estructura, $a$ aparece antes que $b$ si y sólo si $a < b$. Si $a = b$ entonces $b$ podría aparecer antes que $a$. 
+\\ \\
+En caso de la lista enlazada, significa que está ordenada de forma ascendente. En cambio, si se trata de un heap, entonces es un $min$-heap.
+}
+
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=blue,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+\end{document}
