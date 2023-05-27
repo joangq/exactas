@@ -1,1 +1,3 @@
-![](notas/assets/especificacion-implementacion_w.png)
+# Función de Abstracción y Sombrerito
+
+![](assets/especificacion-implementacion_w.png)
