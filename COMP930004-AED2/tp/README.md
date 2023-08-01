@@ -5,3 +5,9 @@ La temática de los trabajos prácticos de 2022 fue entorno a un festival fictic
 - [Trabajo Práctico 1 - Especificación](./1/)
 - [Trabajo Práctico 2 - Diseño](./2/)
 - [Trabajo Práctico 3 - Implementación y Testing](./3/)
+
+Los trabajos prácticos fueron grupales y, en éste caso los hice junto con:
+
+- [@Dante-010](https://github.com/Dante-010)
+- [@mellista1](https://github.com/mellista1)
+- [@luciasuter](https://github.com/luciasuter)
