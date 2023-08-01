@@ -1,0 +1,86 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tad}{\crearTadNombre{Persona}}
+        \tadExtiende{ \tadNombre{Tupla}(\hyperref[renombres]{ID}, \tadNombre{Secuencia}(\tadNombre{Compra}))}
+
+        \spacing
+
+        \tadGeneros{persona}
+        
+        \spacing
+
+        \tadExporta{\numIdDe{}, \comprasDe{}, \gastoTotalDe{}, \comprar{}, \devolverUnidadCompra{}, %
+                    \maxGastoEntrePers{}}
+        
+        \spacing
+
+         \tadUsa{\Compra, ID}
+        % {\color{gris}
+        %     \myTadIgualdadObservacional{igualdad observacional especializada}%
+        %                                {p_1}{p_2}{persona}%
+        %                                {\esVacia{p_1} \igobs \esVacia{p_2} \\%
+        %                                 \yluego $\;\neg$\esVacia{p_1} \impluego \prim{p_1} \igobs \prim{p_2} \\%
+        %                                 $\;\land$ \fin{p_1} \igobs \fin{p_2}}
+        % }
+         \spacing
+        
+        \tadOtrasOperaciones{
+            \tadOperacion{numIdDe}{persona}{id}{}
+            \tadOperacion{comprasDe}{persona}{secuencia(\Compra)}{}
+            \myTadOperacion{gastoTotalDe}{persona}{\nat}{}
+            \myTadOperacion{comprar}{persona, compra}{\persona}{}
+            \myTadOperacion{devolverUnidadCompra}{persona \; p, compra \; c}{\persona}{\text{está?(c, \comprasDe{p})}}
+            \tadOperacion{\infix{\geq}}{persona, persona}{\bool}{} 
+            \tadOperacion{maxGastoEntrePers}{persona, persona}{\persona}{} 
+        }
+        
+        \spacing
+
+        
+        \tadAxiomas[\paratodo{\persona}{p, p_1, p_2}, %
+                    \paratodo{\compra}{c}]{
+    
+            \tadAxioma{\numIdDe{p}}{$\pi_1$(p)}
+            \tadAxioma{\comprasDe{p}}{$\pi_2$(p)}
+
+            \tadAxioma{\gastoTotalDe{$p$}}{\IfThenElse
+                {\esVacia{\comprasDe{p}}\\}
+                {0\\}
+                {\gastoDe{{\prim{\comprasDe{p}}}} + \gastoTotalDe{\fin{\comprasDe{p}}}}
+            }
+
+            \espacioEntreAxiomas
+                            
+            \tadAxioma{\comprar{$p$, $c$}}{$c$ \puntito $\comprasDe{p}$}
+
+            \tadAxioma{\devolverUnidadCompra{$p$, $c$}}{}
+            \vspace{-7mm}
+            \begin{align*}
+             &\textbf{if}\; \text{prim(\comprasDe{p})} \igobs c \; \textbf{then}\\ 
+             &\espacio{2} \textbf{if}\; \cantidadDe{c} \igobs 1 \; \textbf{then} \\
+             &\espacio{4}\langle\numIdDe{p},\; \text{fin(\comprasDe{p})}\rangle \\
+             &\espacio{2} \textbf{else}\\
+             &\espacio{4}\langle\numIdDe{p},\\
+                &\espacio{6}\langle\itemDe{c}, \cantidadDe{c} - 1, \gastoDe{c} - \text{div}(\gastoDe{c}, \cantidadDe{c}), \puestoDe{c}\rangle \puntito \text{fin(\comprasDe{p})}\\ 
+             &\espacio{4}\rangle \\
+             &\espacio{2}\textbf{fi}\\
+             &\textbf{else} \\
+                &\langle\numIdDe{p}, \espacio{2}\langle\text{prim(\comprasDe{p})}\rangle \puntito \devolverUnidadCompra{\text{fin(\comprasDe{p})}, c} \rangle \\
+            &\textbf{fi}
+            \end{align*}
+           
+            \espacioEntreAxiomas
+            
+              %% si trato de usar variables el texto desaparece?? 
+            \tadAxioma{\ensuremath{p_1 \geq p_2}}{\ensuremath{\gastoTotalDe{p_2} \leq \gastoTotalDe{p_1}}}
+            
+            \tadAxioma{\maxGastoEntrePers{p_1, p_2}}{\IfThenElse{p_1 \geq p_2}{p_1}{p_2}} %\tadAxioma{\Max{p1, p2}}{if p1  \geq p2 then p1 else p2}
+        }
+        
+        \spacing
+
+\end{tad}
+
+\end{document}

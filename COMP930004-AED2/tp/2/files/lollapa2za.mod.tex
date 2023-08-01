@@ -1,0 +1,60 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\interfaz%
+
+\representacion%
+
+\begin{Estructura}{lolla}[estr]
+    \begin{Tupla}[estr]
+        \estrMiembro{puestos}{\dicc[ID, puesto]},\\%
+        \estrMiembro{personas}{\conj[persona]},\\%
+        \estrMiembro{itemsTotal}{\conj[ItemsId]},\\%
+        \estrMiembro{mayoresGastos}{\ColaPrioritaria[persona]},\\%
+        \estrMiembro{comprasPorPersona}{\diccLog[persona, {\tupla[\estrMiembro{gastoTotal}{\nat},\\%
+        \espacio{39}\estrMiembro{hackeables}{\ColaPrioritaria[\mono{compra}]},\\ \espacio{39}\estrMiembro{noHackeables}{\ColaPrioritaria[\mono{compra}]}]}]},\\%
+        \estrMiembro{items}{\diccLog[itemID, {\diccLog[ID, {\Iterador[puesto]}]}]}%
+    \end{Tupla}
+\end{Estructura}
+
+\begin{Tupla}
+    \estrMiembro{elPuesto}{\Iterador[puesto]},
+    \estrMiembro{cant}{\nat}
+\end{Tupla}
+
+\algoritmos%
+
+\begin{implementacion}{CrearLolla}{\In{puestos}{\dicc[\puestoid, \puesto]}, \In{personas}{\conj[\persona]}}{res}{\estrLolla}
+\State 
+\State $res$.puestos $\gets {puestos}$  
+\State $res$.personas $\gets {personas}$
+\State $res$.mayoresGastos $\gets (...)$
+\State $res$.items $\gets (...)$
+\State $it$ $\gets {CrearIt}(personas)$
+\While{$\HaySiguiente[it]$}
+    \State $\text{Definir}(res.comprasPorPersona, it, \langle 0, \Vacio[\phantom{}], \Vacio[\phantom{}] \rangle)$
+    \State $it \gets \Avanzar[it]$
+\EndWhile
+\State $it2$ $\gets {CrearIt}(claves(puestos))$
+\While{$\HaySiguiente[it2]$}
+    \State $it3$ $\gets {CrearIt}(it2.ObtenerMenu)$ %RECORDAR HACER LA FUNCION EN PUESTOSSSSSSSSS
+    \While{$\HaySiguiente[it3]$}
+        \State $\text{Agregar}(res.items, it3)$   
+        \State $it3 \gets \Avanzar[it3]$
+    \EndWhile
+    \State $it2 \gets \Avanzar[it]$
+\EndWhile
+
+
+
+\complejidad{$\Theta(A) + \Theta(I)*\Theta(i)$} \\
+\justificacion{Tenemos que construir el diccionario \textit{comprasPorPersona} que itera sobre todas las personas del festival y el diccionario \textit{items} que itera sobre todos los items del festival. Para conocer todos los items, accedo a el menu de todos los puestos, y recorro dicho menu. La cantidad de items del menu de cada puesto es \textit{i}. 
+Todo lo demás viene pasado como parámetro.}
+
+\end{implementacion}
+\\
+
+
+\par\vspace{4m}
+
+\end{document}

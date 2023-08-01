@@ -1,0 +1,375 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{aed2-symb,aed2-itef,aed2-tad,aed2-diseno}
+\usepackage{subfiles}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage[paper=a4paper, left=1.0cm, right=1.0cm, bottom=1.0cm, top=3.0cm]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[shortlabels]{enumitem}
+\usepackage{caratula}
+
+\definecolor{gris}{RGB}{135, 147, 150}
+\linespread{1.3}
+\setcounter{secnumdepth}{0}
+
+\newcommand{\espacioEntreAxiomas}{\vspace{1mm}}
+
+\newcommand{\clave}{\text{clave}}
+
+\newcommand{\prim}[1]{\text{prim}(#1)}
+\newcommand{\fin}[1]{\text{fin}(#1)}
+\newcommand{\at}[2]{\ensuremath{\pi_{#1}(#2)}}
+
+\newcommand{\obtener}[1]{\ensuremath{\text{obtener}(#1)}}
+
+\newcommand{\Nat}{\tadNombre{Nat}}
+\newcommand{\nat}{\text{nat}}
+
+\newcommand{\Bool}{\tadNombre{Bool}}
+\newcommand{\bool}{\text{bool}}
+
+% if [1] then [2] else [3] fi
+\newcommand{\IfThenElse}[3]{%
+    \ensuremath{\textbf{if}\ #1\ \textbf{then}\ #2\ \textbf{else}\ #3\ \textbf{fi}}%
+}
+
+% Sintáxis de funciones infijas
+\newcommand{\infix}[1]{\ensuremath{\bullet\;#1\;\bullet}}
+
+% dameUno([1])
+\newcommand{\dameUno}[1]{\ensuremath{\text{dameUno}(#1)}}
+
+% sinUno([1])
+\newcommand{\sinUno}[1]{\ensuremath{\text{sinUno}(#1)}}
+
+% max([1])
+\newcommand{\MaxEntrePers}[1]{\ensuremath{\text{maxEntrePers}(#1)}}
+
+% Símbolo de conjunto vacío
+\newcommand{\vacio}{\ensuremath{\varnothing}}
+
+% vacía?()
+\newcommand{\esVacia}[1]{\ensuremath{\text{vacía?}(#1)}}
+
+% ∅?()
+\newcommand{\esVacio}[1]{\ensuremath{\text{\vacio?}(#1)}}
+
+% Agregar cosas a conjuntos
+\newcommand{\Ag}[1]{\ensuremath{\text{Ag}(#1)}}
+
+% Para utilizar con hyperref (tadOperacion)
+\newcommand{\myTadOperacion}[4]{\phantomsection\tadOperacion{#1}{#2}{#3}{#4}\label{#1}}
+
+% Para utilizar con hyperref (tadNombre)
+\newcommand{\crearTadNombre}[1]{\phantomsection\tadNombre{#1}\label{#1}}
+
+% Crear hyperref
+\newcommand{\crearLabel}[1]{%
+   %\expandafter\newcommand\csname #1\endcsname[1]{\hyperref[#1]{\text{#1}}(##1)}%
+
+   % Esto es para que no ponga paréntesis extra
+   \expandafter\newcommand\csname #1\endcsname[1]{%
+        \ifx\empty##1\empty%
+            \hyperref[#1]{\text{#1}}%
+        \else%
+            \hyperref[#1]{\text{#1}}(##1)%
+        \fi%
+   }%
+}
+
+\newcommand{\crearLabelText}[3]{%
+    \expandafter\newcommand\csname #2\endcsname{\hyperref[#1]{\text{#3}}}%
+}
+
+%% Redefino \tadNombre
+% La definición anterior era: \newcommand{\tadNombre}[1]{\textsc{#1}}
+% Pero esto se rompe si se usa dentro de \tadOperacion.
+\renewcommand{\tadNombre}[1]{\text{\scshape{#1}}}
+
+% [1] **es** [2]
+\newcommand{\tadRenombre}[2]{\textit{#1} \, &\textbf{es} \, \textit{#2}}
+
+% Encabezado de "operaciones"
+\newcommand{\tadOperaciones}[1]{\tadEncabezado{operaciones}{#1}}
+
+% Multiconjunto(a)
+\newcommand{\mset}[1]{multiconj(#1)}
+
+% Si y sólo si con la flecha simple.
+\newcommand{\sii}{\longleftrightarrow}
+
+% Cambiar leq y geq por geqslant y leqslanta
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\leq}{\leqslant}
+
+%% Espacio con ancho variable
+
+% Funcion para repetir un caracter n veces. 
+\newcommand\myrepeat[2]{
+  \begingroup
+  \lccode`m=`#2\relax
+  \lowercase\expandafter{\romannumeral#1000}
+  \endgroup
+}
+
+% Repito n veces un caracter y lo paso por hphantom.
+\newcommand\espacio[1]{\hphantom{\myrepeat{#1}{d}}}
+
+% Para la restricción de Lollapatuza
+\newcommand{\myIndent}{\espacio{4}}
+
+% Espacio vertical
+\newcommand{\spacing}{\vspace{5mm}} % FIXME: Espacio variable
+
+%% ================== Hyperrefs ======================================================
+
+% Hyperref negro
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+%% FIXME: ¿Se puede hacer esto en cada TAD.tad.tex? %%
+
+%% LOLLAPATUZA
+\crearLabelText{Lollapatuza}{Lollapatuza}{\tadNombre{Lollapatuza}} %\newcommand{\Lollapatuza}{\hliLollapatuza{\textsc{Lollapatuza}}}
+\crearLabelText{Lollapatuza}{lollapatuza}{\text{lollapatuza}} %\newcommand{\lollapatuza}{\hliLollapatuza{\textsc{lollapatuza}}}
+
+
+%% PUESTO
+\crearLabelText{Puesto}{Puesto}{\tadNombre{Puesto}}
+\crearLabelText{Puesto}{puesto}{\text{puesto}}
+
+%% PERSONA
+\crearLabelText{Persona}{Persona}{\tadNombre{Persona}}
+\crearLabelText{Persona}{persona}{\text{persona}}
+
+%% GENTE
+\crearLabelText{Gente}{Gente}{\tadNombre{Gente}}
+\crearLabelText{Gente}{gente}{\text{gente}}
+
+%% GASTO
+\crearLabelText{GASTO}{Gasto}{\tadNombre{Gasto}}
+
+%% COMPRA
+\crearLabelText{Compra}{Compra}{\tadNombre{Compra}}
+\crearLabelText{Compra}{compra}{compra}
+
+%% ITEM
+%\crearLabelText{Item}{Item}{}
+
+%% ===================================================================================
+
+% labels LOLLAPATUZA
+\crearLabel{puestosDe}
+\crearLabel{genteEn} 
+\crearLabel{nuevoFestival}
+\crearLabel{agregarPuesto}
+\crearLabel{agregarPersona}
+\crearLabel{compraventa}
+\crearLabel{eliminarConsumo}
+
+\crearLabel{personaDeMayorGasto}
+\crearLabel{itemDefinidoEnMenuDePuesto}
+\crearLabel{precioSinDescDe}
+\crearLabel{compraHackeable}
+\crearLabel{actualizarGente}
+\crearLabel{actualizarPuestos}
+
+
+% labels PUESTO
+\crearLabel{menuDe}
+\crearLabel{stockDe}
+\crearLabel{nuevoPuesto}
+\crearLabel{crearMenu}
+\crearLabel{vender}
+\crearLabel{devolverUnidadVenta}
+
+\crearLabel{compraValida}
+\crearLabel{promocionesDe}
+
+% labels PERSONA
+\crearLabel{gastoTotalDe}
+\crearLabel{numIdDe}
+\crearLabel{comprasDe}
+\crearLabel{comprar}
+\crearLabel{devolverUnidadCompra}
+\crearLabel{maxGastoEntrePers}
+
+% labels GENTE
+\crearLabel{mayorGasto}
+
+% labels COMPRA
+\crearLabel{itemDe}
+\crearLabel{cantidadDe}
+\crearLabel{gastoDe}
+\crearLabel{puestoDe}
+\crearLabel{aplicarPromo}
+
+% labels GASTO
+\newcommand{\Div}[1]{\hyperref[div]{\text{div}(#1)}}
+\crearLabel{aplicarDescuento}
+
+% labels PROMOCIONES
+\crearLabel{enPromo}
+\crearLabel{buscarPromo}
+\crearLabel{porcentajeValidoMasCercano}
+
+\titulo{Trabajo Práctico I}
+\subtitulo{Primer Cuatrimestre 2023}
+\materia{Algoritmos y Estructuras de Datos II}
+\date{\today}
+\integrante{Culaciati, Dante}{351/22}{mellidante@gmail.com}
+\integrante{Gonzalez, Joan}{51/22}{jgquiroga@dc.uba.ar}
+\integrante{Lista, Melanie}{516/21}{melaalista@gmail.com}
+\integrante{Suter, Lucia}{579/21}{lsuter@dc.uba.ar}
+
+
+\begin{document}
+
+\maketitle{}
+\tableofcontents
+\pagenumbering{gobble}
+\newpage
+
+\section{Aclaraciones (Previas a la corrección)} {
+    Consideramos los siguientes comportamientos: 
+    \begin{enumerate}[a)]
+        \item Una \textit{\compraventa{}} es un evento donde simulténamente se implica que una \persona{} \hyperref[comprar]{compró} en un \puesto, incrementando la cantidad de \hyperref[Compra]{compras} que posee la misma y también reduciendo el \hyperref[renombres]{stock} del mismo. Una \Compra{} es una \tadNombre{Tupla}(\hyperref[renombres]{\tadNombre{Ítem}}, \hyperref[renombres]{\tadNombre{Cantidad}}, \Gasto, \Puesto), por lo que podemos representar los consumos de la siguiente forma: ``\textit{Dos gaseosas y dos hamburguresas, del puesto P}'' $\;\equiv\;$ $\langle(1,\,2,\,400,\,P),\;(2,\,2,\,2000,\,P)\rangle$. Inmediatamente, $P$ \hyperref[vender]{vendió} la cantidad correspondiente de los \hyperref[renombres]{ítems}. Si $P$ tenía un descuento para alguno de los ítems en la cantidad que se compró, entonces la nueva instancia de la \persona{} post-\hyperref[comprar]{compra} poseerá la compra con el \hyperref[aplicarDescuento]{descuento ya considerado.}
+        \item Un \textit{hackeo} es la contraparte a la compraventa, pues se compone de \hyperref[eliminarConsumo]{\textit{eliminar}} una unidad de las compras (Sólo si la compra no tenía un descuento aplicado) de una \persona{}, y de \hyperref[devolverUnidadVenta]{\textit{reponer}} una unidad al stock de un \puesto. Si la persona sólo poseía una compra de una sola unidad, entonces la nueva instancia no poseerá una tupla que represente esa compra de \textit{cantidad 0}. Por ejemplo: $\langle(1,1,200)\rangle \xrightarrow{hackeo} \langle\rangle \not\equiv \langle(1,0,200)\rangle$
+    \end{enumerate}
+    %En algún momento, una \persona{} \hyperref[comprar]{compra} una secuencia de productos. Este comportamiento es modelado por la operación $compraventa$. Como una \tadNombre{Compra} es una \tadNombre{Tupla}(\tadNombre{Ítem}, \tadNombre{Cantidad}, \Gasto, \Puesto), podemos representar las compras de la siguiente forma: ``\textit{Dos gaseosas y dos hamburguresas, del puesto P}'' $\;\equiv\;$ $\langle(1,\,2,\,400,\,P),\;(2,\,2,\,2000,\,P)\rangle$. Simultáneamente, un \puesto{} \hyperref[vender]{vendió} los mismos ítems. Sin embargo, \comprar{} y \vender{} están axiomatizadas para describir su comportamiento. En particular, los comportamientos que son completamente automáticos son ``{\itshape bajar el stock}'' y ``{\itshape aumentar el gasto}'' (respectivamente para un \puesto{} y una \persona{}).\\
+    
+    %En el momento que se realiza un hackeo, se \hyperref[devolverUnidadCompra]{devuelve una compra} y se \hyperref[devolverUnidadVenta]{devuelve una venta}, acciones para las cuales existen generadores análogamente a lo anterior. El comportamiento automático acá es ``{\itshape subir el stock}'' y ``{\itshape reducir el gasto}''.
+}
+
+\section{Aclaraciones (Luego de la corrección)} \label{Aclaraciones}{
+\noindent Teníamos dos errores graves:
+\begin{itemize}
+    \item{No podíamos distinguir a las personas entre sí (pues las representábamos como secuencias de compras).}
+    \item{No aplicábamos las promociones en ninguna parte.}
+\end{itemize}
+
+\noindent Solucionamos la parte de personas representándolas como una tupla de un natural que representa su número de identificación, y 
+la secuencia de compras que teníamos antes. Con respecto a la parte de promociones, lastimosamente se nos había olvidado incluir el TAD \tadNombre{Promociones}, que permite encontrar la promoción a aplicar, para luego realizar el descuento apropiado.\\
+
+
+\noindent Teníamos demás errores ``pequeños" (en comparación a los anteriores), como no construir una tupla al devolver en una función, comparar un \tadNombre{Nat} con una \tadNombre{Compra}, no axiomatizar algunas operaciones sobre todos los generadores, entre otros.\\
+
+
+\noindent Siguen aplicando las aclaraciones hechas antes de la correción, y agregamos alguna más para que no hayan dudas sobre nuestra interpretación y modelado del problema.\\
+
+\noindent Por si acaso, al utilizar $\langle elem_1, elem_2, ..., elem_n \rangle$ estamos definiendo una tupla de n elementos, cada uno
+con su tipo apropiado, al igual que se indica en el apunte de TADs básicos.
+
+\noindent Aclaraciones por TAD:
+\begin{itemize}
+    \item Lollapatuza 
+        \begin{itemize}
+            \item En la restricción de agregarPuesto estamos asegurándonos que el puesto a agregar sea válido (es decir, que venda los 
+            ítems al mismo precio que todos los demás puestos).
+            \item En la restricción de eliminarConsumo nos fijamos que la persona esté en el festival y que tenga una compra cuyo ítem
+            es $i$ y la compra haya sido realizada sin descuento. (realizamos esto debido a que el enunciado dice: ``\textit{...esta persona debería haber comprado al menos una vez dicho Ítem sin que le aplique un descuento...}''
+            \item Por la restricción de eliminarConsumo, tenemos la certeza de que compraHackeable nos va a devolver una compra (y no
+            va a iterar hasta llegar al vacío). Esto se debe a que compraHackeable es llamada únicamente en casos donde sabemos que vale
+            la restricción de eliminarConsumo (notemos que si pidiésemos en la restricción de compraHackeable que deseamos que haya una
+            compraHackeable sería el equivalente a ``resolver el problema en la restricción'', cosa que tećnicamente ya ocurre en la precondición de eliminarConsumo. compraHackable únicamente es la manera que tenemos de encontrar esa compra que ya sabemos
+            que existe, y devolverla).
+            \item actualizarGente y actualizarPuestos son operaciones utilizadas a la hora de realizar un hackeo, y permiten que, como
+            indican sus nombres, la gente y los puestos coincidan con el nuevo ``estado'' del festival luego del hackeo. 
+            Además, actualizarGente solía eliminar la persona si a la hora de realizar esta operación cantidadDe(c) era 1, mientras que 
+            ahora simplemente se elimina esa compra de la persona.
+        \end{itemize}
+
+    \item Persona
+        \begin{itemize}
+            \item devolverUnidadCompra elimina la compra $c$ si cantidadDe($c$) es 1, y sino, simplemente le resta 1 a su cantidad, y
+            además le resta el valor apropiado a su gasto. Nótese que podemos calcular el precio del ítem a eliminar utilizando
+            div(gastoDe(c), cantidadDe(c)) puesto como llamamos devolverUnidadCompra sabiendo que vale la restricción de eliminarConusmo
+            (ocurre un caso similar a compraHackeable), tenemos la certeza de que el gasto es igual a la cantidad por el precio del ítem
+            sin descuento, lo que implica que gastoDe(c) es un múltiplo de cantidadDe(c), lo que implica que la división es correcta y 
+            da resto 0.
+        \end{itemize}
+
+    \item Gente
+        \begin{itemize}
+            \item Notemos que mayorGasto no necesita ser definido con generadores cómo parámetros, pues entre su restricción y su
+            definición cubren todos los casos para cualquier instancia que se le pueda pasar (además, es válido no utilizar generadores
+            para axiomatizar otras operaciones).
+        \end{itemize}
+    
+    \item Promociones
+        \begin{itemize}
+            \item Promociones se representa con un diccionario cuyas claves son un ítem, y su significado es otro diccionario cuyas
+            claves son una cantidad, y su significado es un porcentaje. La idea es que para cada ítem se pueda obtener un diccionario con sus promociones, que dependen de la cantidad mínima de ítems a comprar (pues en el enunciado dice 
+            ``\textit{...cada Puesto de Comida puede decidir implementar promociones, de la forma “Comprando N o más cantidad del Ítem I, te hacemos X \% de descuento en esos Ítems...” }'').
+            
+            Además, toma en cuenta que ``\textit{...puede haber distintos descuentas para 
+            distintas cantidades de un mismo Ítem [...] en este caso, siempre se toma el descuento de mayor N...}''
+
+            \item buscarPromo devuelve la promoción adecuada para aplicar en la compra. En primer lugar, si mi ítem no está definido en
+            promociones, quiere decir que no puedo aplicar ningún tipo de descuento, lo que se representa devolviendo un porcentaje igual a 0.
+            Si el ítem existe en promociones, busco el porcentaje válido más cercano a la cantidad de ítems que quiero comprar, donde 
+            se considera válido a un porcentaje si figura en una promoción cuya cantidad mínima N es menor o igual a cantidadDe(c), y por lo dicho en el enunciado, tomo ``el N más cercano'', o en otras palabras, el mayor N posible (que sea menor o igual a
+            cantidadDe(C)).
+            
+            \item porcentajeValidoMasCercano toma la cantidad de la compra y se fija si existe un promocion (con un N menor o igual a la
+            cantidad) para aplicar.
+
+            Va ``iterando'' desde cantidadDe(c) hasta encontrarse con una promoción aplicable (que por cómo está definida la función va
+            a ser también la ``más cercana'', o llegar a 0.
+            
+            Si llego a 0, quiere decir que no encontré promoción, por lo que devuelvo 0 (pues aunque sería válida definir una promoción del tipo ``para 0 o más items'', dado que 0 es nat, al comprar cero items el descuento es indiferente, pues el gasto será siempre 0. Por otra parte, si llegué a 0 y no encontré ninguna promoción válida quiere decir que no tengo promoción para esa cantidad de items, lo que se representa con un porcentaje igual a 0).
+        \end{itemize}
+    
+\end{itemize}
+
+}
+
+\section{Renombres} \label{renombres} {
+\begin{flalign*}
+            \tadRenombre{item}{nat} &\\
+            \tadRenombre{precio}{nat} &\\
+            \tadRenombre{cantidad}{nat} &\\
+            \tadRenombre{porcentaje}{nat} &\\
+            \tadRenombre{id}{nat} &\\
+            \tadRenombre{menu}{diccionario(item, precio)} &\\
+            \tadRenombre{stock}{diccionario(item, cantidad)} &\\ \label{Stock}
+\end{flalign*}
+}
+    \newpage
+\section{TADs}{
+    \subsection{Lollapatuza}
+    \subfile{tads/lollapatuza.tad.tex}
+    \newpage
+
+    \subsection{Puesto}
+    \subfile{tads/puesto.tad.tex}
+    \newpage
+
+    \subsection{Persona}
+    \subfile{tads/persona.tad.tex}
+    \newpage
+
+    \subsection{Gente}
+    \subfile{tads/gente.tad.tex}
+    \newpage
+
+    \subsection{Gasto}
+    \subfile{tads/gasto.tad.tex}
+    \newpage
+
+    \subsection{Compra}
+    \subfile{tads/compra.tad.tex}
+    \newpage
+    
+    \subsection{Promociones}
+    \subfile{tads/promociones.tad.tex}
+}
+    
+\end{document}

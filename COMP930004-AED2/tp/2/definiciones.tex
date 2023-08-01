@@ -1,0 +1,90 @@
+% Regex \Significado = \\Significado\[\s{0,}(.*)\s{0,},\s{0,}(.*)\s{0,}\]
+% Reemplazar por $1[$2]
+
+% Regex \Definir = \\Definir\[\s{0,}(.*)\s{0,},\s{0,}(.*)\s{0,},\s{0,}(.*)\s{0,}\]
+% Reemplazar por $1[$2] \gets $3
+
+
+% Tipos Imperativos
+\tipoImperativo{tupla}
+\tipoImperativo{nat}
+\tipoImperativo{conj}
+\tipoImperativo{secu}
+\tipoImperativo{Iterador}
+\tipoImperativo{dicc}
+\tipoImperativo{diccLog}
+\tipoImperativo{diccLin}
+\tipoImperativo{lista}
+\tipoImperativo{descuento}
+\tipoImperativo{ColaPrioritaria}
+\tipoImperativo{ab}
+\tipoImperativo{ad}
+
+\tipoImperativo{lolla}
+\tipoImperativo{puesto}
+\newcommand{\Item}{\mono{item}}
+\tipoImperativo{persona}
+\tipoImperativo{id}
+\tipoImperativo{cant}
+\tipoImperativo{puestoid}
+\tipoImperativo{dinero}
+\tipoImperativo{stock}
+\tipoImperativo{compra}
+
+% Funciones lolla
+\tipoImperativo{estrLolla}
+\tipoImperativo{infoCompras}
+\tipoImperativo{infoHackeables}
+\newcommand{\boolType}{\mono{bool}} % \bool ya existe como comando
+\funcionImperativa{ElementoMinimo}
+\funcionImperativa{ActualizarPersMayorGasto}
+
+% Funciones heap
+\tipoImperativo{minHeap}
+\tipoImperativo{maxHeap}
+\tipoImperativo{estrHeap}
+\tipoImperativo{nodo}
+\tipoImperativo{tupPuesto}
+\tipoImperativo{puntero}
+\funcionImperativa{Vacio}
+\funcionImperativa{Agregar}
+\funcionImperativa{Minimo}
+\funcionImperativa{RemoverMinimo}
+\funcionImperativa{Maximo}
+\funcionImperativa{RemoverMaximo}
+\funcionImperativa{ModificarGasto}
+
+
+% Funciones puesto
+\tipoImperativo{estrPuesto}
+\tipoImperativo{comprasPorItem}
+\funcionImperativa{ObtenerStock}
+\funcionImperativa{ObtenerDescuento}
+\funcionImperativa{ObtenerGasto}
+\funcionImperativa{Vender}
+\funcionImperativa{OlvidarItem}
+\funcionImperativa{PrecioConDescuento}
+\funcionImperativa{PrecioSinDescuento}
+
+% Funciones Imperativas
+\funcionImperativa{CrearIt}
+\funcionImperativa{HaySiguiente}
+\funcionImperativa{Avanzar}
+\funcionImperativa{Actual}
+\funcionImperativa{Cardinal}
+\funcionImperativa{Fin}
+\funcionImperativa{Primero}
+\funcionImperativa{Vacia}
+\funcionImperativa{AgregarAdelante}
+\funcionImperativa{Siguiente}
+
+% Diccionario Logarítmico
+\funcionImperativa{Definir}
+\funcionImperativa{Significado}
+\funcionImperativa{Borrar}
+
+\funcionImperativa{busquedaBinaria}
+\tipoImperativo{arreglo}
+\tipoImperativo{Vector}
+\funcionImperativa{MergeSort}
+\funcionImperativa{merge}

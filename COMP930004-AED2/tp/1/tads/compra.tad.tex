@@ -1,0 +1,40 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tad}{\crearTadNombre{Compra}}
+        \tadExtiende{\text{\tadNombre{Tupla}(\hyperref[renombres]{\tadNombre{Item}}, \hyperref[renombres]{\tadNombre{Cantidad}}, \Gasto, \Puesto)}}
+                                  
+        \spacing
+
+        \tadGeneros{compra}
+        
+        \spacing
+
+        \tadExporta{\itemDe{}, \cantidadDe{}, \gastoDe{}, \puestoDe{}, \aplicarPromo{}}
+        
+        \spacing
+        
+        \tadOtrasOperaciones{
+            \myTadOperacion{itemDe}{compra}{item}{}
+            \myTadOperacion{cantidadDe}{compra}{cantidad}{}
+            \myTadOperacion{gastoDe}{compra}{gasto}{}
+            \myTadOperacion{puestoDe}{compra}{puesto}{}
+            \myTadOperacion{aplicarPromo}{compra, porcentaje}{compra}{}
+        }
+        
+        \spacing
+        
+        \tadAxiomas[\forall c: compra, \forall d: porcentaje,]{                                    
+        \tadAxioma{itemDe(c)}{\pi_1(c)}
+        \tadAxioma{cantidadDe(c)}{\pi_2(c)}
+        \tadAxioma{gastoDe(c)}{\pi_3(c)}
+        \tadAxioma{puestoDe(c)}{\pi_4(c)}
+        \tadAxioma{aplicarPromo(c, d)}{\left<\itemDe{c}, \cantidadDe{c}, \aplicarDescuento{\gastoDe{c}, d}, \puestoDe{c} \right>}
+        }
+        
+        \spacing
+
+\end{tad}
+
+\end{document}

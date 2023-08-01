@@ -1,0 +1,461 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\begin{interfaz} 
+{
+\noindent \textbf{se explica con: }\textsc{PuestoDeComida} \\
+\textbf{géneros: \texttt{puesto}} \\
+%\textbf{signatura: }
+
+\InterfazFuncion{CrearPuesto}{%
+                  \In{precios}{\diccLog[\Item, \nat]},    \\%
+                  \espacio{12}\In{stocks}{\diccLog[\Item, \nat]},      \\%
+                  \espacio{12}\In{descuentos}{\diccLog[\Item, {\diccLog[\cant, \nat]}]}
+                  }
+                  {\puesto}
+[claves(puestos) = claves(stocks) $\land$  claves(descuentos) $\subseteq$ claves(puestos)]%
+{$res$ \igobs crearPuesto(puestos, stocks, descuentos)}%
+[$O(I \times (cant \times log(cant) + log(I)))$][Crea un nuevo puesto.] \nln
+
+\InterfazFuncion{ObtenerStock}{\In{p}{\puesto}, \In{item}{\Item}}{\cant}
+[item $\in$ menu(p)]
+{$res$ \igobs stock(puesto,item)}
+[$O(\log(I))$][Devuelve el stock de un ítem del puesto pasado por parametro.]   
+
+\InterfazFuncion{ObtenerDescuento}{\In{p}{\puesto}, \In{item}{\Item}, \In{cant}{\cant}}{\descuento}
+[item $\in$ menu(p)]
+{$res$ \igobs descuento(p, item, cant)}
+[$O(\log(I) + \log(cant))$][Devuelve el descuento (en forma de un porcentaje entero) de un ítem en base a su cantidad.]   
+
+\InterfazFuncion{ObtenerGasto}{\In{p}{\puesto}, \In{persona}{\persona}}{\dinero}
+[true]
+{$res$ \igobs gastosDe(p, persona)}
+[$O(\log (A))$][Devuelve el gasto realizado por una persona en el puesto.]   
+
+\InterfazFuncion{Vender}{\Inout{p}{\puesto}, \In{persona}{\persona}, \In{item}{\Item}, \In{cant}{\cant}}{}
+[$p = p_0 \land$
+haySuficiente?(p, i, c)]
+{$p = \text{vender}(p_0, persona, item, cant)$}
+[$O(log (I) + log (A) + log (cant))$][Registra la venta de un item comprado por una persona, disminuyendo el stock del item en el proceso.]
+
+\InterfazFuncion{OlvidarItem}{\Inout{p}{\puesto}, \In{persona}{\persona}, \In{item}{\Item}}{}
+[$p = p_0 \land$ \\
+$item \in menu(p) \yluego$\\
+consumioSinPromo?(p, persona, item)]
+{$p = \text{olvidarItem}(p_0, persona, item)$}
+[$O(log (A) + log (I))$][Remueve una unidad de una compra del ítem pasado, realizada por la persona pasada, incrementando el 
+stock del ítem en el proceso. En caso de que remover una unidad cause que la compra sea de 0 items, se elimina la compra.]
+
+\textbf{otras operaciones: }
+
+\InterfazFuncion{ExisteEnStock?}{\In{p}{\puesto}, \In{item}{\Item}}{\boolType}
+[true]
+{$res$ \igobs item $\in$ menu(p)}
+[$O(\log(I))$][Devuelve si el item existe en el stock del puesto.]
+
+\InterfazFuncion{CantComprasSinDesc}{\In{p}{\puesto}, \In{persona}{\persona}, \In{item}{\Item}}{\nat}
+[persona $\in$ claves(p.comprasPorPersona)]
+{$res$ es igual a la cantidad de compras sin descuento del item pasado, hechas por la persona pasada.}
+[$O(\log(A) + \log(I))$][Devuelve la cantidad de compras sin descuento de un item de la persona pasada.]
+
+\InterfazFuncion{PrecioConDescuento}{\In{p}{\puesto}, \In{item}{\Item}, \In{cant}{\cant}}{\dinero}
+[$item \in menu(p)$]
+{$res \igobs \text{aplicarDescuento}(\text{precio}(p, item) \times cant, \text{descuento}(p, item, cant))$}
+[$O(log (I) + log (cant))$][Devuelve el precio de la cantidad del ítem a comprar con el descuento aplicado.]
+
+\InterfazFuncion{PrecioSinDescuento}{\In{p}{\puesto}, \In{item}{\Item}, \In{cant}{\cant}}{\dinero}
+[$item \in menu(p)$]
+{$res \igobs \text{precio}(p, i) \times cant$}
+[$O(log (I))$][Devuelve el precio de la cantidad del ítem a comprar sin el descuento aplicado.]
+
+%\InterfazFuncion{ObtenerMenu}{\In{p}{\puesto}}{\conj}
+%[true]
+%{$res$ \igobs menu(p)}
+%[$O(1)$][Devuelve el menu de un puesto pasado por parametro.]
+
+
+% \InterfazFuncion{haySuficiente?}{\In{p}{\puesto}, \In{i}{\Item}, \In{c}{\cant}}{\bool}[i menu(p)]{$res$ \igobs haySuficiente?(p, i, c)}[$\Theta(TODO)$][Devuelve true si y solo si el stock del item i en el puesto p es mayor que la cantidad c pasada.]   
+% Esta funcion no hace falta porque la precondicion te garantiza que siempre va a haber suficiente; es decir, el módulo no necesita checkearlo.
+
+% \InterfazFuncion{consumioSinPromo?}{\In{p}{\puesto}, \In{a}{\persona}, \In{i}{\Item}}{\bool}[i  menu(p)]{$res$ \igobs consumioSinPromo?(p, a, i)}[$\Theta(TODO)$][Devuelve true si y solo si la persona a consumio el item i en el puesto p con descuento.]   
+
+% \InterfazFuncion{vendenMismoPrecio}{\In{p1}{\puesto}, \In{p2}{\puesto}}{\bool}[true]{$res$ \igobs vendesMismoPrecio(p1, p2)}[$\Theta(TODO)$][Devuelve true si y solo si dos puestos venden los mismos items al mismo precio.]   
+}
+\end{interfaz}
+
+\newpage
+
+\begin{representacion}
+{
+Para poder hackear en tiempo logarítmico, creamos primero un diccionario asociando a cada persona con un diccionario de sus compras por item, y luego a cada item asociamos una lista de cantidades, representando qué cantidad de items fueron adquiridos en cada compra.
+
+\begin{Estructura}{puesto}[estrPuesto]
+    \begin{Tupla}[estrPuesto]
+        \estrMiembro{stock}{\diccLog[\Item, \stock]}, \\%
+        \estrMiembro{precios}{\diccLog[\Item, \dinero]}, \\%
+        \estrMiembro{comprasPorPersona}{\diccLog[\persona, \comprasPorItem]}, \\%
+        \estrMiembro{gastoPorPersona}{\diccLog[\persona, \dinero]},\\%
+        \estrMiembro{descuentos}{\diccLog[\Item, {\diccLog[\cant, \dinero]}]},\\%
+        \estrMiembro{descuentosPorItem}{\diccLog[\Item, \Vector(cant)]}
+    \end{Tupla}
+
+    \begin{Tupla}[comprasPorItem]
+        \estrMiembro{conDesc}{\diccLog[\Item, {\lista[\cant]}]},\\%
+        \estrMiembro{sinDesc}{\diccLog[\Item, {\lista[\cant]}]}
+    \end{Tupla}
+\end{Estructura}
+%Rep
+{\large\bfseries Invariante de Representación -- Lenguaje natural}
+\begin{enumerate}
+
+    \item {Para todas las definiciones del diccLog \textit{e.stock,} estas deben ser mayores a 0. %
+
+    }
+    \item{ clavesDe(\textit{e.precios}) \igobs clavesDe(\textit{e.stock})%
+
+    }
+    \item {Para todas las definiciones del diccLog \textit{e.precios,} estas deben ser mayores a 0.}%
+
+    \item Para todos los diccLog \textit{e.comprasPorPersona.comprasPorItem.conDesc} y \textit{e.comprasPorPersona.comprasPorItem.sinDesc} en la tupla \textit{e.comprasPorPersona.comprasPorItem}, definicion de todas
+las claves \textit{personas} de \textit{e.comprasPorPersona}, sus claves deben estar incluidas en claves(\textit{e.stock})
+    \item clavesDe(\textit{e.descuentos}) $\subseteq$ clavesDe(\textit{e.stock})%
+
+    \item  Para todas las personas en \textit{e.comprasPorPersona,} los diccionarios \textit{e.comprasPorPersona.comprasPorItem.conDesc} o \textit{e.comprasPorPersona.comprasPorItem.sinDesc} deben de tener al menos un elemento entre los 2. 
+
+    \item clavesDe(\textit{e.gastosPorPersona}) \igobs clavesDe(\textit{e.comprasPorPersona})%
+    
+    \item para todas las personas en comprasPorPersona: \\ claves(\textit{e.comprasPorPersona.comprasPorItem.conDesc}) $\subset$ claves(\textit{e.descuentos}) \\Luego, para 
+cada item su cantidad debe ser clave del diccLog que es descripcion de la clave item correspondiente o multiplo de alguna.
+    \item Las claves de e.descuentosPorItem deben ser las mismas que las claves de e.descuentos.
+    \item Para todas las claves de descuentosPorItem, su significado debe ser una lista ordenada de todas las claves del diccionario asociado a la misma clave de descuentos. \nln
+
+\vfill
+\end{enumerate}
+
+{\large\bfseries Invariante de Representación -- Lenguaje formal}
+
+Rep(e) : estrPuesto $\longrightarrow$ $boolean$ \\
+Rep(e) = $1 \land 2 \land 3 \land 4 \land 5 \land 6 \land 7 \land 8 \land 9 \land 10$ \nln
+    
+    \( 1 \equiv  (\forall{i}:{item})(i \in \text{clavesDe}(e.stock) \impluego e.stock[item] > 0) \)\\
+    \( 2 \equiv  clavesDe(\textit{e.precios}) \igobs clavesDe(\textit{e.stock}) \) \\
+    \( 3 \equiv  (\forall{i}:{item})(i \in \text{clavesDe}(e.precios) 
+    \impluego e.precios[item] > 0) \) 
+    \\
+    \vspace{-9mm}
+    \begin{flalign*}
+        4 \equiv (\forall{i}:{item})&(\forall{p}:{persona})(definido?(e.comprasPorPersona,p)\;\yluego \\ 
+    & (i \in clavesDe(\pi_1 (obtener(e.comprasPorPersona,p))) \lor i \in clavesDe(\pi_2 (obtener(e.comprasPorPersona,p))) ) \impluego \\
+   & i \in clavesDe(e.stock))&&
+    \end{flalign*} \\
+    \( 5 \equiv  clavesDe(\textit{e.descuentos}) \subseteq clavesDe(\textit{e.stock}) \)
+    \vspace{-3mm}
+    \begin{flalign*} 
+    6 \equiv ( \forall{p}:{persona})(&p \in \text{clavesDe}(e.comprasPorPersona) \impluego \\
+                           &(comprasPorPersona[p].comprasPorItem.conDesc.cantidadDeClaves \\ 
+                           +\;& comprasPorPersona[p].comprasPorItem.sinDesc.cantidadDeClaves)  > 0)&&
+    \end{flalign*} \\
+    \( 7 \equiv  clavesDe(\textit{e.gastosPorPersona}) \igobs clavesDe(\textit{e.comprasPorPersona}) \)
+
+\vspace{-11mm}
+\begin{flalign*}
+    8 \equiv ( \forall{p}:{persona})(&p \in \text{clavesDe}(e.comprasPorPersona) \impluego \\
+                           &(claves(\textit{e.comprasPorPersona.comprasPorItem.conDesc}) \subset claves(\textit{e.descuentos})))&&
+\end{flalign*}
+\vspace{-11mm}
+\begin{flalign*}
+    9 \equiv \textit{clavesDe(e.descuentosPorItem)} \igobs \textit{clavesDe(e.descuentos)}&&
+\end{flalign*}
+\vspace{-10mm}
+\begin{flalign*}
+    10 \equiv (\forall{i}:item)&(definido?(e.descuentosPorItem, i) \impluego \\
+  &ordenada?(obtener(e.descuentosPorItem,i)) \land \\
+  &secuAConj(obtener(e.descuentosPorItem,i)) \igobs claves(obtener(e.descuentos,i)))&&
+\end{flalign*}
+
+{\large\bfseries Operaciones auxiliares:}
+
+
+(Nótese que un vector se representa con una secuencia)\\
+\(
+\text{secuAConj}(s) \equiv \text{\textbf{if}}\;|s| = 0\;\text{\textbf{then}}\;\{\}\;\text{\textbf{else}}\;\text{Ag(prim($s$), secuAConj(fin($s$)))} \; \textbf{fi}
+\)
+
+\text{ordenada?} $\equiv$ \textbf{if} $|s| < 2$ \textbf{then} true \textbf{else}\\
+\espacio{4} \textbf{if} $|s| = 2$ \textbf{then} prim($s$) $\leqslant$ prim(fin($s$)) \textbf{else} ordenada?(fin($s$)) \textbf{fi} \\
+\textbf{fi}
+
+
+%\begin{implementacion}{PasarAConj}{\In{A}{lista(cant)}}{res}{conj(cant)}
+%    \Assign{$conj$}[\mono{conj(nat)}]{\Vacio()}
+%    \For{$i \in [0 \dots |A|-1]$}
+%        \State $conj.\Agregar(A[i])$
+%    \EndFor
+%    \State \Return $conj$ 
+%\end{implementacion}
+
+
+
+%ABS puesto de comidas
+
+{\large\bfseries Función de Abstracción} \\
+{$\left( \forall e:estrPuesto \right)$}
+{$\left( \forall i: item \right)$}
+{$\left( \forall c: cant \right)$}
+{$\left( \forall a: persona \right)$}
+\AbsFc[estrPuesto]{puesto}[e]{ps : puesto $|$}
+\textit{menu(ps) \igobs clavesDe(e.precio) $\land$ \\
+precio(ps, i) \igobs e.precios[i]  $\land$ \\
+stock(ps, i) \igobs e.stock[i] $\land$ \\
+descuento(ps, i, cant) \igobs \text{descuentoValido}(e.descuentos, i, cant)} $\land$ \\
+ventas(ps, a) \igobs juntarCompras(obtener(e.comprasPorPersona, a))
+\par\vspace{5mm}
+
+descuentoValido : $\text{diccLog}(\Item, \text{diccLog}(\cant, \dinero)) \times \Item \times \cant \longrightarrow \descuento$
+
+descuentoValido(d, i, c) $\equiv$ \\
+\textbf{if} $c = 0$ \textbf{then} $0$ \textbf{else} \\
+\espacio{4} \textbf{if} $\neg def?(i, d)$ \textbf{then} 0 \textbf{else} \\
+\espacio{8} \textbf{if} $def?(c, \text{obtener}(i, d))$ \textbf{then} \\
+\espacio{12} obtener$(c, \text{obtener}(i, d))$ \\
+\espacio{8} \textbf{else} \\
+\espacio{12} descuentoValido$(d, i, c - 1)$ \\
+\espacio{8} \textbf{fi} \\
+\espacio{4} \textbf{fi} \\
+\textbf{fi}
+
+juntarCompras : $comprasPorItem \longrightarrow multiconj(<item, cant>)$\\
+juntarCompras(c) $\equiv$ \\
+diccAMulticonj(claves(c.conDesc), c.conDesc) $\cup$
+diccAMulticonj(claves(c.sinDesc), c.sinDesc)
+
+diccAMulticonj : $\conj[\Item] \times \diccLog[\Item, {\lista[\cant]}] \longrightarrow \text{multiconj($<item, cant>$)}$
+\begin{flalign*}
+    \text{diccAMulticonj}(i, d) \equiv \;&\textbf{if}\;\text{vacio?}(i)\;\textbf{then}\; \emptyset \;\\
+    &\textbf{else}\;\text{listaAMulticonj}( \text{dameUno(i)}, \text{obtener}(d, i)) \cup
+    \text{diccAMulticonj}(\text{sinUno}(i), d) \\
+    \textbf{fi}&&
+\end{flalign*}
+
+(notar que una lista se representa con una secuencia)
+
+listaAMulticonj : $\Item \times \secu[cant] \longrightarrow \text{multiconj($<item, cant>$)}$
+\begin{flalign*}
+    \text{listaAMulticonj}(i, l) \equiv \;&\textbf{if}\;\text{vacia?}(l)\;\textbf{then}\; \emptyset \;\\
+    &\textbf{else}\;\text{Ag}(\langle i, \text{prim}(l) \rangle, \text{listaAMultiConj}(i, \text{fin}(l))) \\
+    \textbf{fi}&&
+\end{flalign*}
+
+}
+\end{representacion}
+
+\clearpage
+
+\begin{algoritmos}
+
+\begin{implementacion}{CrearPuesto}{%
+                  \In{precios}{\diccLog[\Item, \nat]},    \\%
+                  \espacio{12}\In{stocks}{\diccLog[\Item, \nat]},      \\%
+                  \espacio{12}\In{descuentos}{\diccLog[\Item, {\diccLog[\cant, \nat]}]}
+                  }
+                  {\puesto}{}%
+    %\Assign{$stock$}[\diccLog]{stock} \Complexity{$O((1)$}
+    \Assign{$comprasPorPersona$}[\diccLog]{\Vacio()}\Complexity{$O(1)$}
+    \Assign{$gastoPorPersona$}[\diccLog]{\Vacio()}\Complexity{$O(1)$}
+    %\Assign{$descuentos$}[\diccLog]{descuentos}\Complexity{$O(1)$}
+    \Assign{$descuentosPorItem$}[\diccLog]{\Vacio()}\Complexity{$O(1)$}
+    \\%
+    \\%
+    \Assign{$it$}{\CrearIt(descuentos)} \Complexity{$O(1)$}
+    \\ \comentario{Por cada item que tenga descuento...}%
+    \While{\HaySiguiente($it$)}\Complexity{$O(I)$}%
+        \Assign{$x$}[$\tupleOf{\Item}{\diccLog[\cant, \dinero]}$]{\Siguiente(it)} \Complexity{$O(1)$}%
+        \\%
+        \Assign{$temp$}[\Vector($cant$)]{\Vacio(\pi_2(x).\#claves())} \comentario{Vector de cantidades por item.} \Complexity{$O(cant)$}%
+        \Assign{$cIt$}{\CrearIt(\pi_2(x))} \Complexity{$O(1)$}%
+        \\%
+        \\%
+        \espacio{1}\comentario{Agrego todas las $cant$ a temp.}%
+        \State k $\gets 0$ \Complexity{$O(1)$}
+        \While{\HaySiguiente($cIt$)}\Complexity{$O(cant)$}%
+            \Assign{$y$}[$\tupleOf{\cant}{\dinero}$]{\Siguiente(cIt)} \Complexity{$O(1)$}%
+            \Assign{$temp[k]$}{\pi_1(y)} \Complexity{$O(1)$}
+            \Assign{$k$}{k+1} \Complexity{$O(1)$}
+            \State Avanzar($cIt$) \Complexity{$O(1)$}
+        \EndWhile%
+        \\
+        \Assign{$temp$}{\text{mergeSort}(temp)} \Complexity{$O(cant \times log(cant))$}%
+        \Assign{$descuentosPorItem[\pi_1(x)]$}{temp} \comentario{Asigno la lista al item. (Por referencia)} \Complexity{$O(log(I))$}%
+        \State Avanzar(it) \Complexity{$O(1)$}
+    \EndWhile%
+    \\%
+    \\%
+    \Assign{$res$}{\tupleOf{stocks}{precios}{comprasPorPersona}{gastoPorPersona}{descuentos}{descuentosPorItem}} \comentario{pasa las variables por referencia} \Complexity{$O(1)$}
+
+    \State \Return $res$
+\complejidad{$O(I \times (cant \times log(cant) + log(I)))$} \\
+\justificacion{El primer while itera las claves de \textit{descuentos,} lo que toma O(I). En el segundo while iteramos las claves de cada diccionario, significado de cada item y las guardamos en una lista, Esto toma O(cant). Luego, aún dentro del primer while, ordenamos las cantidades en O(cant*log(cant)) y asignamos la misma como significado del diccionario descuentosPorItem. Esta ultima asignacion toma log(I).}   
+\end{implementacion}
+
+
+\begin{implementacion}{ObtenerStock}{\In{p}{\estrPuesto}, \In{item}{\Item}}{res}{\cant}
+\State $res \gets p.stock[item]$ \Complexity{$O(log(I))$}%
+\State \Return $res$
+
+\complejidad{$O(log(I))$} \\
+\justificacion{Obtener el valor de un diccLog cuesta $O(log(I))$ donde I es cantidad de items.}
+\end{implementacion}
+
+\begin{implementacion}{ObtenerDescuento}{\In{p}{\estrPuesto}, \In{item}{\Item}, \In{c}{cant}}{res}{\descuento}%
+    \If{$(c = 0) \lor \neg p.descuentosPorItem\text{.Definido?}(item)$} \Complexity{$O(log(I))$}%
+        \State $res \gets 0$ \Complexity{$O(1)$}%
+    \Else%
+        \Assign{$cantidades$}{p.descuentosPorItem[item]} \comentario{Referencia inmutable} \Complexity{$O(\log I)$}%
+    
+        \If{cant $<$ cantidades[0]}\Complexity{$O(1)$}
+            \State $res \gets 0$ \Complexity{$O(1)$}
+        \Else%
+            \Assign{$i$}{\busquedaBinaria(cantidades, c)}  \Complexity{$O(\log(cant))$}%
+            \Assign{$res$}{descuentos[item][i]} \Complexity{$O(log(I) + log(cant))$}
+            %\Assign{$right$}{cantidades[i+1]} lo borre porque no es necesario conocer la cantidad que encontro a la derecha.
+            %\Assign{$res$}{(\IfThenElse{$|left - c| < |right - c|$}{$p.descuentos[item][left]$}{$p.descuentos[item][right]$})} \Complexity{$O(\log I + \log cant)$}
+            %lo borre porque no es necesaria la comparacion. Si no encuentra la cantidad ya directamente devuelve el valor a la izquierda lo que esto implica que es el descuento mas cercano. Segun a la especificacion nunca llega a acceder a la cantidad que se encuentra a la derecha.
+    \EndIf%
+    \EndIf
+    \\%
+    \State \Return $res$%
+
+    \complejidad{$O(log(I) + log(cant))$} \\
+    \justificacion{ La operacion $Definido?$ tiene una complejidad de $\displaystyle\Theta\left(log(\sum_{k'\in K}^{} equal(k',k))\right)$ donde las claves son NAT y equal entre NAT cuesta $O(1)$. Obtener la lista $cantidades$ lo hacemos por referencia. No copiamos la lista entera pues copiarla implicaria un costo lineal. Usamos una referencia no modificable. La funcion $busquedaBinaria$ tiene un costo $O(log(cant))$. Finalmente para obtener el descuento accedemos al diccLog $descuentos$ con un costo $O(log(I))$ y luego accedemos al diccLog del significado obtenido con un costo de $O(log(cant))$.       }
+\end{implementacion}
+
+\begin{implementacion}{ObtenerGasto}{\In{p}{\estrPuesto}, \In{persona}{\persona}}{res}{\dinero}
+\State $res \gets p.gastoPorPersona[persona]$ \Complexity{$O(log(A))$}%
+\State \Return $res$
+
+\complejidad{$O(log(A))$} \\
+\justificacion{Obtener el valor de un diccLog cuesta $O(log(A))$ donde A es la cantidad de personas.}
+\end{implementacion}
+
+\begin{implementacion}{Vender}{\Inout{p}{\estrPuesto}, \In{persona}{\persona}, \In{item}{\Item}, \In{cant}{\cant}}{}{}
+\State $stockItem \gets l.stock[item]$ \Complexity{$O(log(I))$}%
+\State $gastoPersona \gets l.gastoPorPersona[persona]$\Complexity{$O(log(A))$}%
+\\
+\State $precioBase \gets p.\PrecioSinDescuento[item,\;cant]$ \Complexity{$O(log(I))$}%
+\State $precioFinal \gets p.\PrecioConDescuento[item,\;cant]$\Complexity{$O(log(I) + log(cant))$}%
+\State $comprasPersona \gets p.comprasPorPersona[persona]$ \Complexity{$O(log(A))$}%
+\\
+\State $stockItem \gets stockItem - cant$ \Complexity{$O(1)$}%
+\State $gastoPersona \gets gastoPersona + precioFinal$\Complexity{$O(1)$}%
+\\
+\If{$precioBase = precioFinal$} \Complexity{$O(1)$}%
+    \State $diccCompras \gets \&comprasPersona.sinDesc$ \Complexity{$O(1)$}%
+\Else
+    \State $diccCompras \gets \&comprasPersona.conDesc$ \Complexity{$O(1)$}%
+\EndIf
+\\
+\If{$diccCompras.\text{Definido?}(item)$} \Complexity{$O(log(I))$**}%
+    \State $listaCant \gets diccCompras[item]$ \comentario{Referencia mutable} \Complexity{$O(log(I))$}%
+    \State $listaCant.\AgregarAdelante[cant]$\Complexity{$O(1)$}%
+\Else
+    \State $listaCant \gets \Vacia[\phantom{}]$ \Complexity{$O(1)$}%
+    \State $listaCant.\AgregarAdelante[cant]$\Complexity{$O(1)$}%
+    \State $diccCompras[item] \gets listaCant$\Complexity{$O(log(I))$}%
+\EndIf
+
+\complejidad{$O(log (I) + log (A) + log (cant))$} \\
+\justificacion{La operacion $Definido?$ tiene una complejidad de $\displaystyle\Theta\left(log(\sum_{k'\in K}^{} equal(k',k)) \right)$ donde las claves son int y equal entre int $O(1)$.\\
+Luego, no tenemos ningún bucle, y en el peor caso tenemos operaciones de peor caso logarítmico en base a $A$, $I$ y $cant$.}
+\end{implementacion}
+
+\begin{implementacion}{OlvidarItem}{\Inout{p}{\estrPuesto}, \In{persona}{\persona}, \In{item}{\Item }}{}{}
+\State $comprasPersona \gets p.comprasPorPersona[persona]$ \comentario{Referencia mutable} \Complexity{$O(log(A))$}%
+\State $comprasItem \gets comprasPersona.sinDesc[item]$ \comentario{Referencia mutable} \Complexity{$O(log(I))$}%
+\State $compra \gets comprasItem.\Primero()$ \comentario{Referencia mutable} \Complexity{$O(1)$**}%
+\State $compra \gets compra - 1$ \Complexity{$O(1)$}%
+\\
+\If{$compra = 0$} \Complexity{$O(1)$}%
+    \State $comprasItem \gets comprasItem.\Fin()$ \Complexity{$O(1)$**}%
+\EndIf
+
+\complejidad{$O(log(A) + log(I))$} \\
+\justificacion{$O(log(A) + log(I) + O(1)) = O(log(A) + log(I))$ \\
+**Accedemos al primero y al fin en $O(1)$ pues comprasItem esta implementado con una lista Enlazada}
+\end{implementacion}
+
+\begin{implementacion}{ExisteEnStock?}{\In{p}{\estrPuesto}, \In{item}{\Item}}{res}{\boolType}
+\State $res \gets p.stock.\text{Definido?}(item)$ \Complexity{$O(log(I))$}
+\State \Return $res$
+\\
+\complejidad{$O(log(I))$}\\
+\justificacion{La operacion $Definido?$ tiene una complejidad de $\displaystyle\Theta\left(log(\sum_{k'\in K}^{} equal(k',k))\right)$ donde las claves son nat. En el peor caso la suma es el total de items.}
+\end{implementacion}
+
+\begin{implementacion}{CantComprasSinDesc}{\In{p}{\estrPuesto}, \In{persona}{\persona}, \In{item}{\Item}}{res}{\nat}
+\State $cant \gets 0$ \Complexity{$O(1)$}
+\If{$(p.comprasPorPersona[persona].sinDesc.\text{Definido?}(item)$} \Complexity{  $O(log(A) + log(I))$}
+    \State  $cant \gets \text{longitud}(p.comprasPorPersona[persona].sinDesc[item])$ \Complexity{$O(log(A))$}
+\EndIf
+\State $res \gets cant$ \Complexity{$O(1)$}
+\State \Return $res$
+\\
+\complejidad{$O(log(A) + log(I))$}\\
+\justificacion{ Obtener el signficado de una clave en el dicc $comprasPorPersona$ cuesta $O(log(A))$. La operacion $Definido?$ en el dicc $sinDesc$ cuesta $O(log(I))$. Pedir la longitud de una lista cuesta $O(1)$}
+\end{implementacion}
+
+\begin{implementacion}{PrecioConDescuento}{\In{p}{\estrPuesto}, \In{item}{\Item}, \In{cant}{\cant}}{res}{\dinero}
+\State $descuento \gets p.\ObtenerDescuento[item, cant]$ \Complexity{ $O(log(I) + log(cant))$}%
+\State $precioBase \gets p.\PrecioSinDescuento[item, cant]$ \Complexity{$O(log(I))$}%
+\State $res \gets (precioBase - (precioBase / descuento))$ \comentario{$\bullet / \bullet$ devuelve un \nat, y \dinero{ }es \nat} \Complexity{$O(1)$}
+\State \Return $res$
+\\
+\complejidad{$O(log(I) + log(cant))$} \\
+\justificacion{$O(log(I) + log(cant)) + O(log(I)) = O(log(I) + log(cant))$}
+\end{implementacion}
+
+\begin{implementacion}{PrecioSinDescuento}{\In{p}{\estrPuesto}, \In{item}{\Item}, \In{cant}{\cant}}{res}{\dinero}
+\State $res \gets p.precios[item] \times cant$ \Complexity{$O(log(I)) **$}%
+\State \Return $res$
+
+\complejidad{$O(log(I))$} \\
+\justificacion{Es $O(log(I))$ pues hay tantos precios como items}
+\end{implementacion}
+
+
+\end{algoritmos} \newpage
+
+\begin{servicios}
+{\large\bfseries Diccionario Logaritmico}\\
+Se utiliza el modulo Diccionario Logaritmico. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz:\par
+% $(\forall I = \text{cantidad de items},\;A= \text{cantidad de personas},\; P = \text{cantidad de puestos.})$
+\begin{itemize}
+        \item \textbf{Vacio}.
+        \item \textbf{Definido?}.
+        \item \textbf{CrearIt}.
+        \item \textbf{Avanzar}.
+        \item \textbf{Siguiente}.
+
+        (\textbf{Definir} y \textbf{Significado} son utilizadas indirectamente al utilizar la notación [ ] para los diccionarios).
+\end{itemize}
+
+{\large\bfseries Lista Enlazada}\\
+Se utiliza el modulo Lista Enlazada. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz:\par
+% $(\forall I = \text{cantidad de items},\;A= \text{cantidad de personas},\; P = \text{cantidad de puestos.})$
+\begin{itemize}
+    \item \textbf{Vacia}.
+    \item \textbf{AgregarAdelante}.
+\end{itemize}
+
+{\large\bfseries Vector}\\
+Se utiliza el módulo Vector. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz (con una excepción):\par
+\begin{itemize}
+    \item \textbf{Vacio}. \textbf{*}
+    \item  $\bullet [ \bullet ]$
+
+    \textbf{*} Ver \hyperref[aclaracionVacio]{aclaraciones}.
+\end{itemize}
+
+\end{servicios}
+
+
+\end{document}

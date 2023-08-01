@@ -1,0 +1,40 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tad}{\crearTadNombre{Gente}}
+        \tadExtiende{\tadNombre{Conjunto}(\tadNombre{persona})}
+
+        \spacing
+
+        \tadGeneros{gente}
+        
+        \spacing
+
+        \tadExporta{\mayorGasto{}}
+                       
+        \spacing
+        
+        \tadOtrasOperaciones{
+            \myTadOperacion{mayorGasto}{gente/g}{persona}{$\neg$ \esVacio{g}}
+        }
+        
+        \spacing
+        
+        \tadAxiomas[\paratodo{\gente}{g}]{                                    
+
+            \tadAxioma{\mayorGasto{g}}{\IfThenElse
+            {\text{\#g = 1} \\}
+            {\text{dameUno(g)}\\}
+            {\maxGastoEntrePers{\text{dameUno(g), \mayorGasto{sinUno(g)}}}}
+            }
+            %\tadAxioma{mayorGasto{(Ag(p,ps))}}{if #ps = 1 then p else max(p, mayorGasto(ps))}
+
+            
+        }
+        
+        \spacing
+
+\end{tad}
+
+\end{document}

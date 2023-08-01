@@ -1,0 +1,479 @@
+\documentclass[../main.tex]{subfiles}
+
+
+\begin{document}
+\begin{interfaz}{
+    \textbf{se explica con: }\textsc{Lollapatuza} \par\vspace{-3mm}
+    \textbf{géneros: lolla} \\
+    %\textbf{signatura: }
+    
+    \InterfazFuncion{CrearLolla}{\In{puestos}{\dicc[\puestoid, \puesto]}, \In{personas}{\conj[\persona]}}{\lolla}
+    [vendenAlMismoPrecio(significados(puestos)) \\
+    $\land$ NoVendieronAun(significados(puestos)) \\
+    $\land$ $\neg$vacio?(personas) \\ 
+    $\land$ $\neg$vacio?(claves(puestos))]
+    {$res$ \igobs crearLolla(puestos, personas)}
+    [$O(I^2P + I \log I + A(I \times P + \log A))$][Inicia un nuevo sistema.]   
+    
+    \InterfazFuncion{RegistrarCompra}{\Inout{l}{\lolla}, \In{pid}{\puestoid}, \In{persona}{\persona}, \In{item}{\Item}, \In{cant}{\cant}}{}
+    [$l \igobs l_0 \land$ \\
+    persona $\in$ personas(l) \\
+    $\land$ def?(pid, puestos(l))\\
+    $\yluego$ haySuficiente?(obtener(pid, puestos(l)), item, cant)]
+    {$l$ \igobs vender($l_0$, pid, persona, item, cant)}
+    [$O(log(A) + log(I) + log(P) + log(cant))$][Registra la compra de una cantidad de un ítem particular, realizada por una persona en un puesto.]   
+    
+    \InterfazFuncion{Hackear}{\Inout{l}{\lolla}, \In{persona}{\persona}, \In{item}{\Item}}{}
+    [$l \igobs l_0 \land $
+    ConsumioSinPromoEnAlgunPuesto(l, persona, i)]
+    {$l$ \igobs hackear($l_0$, persona, item)}[$O(log(A) + log(I))$ y en caso de que el puesto correspondiente
+    deje de ser hackeable para esa persona e ítem luego de esta operación, 
+    $O(log(A) + log(I) + log(P))$][Borra el consumo del item en el puesto de menor ID en el que la persona haya consumido ese ítem sin promoción.]   
+    
+    \InterfazFuncion{GastoTotalPersona}{\In{l}{\lolla}, \In{persona}{\persona}}{\dinero}
+    [persona  $\in$ personas(l)]
+    {$res$ \igobs gastoTotal(l, persona)}[$O(log (A))$][Devuelve el gasto total de una persona.]   
+    
+    \InterfazFuncion{PersonaMayorGasto}{\In{l}{\lolla}}{\persona}
+    [$\neg$vacio?(personas(l))]
+    {$res$ \igobs masGasto(l)}
+    [$O(1)$][Devuelve la persona que más dinero gastó. En caso de empate, toma aquella con el menor ID.]   
+    
+    \InterfazFuncion{MenorStock}{\In{l}{\lolla}, \In{item}{\Item}}{\puestoid}
+    [$(\exists p: \puesto) (p \in \text{puestos}(l) \yluego item \in \text{menu}(p))$]
+    {$res$ \igobs menorStock(l, item)}
+    [$O(P \times log(I))$]
+    [Dado un ítem, devuelve la ID del puesto que tiene menor stock para dicho ítem. En caso de empate, devuelve el puesto de menor ID.
+    \textbf{Aclaración: la especificación no pide que item se encuentre en alguno de lo menúes de los puestos, pero nosotros lo pedimos
+    para garantizar que la función siempre devuelva algo.}]
+    
+    \InterfazFuncion{ObtenerPersonas}{\In{l}{\lolla}}{{\conj[\persona]}}
+    [true]
+    {$res$ \igobs personas(l)}
+    [$O(1)$][Devuelve las personas del festival.]   
+    
+    \InterfazFuncion{ObtenerPuestos}{\In{l}{\lolla}}{\dicc[\puestoid, \puesto]}
+    [true]
+    {$res$ \igobs puestos(l)}
+    [$O(1)$][Devuelve los puestos del festival.]
+}
+
+{\large\bfseries Otras operaciones: }
+
+\InterfazFuncion{idMaximo}{\In{p}{\conj[\persona]}}{\persona}
+[$\neg$vacio?(p)]
+{$res$ \igobs id maximo entre todas las personas.}
+[$O(A)$]
+[Devuelve el id máximo entre todas las personas.]
+
+\end{interfaz}
+\newpage
+
+\begin{representacion}
+\subsection*{Aclaraciones} {
+Utilizamos heaps ``no convencionales'' para solucionar el siguiente problema: queremos tener complejidad de peor caso logarítmica en
+las operaciones de registrar compra, hackear, y obtener el gasto total.
+
+Si utilizamos heaps ``convencionales'' (es decir, guardan tipos de datos primitivos y no tiene un límite de tamaño), llegamos a uno de dos casos:
+\begin{itemize}
+    \item Si implementamos el heap con una lista enlazada, no podemos acceder de manera aleatoria a los elementos del heap.
+    \item Si implementamos el heap con un arreglo dimensionable, \textbf{según lo que guardemos}, puede llegar un punto en donde
+    tengamos que aumentar el tamaño del arreglo para que pueda contener más elementos.
+\end{itemize}
+
+Por lo tanto, llegamos a la siguiente solución: 
+\begin{itemize}
+    \item en minHeap, guardamos tuplas con las ids de los puestos y un puntero al puesto. El tamaño máximo del minHeap es la cantidad de puestos del lollapatuza.
+    \item en maxHeap, guardamos tuplas con los gastos de las personas y el id de las personas. El tamaño máximo del maxHeap es la
+    cantidad de personas del lollapatuza.
+\end{itemize}
+
+Ambos heaps están implementados en base a un arreglo dimensionable, y tienen complejidad de peor caso logarítmica para todas las operaciones que necesitábamos.
+
+\textbf{Hackear: }Para poder tener una complejidad temporal de peor caso $O(log \; n)$, guardamos en un minHeap los ids de los puestos que tengan compras hackeables, en conjunto a un puntero a los puestos.
+
+El tamaño máximo de idsPuestos es la cantidad total de puestos.
+
+Esto funciona de la siguiente manera:
+\begin{itemize}
+    \item En RegistrarCompra, me fijo si la compra es hackeable, y si lo es, agrego el id del puesto que contiene la compra. 
+    \begin{itemize}
+        \item Si quiero agregar un id que nunca agregué, simplemente lo agrego al heap.
+        \item Si el id ya está en el heap, no hago nada.
+    \end{itemize}
+    \item En Hackear, estoy eliminando una compra hackeable, así que analizamos cuándo y cómo se altera nuestro heap.
+    Notemos que al hackear, por definición, se haceka el puesto de menor 
+    \begin{itemize}
+        \item El único id que puedo eliminar es el mínimo. Si antes de olvidar el item, su cantidad de compras sin descuento en el puesto es 1, entonces elimino el id del heap, pues luego la cantidad va a ser 0, y el puesto dejaría de tener compras hackeables para ese ítem.
+    \item Caso contrario, no hago nada.
+    \end{itemize}
+\end{itemize}
+
+\textbf{PersonaMayorGasto: } Para obtener la persona de mayor gasto, desempatando por id, realizamos una estrategia similar a la descripta anteriormente.
+Guardamos los gastos de las personas en un \maxHeap[] "modificado" que además asocia a cada gasto la id de la persona.
+Este \maxHeap[] ordena las personas por su gasto, y en caso de empate, las ordena por id.
+
+Nótese que guardamos los gastos de las personas tanto en gastosPersonas como en infoCompras.gastoTotal ya que cada estructura cumple 
+distintos propósitos: el heap nos ayuda a obtener la persona de mayor gasto en $O(1)$, mientras que el diccionario nos permite obtener
+el gasto total de una persona cualquiera en $O(log \,n)$.
+}
+
+\begin{Estructura}{lolla}[estrLolla]
+    \begin{Tupla}[estrLolla]
+        \estrMiembro{puestos}{\diccLog[\puestoid, \puesto]},\\%
+        \estrMiembro{gastosPersonas}{maxHeap},\\%
+        \estrMiembro{infoPersonas}{\diccLog[\persona, \infoCompras]}
+    \end{Tupla}
+
+    \begin{Tupla}[infoCompras]
+        \estrMiembro{gastoTotal}{\dinero}, \\%
+        \estrMiembro{hackeables}{\diccLog[item, minHeap]}
+    \end{Tupla}
+    
+    \vspace{8mm}
+    A pesar de no tener parámetros formales, los tipos con los que trabajan maxHeap y minHeap son, respectivamente, \textbf{nodo} y \textbf{tupPuesto}.
+    
+    \begin{Tupla}[nodo]
+        \estrMiembro{gasto}{dinero},
+        \estrMiembro{id}{persona}
+    \end{Tupla}
+    
+    \begin{Tupla}[tupPuesto]
+        \estrMiembro{id}{puestoid},
+        \estrMiembro{puesto}{puntero(puesto)}
+    \end{Tupla}
+\end{Estructura}
+
+{\large\bfseries Invariante de Representación -- Lenguaje natural}
+\begin{enumerate}
+    %\item Todos los puestos deben ser válidos.
+    \item Para toda las personas en \textit{e.infoPersonas}, todas las tuplas del minHeap (definido en \textit{e.infoPersonas.infoCompras.hackeables} para cada persona)
+deben de tener id y puestos que sean clave y definicion del dicc \textit{e.puestos}, y viceversa. (es decir, cada entrada en cada minHeap existe si y sólo si existe al menos una compra hackeable en ese puesto).
+    \item Para todas las tuplas nodos de \textit{e.gastosPersonas} deben existir una clave en \textit{e.infoPersonas} tal que la clave sea igual a \textit{nodo.id} y para ese mismo nodo y esa misma clave, su definicion \textit{infoCompras.gastoTotal} es igual a \textit{nodo.gasto} (es decir, coincide lo que figura en gastosPersonas con el infoCompras.gastoTotal).
+    \item Los gastosTotales de las personas en e.infoCompras se corresponden a la suma de los gastos de las compras con y sin descuento presentes en todos los puestos.
+    Notar que por transitividad, si los minHeap se corresponden con gastosTotales, y gastosTotales se
+    corresponde con las compras en los puestos, entonces los minHeap se corresponden con los puestos.
+\end{enumerate}
+
+\clearpage
+{\large\bfseries Invariante de Representación -- Lenguaje formal}
+
+Rep : estrPuesto $\longrightarrow$ $boolean$ \\
+Rep(e) = $1 \land 2 \land 3 \land 4$
+\begin{flalign*}
+1 \equiv (\forall p: persona) (&p \in \text{claves}(e.infoPersonas) \impluego \\
+                               &(\forall i: item) (i \in \text{claves}(\text{obtener}(e.infoPersonas, p).hackeables) \impluego (\\
+                               &\text{correspondeMinHeapYPuestos}(\text{obtener}(\text{obtener}(e.infoPersonas, p).hackeables, i), e.puestos, i)))&&
+\end{flalign*}
+
+\begin{flalign*}
+2 \equiv (\forall p: persona) (&p \in \text{claves}(e.infoPersonas) \iff \\
+&(\exists n: nodo) (n \in \text{inorder}(e.gastosPersonas)\\ 
+&\yluego\;n.gasto = \text{obtener}(e.infoPersonas, p) \\
+&\land\;n.id = p)
+)&&   
+\end{flalign*}
+
+\begin{flalign*}
+3 \equiv (\forall p: persona) (&p \in \text{claves}(e.infoPersonas) \iff \\
+&\text{obtener}(e.infoPersonas, p).gastoTotal = \text{sumaGastosPersona}(\text{claves}(e.puestos), e.puestos, p))&&
+\end{flalign*}
+
+{\large\bfseries Auxiliares}
+
+correspondeMinHeapYPuestos : $\minHeap\;\times\;\diccLog[\puestoid, \puesto] \times \Item \longrightarrow boolean$
+\begin{flalign*}
+\text{correspondeMinHeapYPuestos($m$, $ps$, $i$)} \equiv (\forall n: tupPuesto) (n& \in \text{inorder}(m) \iff \\
+    &n.puestoid \in \text{claves}(ps) \land \\
+    &n.puesto = \&\text{obtener}(ps, n.puestoid) \land \\
+    &(\exists p: persona) (\\&p \in \text{claves}(\text{obtener}(ps, n.puestoid).comprasPorPersona) \;\yluego \\
+    \text{long}(\text{obtener}&(\text{obtener}(ps, n.puestoid).comprasPorPersona, i).sinDesc) > 1 \\&)\\
+    )
+\end{flalign*}
+
+sumaGastosPersona : $\conj[\puestoid] \times \diccLog[\puestoid, \puesto] \times \persona$
+\begin{flalign*}
+    \text{sumaGastosPersona}(ids, ps, p) \equiv &\textbf{if}\;\text{vacio?}(ids)\;\textbf{then}\;0\;\\
+                                                &\textbf{else}\;(\text{obtener}(\text{obtener}(ps, \text{dameUno}(ids)).gastoPorPersona, p) \\
+                                               &\;\;\;\;\;\;\;+\;\text{sumaGastosPersona}(\text{sinUno}(ids), ps, p))&&
+\end{flalign*}
+
+%ABS lolla
+\clearpage
+{\large\bfseries Función de Abstracción}\nln
+{$\left( \forall l: estrLolla \right)$} 
+%                       creo que el \forall deberia estar entre 
+%                        medio de Abs: estr e-> lolla y Abs(e)
+\AbsFc[estrLolla]{lolla}[l]{$l$ : lolla $\mid \\
+\text{puestos}(l) \igobs l.puestos \land \\ \text{personas}(l) \igobs \text{claves}(l.infoPersonas)$}
+\par\vspace{5mm}
+
+\end{representacion}
+
+\clearpage
+
+\begin{algoritmos}
+    {
+    \begin{implementacion}{CrearLolla}{\In{puestos}{\dicc[\puestoid, \puesto]}, \In{personas}{\conj[\persona]}}{res}{\estrLolla}
+    %\Assign{}{}{}
+    \Assign{$infoPersonas$}[\mono{\diccLog(persona, infoCompras)}]{\Vacio()} \Complexity{$O(1)$}%
+    \Assign{$gastosPersonas$}[\mono{maxHeap($\langle$\textit{gasto}: nat, \textit{id}: nat$\rangle$)}]{\Vacio($\text{Cardinal}(personas)$, \text{idMaximo}$(personas)$)} \Complexity{$O(A)$}%
+    % \Assign{$puestos$}[\mono{\diccLog[puestoid, puesto]}]{puestos} \Complexity{$O(1)$}
+
+    % TODO: buscar el maximo y minimo id en el conj Personas
+
+    \State $itPuestos \gets$ \CrearIt[puestos]\Complexity{$O(1)$}
+    \Assign {$totalItems$}[\mono{conj(item)}]  Vacio() \Complexity{$O(1)$} \\
+    % En el primer while itero todas las claves del dicc puestos y accedo a cada puesto correspondiente, por medio de la 2da coordenada de la tupla que me devuelve el iterador. Accedo a stock de cada puesto, que tambien es un dicc y en el 2do while, itero todos sus items. Si no pertenecen al conjunto de items totales lo agrego, sino sigo iterando.
+     \While{$\HaySiguiente(itPuestos)$} \Complexity{$O(1 \times P)$}
+    \State $puesto \gets$ Siguiente(itPuesto).$significado$ \Complexity{$O(1)$}
+    \State $itItemP \gets$ \CrearIt(puesto.stock)\Complexity{$O(1)$} 
+    \While{$\HaySiguiente(itItemP)$} \Complexity{$O(1\times I)$} %donde i es la cant de items por puesto
+    \If{$\neg$totalItems.Pertenece?(Siguiente(itItemP).$clave$)} \Complexity{$O(I)$}   
+        \State $totalItems.Agregar \gets$ Siguiente(itItemP).$clave$\Complexity{$O(I)$}
+    \EndIf
+    
+    \State $\text{Avanzar}(itItemP)$ \Complexity{$O(1)$}
+    \EndWhile
+    \State $\text{Avanzar}(itPuestos)$ \Complexity{$O(1)$}
+    \EndWhile
+    \\
+    
+    %creo un dicc y un iterador que recorra todos los elementos del conj totalItems. Dentro del while, agrego todos los elementos del conjunto como claves de este diccionario y a cada una le paso un heap vacio como significado. 
+      \Assign {$dic$}[\mono{\diccLog[nat, minHeap(nat)]}]{Vacio()}
+    \Complexity{$O(1)$}
+    \State $itItems \gets \CrearIt[totalItems]$ 
+    \Complexity{$O(1)$}
+   \While{$\HaySiguiente(itItems)$} \Complexity{$O(1 \times I)$} 
+    \Assign {$heap$}[\mono{\minHeap(nat)}]{\Vacio(|puestos|)} \Complexity{$O(P)$}
+
+    \Assign{$dic[\Siguiente(itItems)]$}{heap} \comentario{Referencia mutable} \Complexity{$O(\log I)$}
+        \State $\text{Avanzar}(itItems)$ \Complexity{$O(1)$}%
+    \EndWhile
+    \\
+    \State $it \gets \CrearIt[personas]$ \Complexity{$O(1)$}%
+    %Creo un iterador, que recorra todas las personas del conj personas y las agrego a gastosPersonas (heap) e infoPersonas. En este ultimo las personas son claves, ya que es un diccionario y a cada una le paso como significado infoCompras, una tupla. 
+    \While{$HaySiguiente(it)$}  \Complexity{$O(1 \times A)$}%
+        \State $gastosPersonas$.Agregar($\langle \text{Siguiente}(it),\; 0\rangle$)
+        \Complexity{$O(\log A)$}%
+        \Assign{$infoCompras$}[\mono{$\langle$\textit{gastoTotal}: nat, \textit{hackeables}: diccLog(item, minHeap)$\rangle$}]{\langle\text{0, Copiar($dic$)}\rangle} \Complexity{$O(I \times P)$}%
+        
+        % FIXME:
+        % Los heaps deberian estar encapsulados en colas de prioridad.
+        % Por ende, "Agregar" debería ser "encolar"
+        %
+        % La estructura de gastosPersonas debería ser:
+        %   ColaPrioritaria(tupla(gasto, id))
+        %
+        % TODO: gastosPersonas debería usar un orden especial que compare id y Gastos
+        %       para minimizar las comparaciones (especialmente la busqueda lineal del id más chico)
+        %       ¿Debería estar encapsulado en un Módulo "Nodo"?
+        % 
+        %
+        % TODO: Además, reordenar un heap es O(log n) si y solo si se cambió un solo nodo y,
+        %       no lo tengo que buscar, es decir, sé exactamente qué posición tiene en el heap.
+        %       para eso, debería ordenar el heap con un puntero al nodo que modifiqué.
+        %       Véase: https://gist.github.com/joangq/0d92b4d561c6203f22a5ea55b6fe1a9f
+    
+        %\State $\text{Definir}(infoCompras, it, \langle 0,  \text{Vacio} \rangle)$ %(\nat, {\diccLog[\item, \infoHackeables]})
+    
+        \State $infoPersonas[Siguiente(it)] \gets infoCompras$ \comentario{Referencia mutable}  \Complexity{$O(\log A)$}
+        \State $\text{Avanzar}(it)$ \Complexity{$O(1)$}
+    \EndWhile
+    \\
+
+    \Assign{$res$}{\tupleOf{puestos}{gastosPersonas}{infoPersonas}}  \comentario{Paso las variables por referencia}\Complexity{$O(1)$} 
+    \State \Return $res$ 
+
+    
+    %\complejidad{$O(I \times (P \times I + \log I + P) + A \log A )$} 
+    \complejidad{$O(I^2P + I \log I + A(I \times P + \log A))$}
+    
+    \\
+    \justificacion{El primer ciclo tiene complejidad $O(I^2P)$; el segundo, tiene complejidad $O(I \log I)$. El último ciclo ejecuta $A$ veces un cuerpo de complejidad $O(\log A + copy(dic))$, pero $dic$ es un \diccLog[] con $I$ \mono{minHeap}s de tamaño $P$ definidos. Por ende la complejidad de dicha operación es: $\displaystyle\Theta\left(\sum_{I}{\Theta(1)+O(P)}\right)=O(I\times P)$, por ende la complejidad del ciclo es $O(A\times(I \times P + \log A))$. Luego, la complejidad total de la función es la suma de las complejidades de los ciclos, usando álgebra de órdenes: $\displaystyle O(I^2P)+O(I \log I)+O(A\times(I \times P + \log A) = O(I^2P + I \log I + A(I \times P + \log A))$}
+    %\justificacion{En el primer while se itera sobre todos los puestos en el festival, por lo tanto esta guarda se ejecuta $P$ veces. Luego, iteramos sobre todos los items del puesto, que en el peor caso será $I$ veces, y por cada uno . Por lo tanto, el primer ciclo queda con complejidad $O(A + P \times I^2 + I \times log(I) + A \times log(A) \times copiar(d))$.
+    %\\
+
+    %En el segundo while iteramos sobre todos los items, lo que nos lleva $I$ iteraciones.
+    
+    %En el segundo while iteramos sobre el conjunto total de personas y realizamos operaciones que toman $O(log(A))$ $\Theta(log \,A)$ (Agregar y Definir)}
+
+    \end{implementacion}
+    
+    \begin{implementacion}{RegistrarCompra}{\Inout{l}{\estrLolla}, \In{pid}{\puestoid}, \In{persona}{\persona}, \In{item}{\Item}, \In{cant}{\cant}}{}{}
+    
+    \State $puesto \gets l.puestos[pid]$ \comentario{Referencia mutable}                                \Complexity{$O(log(P))$}%
+    \State $puesto.\text{Vender}(persona,\;item,\;cant)$                                                \Complexity{$O(log(I) +log(A) + log(cant))$}%
+    \State $infoCompras \gets l.infoPersonas[persona]$                                           \hfill\Complexity{$O(log(A))$}
+    \State $precioConDescuento \gets puesto.\PrecioConDescuento[item, cant]$                            \Complexity{$O(log(I) + log(cant))$}%
+    \State $infoCompras.gastoTotal \gets infoCompras.gastoTotal + precioConDescuento$                   \Complexity{$O(1)$}%
+    \\
+    \If{$precioConDescuento = puesto.\PrecioSinDescuento[item, cant]$}                                  \Complexity{$O(log(I))$}%
+       \\
+       \comentario{No tengo compras sin desc $\implies$ el ids no existe en el heap}
+       \If{CantComprasSinDesc$(puesto, persona, item) = 0$}  \Complexity{$O(log(I) + log(A))$**}%
+           \State $infocompras.hackeables[item].\text{Agregar}(\langle pid, \&puesto \rangle)$                                            
+           \Complexity{$O(log P)$}%
+       \EndIf
+    \EndIf
+    \\
+    
+    \State $l.gastosPersonas.\ModificarGasto[persona,\;infoCompras.gastoTotal]$ \Complexity{$O(log(A))$}
+    \\
+    \complejidad{$O(log(A) + log(I) + log(P) + log(cant))$} \\
+    \justificacion{
+    **La operacion $definido?$ tiene una complejidad de $\displaystyle\Theta\left(log(\sum_{k'\in K}^{} equal(k',k))\right)$ y dado  que comparar dos items es $O(1)$, entonces la sumatoria cuesta en total la longitud de K, la cual, en este caso, es la cantidad de puestos, por lo tanto $definido?$ cuesta $O$
+    }   
+    \end{implementacion}
+    
+    \begin{implementacion}{Hackear}{\Inout{l}{\estrLolla}, \In{persona}{\persona}, \In{item}{\Item}}{}{}
+    \State $infoCompras \gets l.infoPersonas[persona]$                                                              \Complexity{$O(log (A))$}%
+    \State $hackeablesItem \gets infoCompras.hackeables[item]$                                                      \Complexity{$O(log(I))$}%
+    \State $puestoAHackear \gets *hackeablesItem.\Minimo()$ \comentario{Minimo devuelve un puntero al puesto de menor ID} \Complexity{$O(1)$}%
+    \\
+    \State $cantItem \gets $CantComprasSinDesc$(puesto, persona, item)$ \Complexity{$O(log(I) + log(A)$}
+    \If{$cantItem = 1$} \comentario{No es más hackeable} \Complexity{$O(1)$}
+        \State $hackeablesItem.\RemoverMinimo()$                                                         \Complexity{$O(log(P))$}% Aunque en MinHeap aparece
+    \EndIf
+    \State $puestoAHackear.\OlvidarItem(persona,\;item)$                                                            \Complexity{$O(log(A) + log(I))$}%
+    \\
+    \State $precioItem \gets puestoAHackear.precios[item]$                                                          \Complexity{$O(log(I))$}%
+    \State $infoCompras.gasto \gets infoCompras.gastoTotal - precioItem$                                            \Complexity{$O(1)$}%
+    \State $l.gastosPersona.\ModificarGasto(persona,\;infoCompras.gastoTotal)$                                      \Complexity{$O(log A)$}%
+    \\
+    % \State $listaPuestosHackeables.\RemoverMinimo()$ \comentario{Actualiza el \mono{heap} presente en $l$}           \Complexity{$O(log P)$}%
+    
+    \complejidad{$O(log(A) + log(I))$ y en caso de que el puesto correspondiente
+    deje de ser hackeable para esa persona e ítem luego de esta operación, $O(log(A) + log(I) + log(P))$} \\
+    \justificacion{Tenemos operaciones logarítmicas en base a $A$ e $I$, y en el peor caso, vale el \textbf{if} y tenemos una operación logarítmica en base a $P$. Todo lo demás es $O(1)$}
+    \end{implementacion}
+    
+    \begin{implementacion}{GastoTotalPersona}{\In{l}{\lolla}, \In{persona}{\persona}}{res}{\dinero}
+    \State $res \gets l.infoPersonas[persona].gastoTotal$ \Complexity{$O(log(A))$}
+    
+    \complejidad{$O(log A)$} \\
+    \justificacion{Obtener el significado de la clave pasada por parametro es O(log A) }
+    \end{implementacion}
+    
+    \begin{implementacion}{PersonaMayorGasto}{\In{l}{\estrLolla}}{res}{\persona}
+    \State $res \gets l.gastosPersonas.\Maximo()$ \Complexity{$O(1)$}
+    
+    \complejidad{O(1)} \\
+    \justificacion{Devuelve a la persona de mayor gasto dentro de gastosPersonas. Al ser este ultimo un maxHeap el mayor elemento sera el de indice 0 y acceder a el en un maxHeap cuesta O(1).}
+    \end{implementacion}
+    
+    \begin{implementacion}{MenorStock}{\In{l}{\estrLolla}, \In{item}{\Item}}{res}{\puestoid}
+    \State $itPuesto \gets \CrearIt[l.puestos]$ \Complexity{$O(1)$} 
+    \State $\typeAnnotation{menorStock}[nat] \gets NULL$ \comentario{Antes de comenzar esta variable no tiene ningún valor} \Complexity{$O(1)$}
+    \State $res \gets itPuesto.clave$ \comentario{La precondición me asegura que el item existe en algún puesto} \Complexity{$O(1)$}
+    \\
+    \While{$\HaySiguiente[itPuesto]$} \Complexity{$O(1 \times P)$}
+        \If{\text{ExisteEnStock?}$(itPuesto.significado, item)$} \Complexity{$O(log(I))$}
+            \State $Stock \gets ObtenerStock(itPuesto.significado, item)$ \Complexity{$O(log(I))$}
+                \\
+                \If{$menorStock = NULL$} \Complexity{$O(1)$}
+                    \State $menorStock \gets stock$ \Complexity{$O(1)$}
+                    \State $res \gets itPuesto.clave$\Complexity{$O(1)$}
+                \Else \If{$stock \leq menorStock$} \Complexity{$O(1)$}
+                    \If{$(stock = menorStock) \land (itPuesto.clave < res)$} \Complexity{$O(1)$}
+                        \State $res \gets itPuesto.clave$ \Complexity{$O(1)$}
+                    \EndIf
+                    \State $menorStock \gets stock$ \Complexity{$O(1)$}
+                \EndIf
+            \EndIf
+        \EndIf
+        \\
+        \State $itPuesto \gets Siguiente(itPuesto)$ \Complexity{$O(1)$}
+    \EndWhile
+    
+    \complejidad{$O(P \times log(I))$} \\
+    \justificacion{El ciclo itera sobre todos los puestos y obteniene su stock. Fijarse si hay stock y obtenerlo llevan $O(log(I))$. Realizo $P$ iteraciones, y en cada uno realizo operaciones donde el peor caso es $O(log(I))$.\\ Todo lo demás es $O(1)$}
+    \end{implementacion}
+    
+    \begin{implementacion}{ObtenerPersonas}{\In{l}{\estrLolla}}{res}{conj(persona)}
+    \State $res \gets l.personas$ \Complexity{$O(1)$}
+    
+    \complejidad{$O(1)$} \\
+    \justificacion{Se accede directamente al conjunto de la estructura. Al tener el dato ya guardado, el costo es de $O(1)$.}
+    \end{implementacion}
+    
+    \begin{implementacion}{ObtenerPuestos}{\In{l}{\estrLolla}}{res}{dicc(puestoid, puesto)}
+    \State $res \gets l.puestos$ \Complexity{$O(1)$}
+    
+    \complejidad{$O(1)$} \\
+    \justificacion{Se accede directamente al conjunto de la estructura. Al tener el dato ya guardado, el costo es de $O(1)$.}
+    \end{implementacion}
+
+
+    \begin{implementacion}{idMaximo}{\In{p}{\conj[\persona]}}{res}{\nat}
+    \State $it \gets \CrearIt(p)$ \Complexity{$O(1)$}
+    \State $res \gets \Siguiente(it)$ \Complexity{$O(1)$}
+    \\
+    \While{$\HaySiguiente(it)$} \Complexity{$O(1 \times P)$}
+        \If{$\Siguiente(it) > res$} \Complexity{$O(1)$}
+            \State $res \gets \Siguiente(it)$ \Complexity{$O(1)$}
+        \EndIf
+    \EndWhile\\
+    
+    \State \Return $res$
+
+    \complejidad{$O(A)$}\\
+    \justificacion{Iteramos sobre todas las personas del conjunto (técnicamente la complejidad sería $O(|p|)$, pero para nuestro caso de uso siempre va a coincidir con la cantidad total de personas).}
+    
+    \end{implementacion}
+    }
+\end{algoritmos} \newpage
+
+\begin{servicios}
+    {\large\bfseries Puesto De Comida}
+    Se utiliza el modulo PuestoDeComida. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz:\par
+    % $(\forall I = \text{cantidad de items},\;A= \text{cantidad de personas},\; P = \text{cantidad de puestos.})$
+    \begin{itemize}
+        \item \textbf{Vender}.
+        \item \textbf{ObtenerStock}.
+        \item \textbf{PrecioConDescuento}.
+        \item \textbf{PrecioSinDescuento}.
+        \item \textbf{CantComprasSinDesc}.
+        \item \textbf{OlvidarItem}.
+        \item \textbf{ExisteEnStock?}.
+    \end{itemize}
+    
+    {\nln\large\bfseries Diccionario Logaritmico \nln}
+    Se utiliza el modulo DiccionarioLogaritmico. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz:\par
+    % $(\forall I = \text{cantidad de items},\;A= \text{cantidad de personas},\; P = \text{cantidad de puestos.})$
+    \begin{itemize}
+        \item \textbf{Vacio}.
+        \item \textbf{Definido?}.
+        \item \textbf{Copiar}.
+        \item \textbf{CrearIt}.
+        \item \textbf{Avanzar}.
+        \item \textbf{Siguiente}.
+
+        (\textbf{Definir} y \textbf{Significado} son utilizadas indirectamente al utilizar la notación [ ] para los diccionarios).
+    \end{itemize}
+    
+    \clearpage
+    
+    {\nln\large\bfseries MinHeap \nln}
+    Se utiliza el modulo MinHeap. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz:\par
+    % $(\forall I : \text{cantidad de items},\;A: \text{cantidad de personas},\; P : \text{cantidad de puestos})$
+    \begin{itemize}
+        \item  \textbf{Vacio}.
+        \item  \textbf{Agregar}.
+         \item \textbf{Minimo}.
+         \item \textbf{RemoverMinimo}.
+        
+    \end{itemize}
+    
+    {\large\bfseries MaxHeap\\}
+    Se utiliza el modulo MaxHeap. En particular se utilizan las siguientes funciones con la complejidad declarada en su interfaz:\par
+    % $(\forall I : \text{cantidad de items},\;A : \text{cantidad de personas},\; P : \text{cantidad de puestos})$
+    \begin{itemize}
+        \item  \textbf{Vacio}.
+        \item  \textbf{Agregar}.
+        \item \textbf{Maximo}.
+        \item  \textbf{ModificarGasto}.
+         
+    \end{itemize}
+\end{servicios}
+\end{document}

@@ -1,0 +1,92 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\begin{tad}{\crearTadNombre{Puesto}}
+        
+        \tadUsa{menu, items, stock, compra, promociones}
+        
+        \spacing
+
+        \tadGeneros{puesto}
+        
+        \spacing
+        \tadExporta{ generadores, observadores, \hyperref[compraValida]{compraValida?}}
+        
+        \spacing
+        \tadIgualdadObservacional{P_1}{P_2}{puesto}{
+            \menuDe{P_1} \igobs \menuDe{P_2}\\
+            \stockDe{P_1} \igobs \stockDe{P_2}\\
+            \promocionesDe{P_1} \igobs \promocionesDe{P_2}
+        }
+        
+        \spacing
+
+        \tadObservadores{
+            \myTadOperacion{menuDe}{puesto}{menu}{} 
+            \myTadOperacion{stockDe}{puesto}{stock}{} 
+            \myTadOperacion{promocionesDe}{puesto}{promociones}{} 
+        }
+        
+        \spacing
+        
+        \tadGeneradores{
+            \myTadOperacion{nuevoPuesto}{stock, menu, promociones}{puesto}{} 
+            \myTadOperacion{vender}{puesto, compra}{puesto}{} 
+            \myTadOperacion{devolverUnidadVenta}{puesto, compra}{puesto}{} 
+        }
+        
+        \spacing
+        
+        \tadOtrasOperaciones{
+            \phantomsection
+            \myTadOperacion{compraValida?}{puesto, compra}{\bool}{} \label{compraValida}
+        }
+        
+        \spacing
+        
+        \tadAxiomas[ %
+                    \paratodo{menu}{m}, %
+                    \paratodo{stock}{s}, %
+                    \paratodo{puesto}{P}, \\%
+                    \paratodo{promociones}{pr} %
+                    \paratodo{compra}{c}]
+
+        \espacioEntreAxiomas
+                    
+        \tadAxioma{\menuDe{\nuevoPuesto{s, m, pr}}}{m}
+        \tadAxioma{\menuDe{\vender{P, c}}}{\menuDe{P}}
+        \tadAxioma{\menuDe{\devolverUnidadVenta{P, c}}}{\menuDe{P}}
+
+        \espacioEntreAxiomas
+
+        \tadAxioma{\stockDe{\nuevoPuesto{s, m, pr}}}{s}
+        \tadAxioma{\stockDe{\vender{P, c}}}{\text{definir}(\itemDe{c}, \text{obtener}(\itemDe{c}, \stockDe{P}) - \cantidadDe{c}, \text{borrar}(itemDe(c), \stockDe{P}))}
+
+        \espacioEntreAxiomas
+        
+        \tadAxioma{\stockDe{\devolverUnidadVenta{P, c}}}{\text{definir}(\itemDe{c}, \text{obtener}(\itemDe{c}, \stockDe{P}) + 1, 
+        \text{borrar}(itemDe(c), \stockDe{P}))}
+
+        \espacioEntreAxiomas
+
+        \espacioEntreAxiomas
+
+        \tadAxioma{\promocionesDe{\nuevoPuesto{s, m, pr}}}{pr}
+        \tadAxioma{\promocionesDe{\vender{P, c}}}{\promocionesDe{P}}
+        \tadAxioma{\promocionesDe{\devolverUnidadVenta{P, c}}}{\promocionesDe{P}}
+
+        \espacioEntreAxiomas
+        
+        \tadAxioma{\compraValida{}?(P, c)}{
+        \itemDe{c} \in \text{claves}(\menuDe{P}) \\
+        \land \cantidadDe{c} \leq \stockDe{P, \itemDe{c}} \\
+        \land \gastoDe{c} = \text{obtener}(\menuDe{P}, \itemDe{c}) * \cantidadDe{c} \\
+        \land \puestoDe{c} = P
+        }
+        
+        \spacing
+
+\end{tad}
+
+\end{document}
+

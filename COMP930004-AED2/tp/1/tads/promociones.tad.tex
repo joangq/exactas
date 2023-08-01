@@ -1,0 +1,54 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tad}{\crearTadNombre{Promociones}}
+        \tadExtiende{
+            \tadNombre{Diccionario}(\hyperref[renombres]{\tadNombre{Item}}, %
+                                    \tadNombre{Diccionario}(\hyperref[renombres]{\tadNombre{Cantidad}}, \tadNombre{Porcentaje}))
+        }
+                                  
+        \spacing
+
+        \tadGeneros{promociones}
+
+        \spacing
+
+        \tadExporta{\hyperref[enPromo]{enPromo?}, \buscarPromo{}, \text{porcentajeValidoMasCercano}}
+
+        \spacing
+        
+        \tadOtrasOperaciones{
+            \phantomsection
+            \myTadOperacion{buscarPromo}{compra, promociones}{porcentaje}{}
+            \myTadOperacion{porcentajeValidoMasCercano}{\text{dicc(cantidad, porcentaje) d x cantidad}}{porcentaje}{}
+        }
+        
+        \spacing
+        
+        \tadAxiomas[\paratodo{promociones}{pr}, \paratodo{compra}{c}
+        \paratodo{dicc(cantidad, porcentaje)}{d}, \paratodo{cantidad}{cant} ]{                                    
+        \tadAxioma{buscarPromo(c,pr)}{\IfThenElse
+            {\text{def?}(\itemDe{c}, pr) \\}
+            {\porcentajeValidoMasCercano{\text{obtener}(\itemDe{c}, pr),\cantidadDe{c}}\\}
+            {0}
+            }
+
+        \espacioEntreAxiomas
+        \espacioEntreAxiomas
+            
+        \tadAxioma{porcentajeValidoMasCercano(d, cant)}{
+            \textbf{if} cant = 0 \textbf{then} 0 \textbf{else}\\
+            \espacio{2}\IfThenElse
+            {\text{def?}(cant, d)\\ \espacio{2}}
+            {\text{obtener}(cant, d)\\\espacio{2}}
+            {\porcentajeValidoMasCercano{d, cant - 1}}\\
+            \textbf{fi}
+        }
+        
+        }
+        \spacing
+
+\end{tad}
+
+\end{document}

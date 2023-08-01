@@ -1,0 +1,158 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tad}{\crearTadNombre{Lollapatuza}}
+        \tadGeneros{lollapatuza}
+        
+        \spacing
+        
+        \tadUsa{puesto, \persona, \gente, gasto, compra, item, precio, cantidad, porcentaje, menu, stock}
+        
+        \spacing
+        
+        \tadExporta{ generadores, observadores, personaDeMayorGasto}
+        
+        \spacing
+        \tadIgualdadObservacional{a}{b}{\lollapatuza}{%
+            \puestosDe{a} \igobs \puestosDe{b} \\%
+            $\land\;$\genteEn{a} \igobs \genteEn{b}%
+        }
+        
+        \spacing
+
+        % No se pueden poner hyperrefs en el segundo parámetro de una Operacion
+        % Esto es porque "tadOperacion" transforma el texto de:
+        % {a/b, c/d} a -> {\text{a} $b$ $\times$ \text{c} $d$} 
+        % Y lo hace para una cantidad arbitraria de parámetros
+        \tadGeneradores{
+             \myTadOperacion{nuevoFestival}{}{\lollapatuza}{}      
+             \myTadOperacion{agregarPersona}{\text{lollapatuza}, \text{persona p}}{\lollapatuza}{
+             $p \notin \genteEn{F}$}
+             
+             \myTadOperacion{agregarPuesto}{\text{lollapatuza $F$}, \text{puesto $P$}}{\lollapatuza}{
+                $(\forall q: \puesto)(\forall j: \text{item}) (\\
+                \myIndent q \in \puestosDe{F} \yluego \\
+                \myIndent j \in \text{claves}(\menuDe{q})\, \impluego (\\
+                \myIndent (\forall i: \text{item}) (i \in \text{claves}(\menuDe{P}) \yluego (i \igobs j)) \impluego \\
+                \myIndent \espacio{2} \obtener{i, \menuDe{P}} \igobs \obtener{j, \menuDe{q}}$
+                \\\espacio{4})\\
+            \espacio{2})
+            }
+            
+            \spacing 
+            
+             \myTadOperacion{compraventa}{\text{lollapatuza}/F,\text{puesto}/P, \text{persona}/p, \text{compra}/c }
+             {\lollapatuza}{
+             $p \in \genteEn{F} \\
+            \land P \in \puestosDe{F} \\%
+            \land\;\compraValida{}?(\puestoDe{c}, c)$
+             }
+
+            \spacing
+             
+             \myTadOperacion{eliminarConsumo}{lollapatuza \, F, persona \, p, item \, i}{lollapatuza}{}
+                \vspace{-7mm}
+                 \begin{align*}
+                    \RaggedRight
+                     &\{p \in \text{genteEn(F)}\, \land\\
+                     &(\exists c: compra) (\\
+                     &\espacio{2} \text{está?}(c, \comprasDe{p}) \\
+                     &\espacio{2} \yluego \itemDe{c} \igobs i \\
+                     &\espacio{2} \land \,\gastoDe{c} \igobs \precioSinDescDe{\puestosDe{F}, i} * \cantidadDe{c} \\
+                     &)\}
+                 \end{align*}
+                 
+             }
+             
+            
+        \spacing
+
+        \tadObservadores{
+            \myTadOperacion{puestosDe}{\text{lollapatuza}}{\mset{puesto}}{}    
+            \myTadOperacion{genteEn}{\text{lollapatuza}}{\gente}{}      
+        }
+        
+        \spacing
+        
+        \tadOtrasOperaciones{
+            \myTadOperacion{personaDeMayorGasto}{\text{lollapatuza}}{\text{persona}}{}
+            \myTadOperacion{itemDefinidoEnMenuDePuesto}{\text{multiconj(puesto)}, item}{\bool}{}
+            \myTadOperacion{precioSinDescDe}{\text{multiconj(puesto) Ps, item i}}{precio}{\itemDefinidoEnMenuDePuesto{Ps, i}}
+            \myTadOperacion{compraHackeable}{persona, item, precio}{compra}{}
+            \myTadOperacion{actualizarGente}{compra, persona, gente}{gente}{}
+            \myTadOperacion{actualizarPuestos}{\mset{puesto}, compra}{\mset{puesto}}{}
+        }
+        
+        \spacing
+        
+        \tadAxiomas[\paratodo{\lollapatuza}{F}, %
+                    \paratodo{\text{multiconj(puesto)}}{Ps}
+                    \paratodo{puesto}{P}, %
+                    \paratodo{gente}{g},
+                    \paratodo{\persona}{p},
+                    \paratodo{compra}{c},
+                    \paratodo{item}{i},
+                    \paratodo{precio}{n}]{
+
+            % puestosDe
+            \tadAxioma{\puestosDe{\nuevoFestival{}}}{\vacio}{}
+            \tadAxioma{\puestosDe{\agregarPersona{$F$, $p$}}}{\puestosDe{$F$}}
+            \tadAxioma{\puestosDe{\agregarPuesto{$F$, $P$}}}{\Ag{P,\;\puestosDe{F}}}
+            \tadAxioma{\puestosDe{\compraventa{$F$, $P$, $p$, $c$}}}{\Ag{\vender{$P$, $c$}, \puestosDe{$F$} $-$ \{P\}}}
+            \tadAxioma{\puestosDe{\eliminarConsumo{$F$, $p$, $i$}}}{}
+                \espacio{2}\actualizarPuestos{\puestosDe{F}, \compraHackeable{p, i, \precioSinDescDe{\puestosDe{F}, i}}}
+            \espacioEntreAxiomas
+            \tadAxioma{\actualizarPuestos{Ps, c}}{\Ag{\devolverUnidadVenta{\puestoDe{c}, c}, \text{Ps} $-$ \{\puestoDe{c}\}}}
+            
+            \espacioEntreAxiomas
+            
+            % genteEn
+            \tadAxioma{\genteEn{\nuevoFestival{}}}{\vacio}
+            \tadAxioma{\genteEn{\agregarPuesto{$F$, $P$}}}{\genteEn{$F$}}
+            \tadAxioma{\genteEn{\agregarPersona{$F$, $p$}}}{\Ag{p,\genteEn{F}}}
+            \tadAxioma{\genteEn{\compraventa{$F$, $P$, $p$, $c$}}}{}
+            \espacio{2} \Ag{\comprar{$p$, \aplicarPromo{c, \buscarPromo{c, \promocionesDe{P}}},\\
+            \espacio{8} \genteEn{$F$} $-$ \{p\} \\
+            \espacio{6}}}
+            \espacioEntreAxiomas
+            
+            \tadAxioma{\genteEn{\eliminarConsumo{$F$, $p$, $i$}}}{}
+                \espacio{2} \actualizarGente{\compraHackeable{p, i, \precioSinDescDe{\puestosDe{F}, i}}, p, \genteEn{F}}
+            \tadAxioma{\actualizarGente{c, p, g}}{
+                \Ag{\devolverUnidadCompra{c, p}, g\, $-$ \,\{p\}}
+            }
+            
+            \espacioEntreAxiomas
+            
+            \tadAxioma{\personaDeMayorGasto{F}}{\mayorGasto{\genteEn{F}}}
+
+            \espacioEntreAxiomas
+
+            % No chequea vacio pues solo lo llamamos con un p que SABEMOS que tiene una compraHackeable
+            \tadAxioma{\compraHackeable{p, i, n}}{\IfThenElse
+                {\itemDe{\prim{\comprasDe{p}}} \igobs i \land \\ \gastoDe{\prim{\comprasDe{p}}} \igobs n \times \cantidadDe{\prim{\comprasDe{p}}}\\}
+                {\prim{\comprasDe{p}}\\}
+                {\compraHackeable{\fin{\comprasDe{p}}, i, n}}
+            }
+
+            \espacioEntreAxiomas
+            
+            \tadAxioma{\itemDefinidoEnMenuDePuesto{Ps, i}}{
+            \neg \vacio?(Ps) \yluego \text{def?}(i, \menuDe{\text{dameUno(Ps)}}) \oluego \\
+            \itemDefinidoEnMenuDePuesto{\menuDe{\text{sinUno(Ps)}}}
+            }
+    
+            \espacioEntreAxiomas
+            
+            \tadAxioma{\precioSinDescDe{Ps, i}}{\IfThenElse
+            {\text{def?}(i, \menuDe{\text{dameUno(Ps)}})\\}
+            {\obtener{i, \menuDe{\text{dameUno(Ps)}}}\\}
+            {\precioSinDescDe{\menuDe{\text{sinUno(Ps)}}}}
+            }
+        }
+        \spacing
+
+\end{tad}
+
+\end{document}

@@ -1,0 +1,38 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{tad}{\tadNombre{Gasto}} \label{GASTO}
+        \tadExtiende{\Nat}  
+        
+        \spacing
+
+        \tadGeneros{gasto}
+
+        \spacing
+
+        \tadExporta{\hyperref[div]{div}{}, \aplicarDescuento{}}
+        
+        \spacing
+        
+        \tadOtrasOperaciones{
+            \myTadOperacion{div}{\text{nat}/n, \text{nat}/k}{\nat}{$0 < k$}
+            \myTadOperacion{aplicarDescuento}{\text{nat}/p, \text{nat}/d}{\nat}{$d < 100$}
+        }
+        
+        \spacing
+        
+        \tadAxiomas[\paratodo{gasto}{a,b},%
+                    \paratodo{precio}{p},
+                    \paratodo{porcentaje}{d}]{
+            \tadAxioma{\hyperref[div]{div}(a, b)}{\IfThenElse{n < k}{0}{1+\hyperref[div]{\text{div}}(n-k, k)}} 
+            \tadAxioma{\aplicarDescuento{$p$, $d$}}{\hyperref[div]{div}($p \times (100-d)$, $100$)}
+        } 
+        
+        \spacing
+
+\end{tad}
+
+\end{document}
+
+

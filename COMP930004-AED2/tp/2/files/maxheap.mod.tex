@@ -1,0 +1,316 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+Este MaxHeap es básicamente idéntico al minHeap con dos diferencias básicas:
+\begin{itemize}
+    \item La propiedad de heap se cumple si el valor de todos los padres es mayor o igual al de sus hijos.
+    \item Se guardan tuplas en vez naturales, y se puede modificar el valor de los nodos en $O(log\, n)$, siendo n el tamaño máximo del heap (correspondiente a la cantidad total de personas para nuestro caso de uso).
+\end{itemize}
+
+\begin{interfaz}
+
+\textbf{se explica con: }\textsc{Árbol Binario(nodo)} \\
+\textbf{géneros: \texttt{maxHeap}} \\
+%\textbf{signatura: }
+
+\InterfazFuncion{Vacio}{\In{n}{\nat}, \In{maxId}{\nat}}{\maxHeap}
+[true]
+{$res \igobs $nil}
+[$O(n)$][Genera un heap vacío de capacidad n.]   
+
+\InterfazFuncion{Agregar}{\Inout{h}{\maxHeap}, \In{elem}{nodo}}{}
+[$h \igobs h_0 \land \text{noEstaEnElHeap}(h, \pi_1(elem)) \land \pi_1(elem) < \text{tam}(h.indicesPersonas)$]
+{respetaHeap(h) $\land$ mismosElementosMasUno($h$, $h_0$, elem)}
+[$O(log(n))$][Agrega un elemento al heap.] 
+
+\InterfazFuncion{Maximo}{\In{h}{\maxHeap}}{\id}
+[$\neg$nil?(h)]
+{$res = \pi_2$(raiz(h))}
+[$O(1)$][Devuelve la persona con mayor gasto (por como lo implementamos, siempre está en la raíz del heap).]
+
+\InterfazFuncion{RemoverMáximo}{\Inout{h}{\maxHeap}}{}
+[$h \igobs h_0 \land \neg$nil?(h)]
+{respetaHeap(h) $\land$ mismosElementosMenosUno(h, $h_0$, elem)}
+[$O(log(n))$][Remueve el gasto máximo del heap (por como lo implementamos, siempre está en la raíz del heap).]
+
+{\large\bfseries Otras operaciones: }
+
+\InterfazFuncion{ModificarGasto}{\Inout{h}{\maxHeap}, \In{persona}{\persona}, \In{nuevoGasto}{\nat}}{}
+[$h \igobs h_0 \land$ persona está en el heap.]
+{$h$ respeta la propiedad del heap y tiene las mismas personas y gastos que $h_0$, a excepción de la persona
+pasada por parámetro, cuyo gasto será nuevoGasto.}
+[$O(log(n))$][Modifica el gasto de la persona pasada como parámetro.]
+
+\InterfazFuncion{HacerMaxHeap}{\Inout{h}{\estrHeap}, \In{i}{\nat}}{}
+[$h = h_0$ y los subtrees del elemento en la posición i ya son heaps.]
+{$h$ tiene los mismos elementos que $h_0$ y cumple la propiedad del maxHeap.}
+[$O(log(n))$][Convierte a el subtree con raíz en la posición i de h.nodos en una representación válida de un maxHeap.]
+
+\InterfazFuncion{Swap}{\Inout{h}{\ad[nodo]}, \In{i}{\nat}, \In{j}{\nat}}{}
+[$h = h_0 \land i < \text{tamaño}(h) \land j < \text{tamaño}(h)$]
+{$h$ es igual a $h_0$ con los elementos en las posiciones i y j intercambiados, modificando apropiadamente sus índices en el arreglo de índices.}
+[$O(1)$][Intercambia los elementos de las posiciones i y j, modificando apropiadamente sus índices en el arreglo de índices.]
+
+\InterfazFuncion{Izq}{\In{n}{\nat}}{\nat}
+[true]
+{$res =$ Izq(n)}
+[$O(1)$][Devuelve el índice del hijo izquierdo del nodo en la posición n.]
+
+\InterfazFuncion{Der}{\In{n}{\nat}}{\nat}
+[true]
+{$res =$ Der(n)}
+[$O(1)$][Devuelve el índice del hijo derecho del nodo en la posición n.]
+
+\InterfazFuncion{Padre}{\In{n}{\nat}}{\nat}
+[true]
+{$res =$ Padre(n)}
+[$O(1)$][Devuelve el índice del padre del nodo en la posición n.]
+
+{\large\bfseries Predicados auxiliares: }
+
+respetaHeap(h : ab(nodo)) \\
+mismosElementosMasUno($h_1$: ab(nodo), $h_2$: ab(nodo), a: \nat) \\
+mismosElementosMenosUno($h_1$: ab(nodo), $h_2$: ab(nodo), a: \nat) \\
+
+respetaHeap(h) $\equiv$ \\
+\textbf{if} nil?(h) $\lor$ esHoja(h) \textbf{then} true \textbf{else} \\
+\espacio{4} \textbf{if} $\neg$nil?(der) \textbf{then} \\
+\espacio{8} $\pi_1$(raiz(h)) $\geq$ $\pi_1$(raiz(der(h))) $\land$ respetaHeap(der(h)) $\land$\\
+\espacio{8} \textbf{if $\pi_1$(raiz(h)) $=$ $\pi_1$(raiz(der(h)))} \textbf{then} \\
+\espacio{12} $\pi_2$(raiz(h)) $<$ $\pi_2$(raiz(der(h)) \\
+\espacio{8} \textbf{endif} \\
+\espacio{4} \textbf{endif} \\
+\espacio{4} \textbf{if} $\neg$nil?(izq) \\
+\espacio{8} $\pi_1$(raiz(h)) $\geq$ $\pi_1$(raiz(derizq)) $\land$ respetaHeap(izq(h)) $\land$\\
+\espacio{8} \textbf{if $\pi_1$(raiz(h)) $=$ $\pi_1$(raiz(izq(h)))} \textbf{then} \\
+\espacio{12} $\pi_2$(raiz(h)) $<$ $\pi_2$(raiz(izq(h)) \\
+\espacio{8} \textbf{endif} \\
+\espacio{4} \textbf{endif} \\
+\textbf{endif} \\
+\vspace{3mm}
+mismosElementosMasUno($h_1, h_2, a) \equiv$ \\
+tamaño$(h_1) =$ tamaño$(h_2) + 1$ $\land$ \\
+$(\forall x: nodo) (x \neq a \implies \#\text{apariciones}(\text{inorder}(h_1), x) = \#\text{apariciones}(\text{inorder}(h_2), x))$ $\land$ \\
+$\#\text{apariciones}(\text{inorder}(h_1), a) = \#\text{apariciones}(\text{inorder}(h_2), a) + 1$
+
+mismosElementosMenosUno($h_1, h_2, a) \equiv$ \\
+tamaño$(h_1) =$ tamaño$(h_2) - 1$ $\land$ \\
+$(\forall x: nodo) (x \neq a \implies \#\text{apariciones}(\text{inorder}(h_1), x) = \#\text{apariciones}(\text{inorder}(h_2), x))$ $\land$ \\
+$\#\text{apariciones}(\text{inorder}(h_1), a) = \#\text{apariciones}(\text{inorder}(h_2), a) - 1$
+\\
+
+noEstaEnElHeap($h, persona) \equiv$ \\
+$(\forall i : \nat) (0 \leq i < h.tama\tilde{n}oActual \impluego h.nodos[i].id \neq persona)$
+
+{\large\bfseries Funciones auxiliares: } \\
+($\forall$ sec: secu($nodo$)) \\
+($\forall$ a: $nodo$)
+
+\#apariciones : secu($nodo$) sec $\times nodo$ a $\longleftarrow$ nat\\
+Izq, Der, Padre (definidas en la parte de representación).
+
+$\#$apariciones($sec, a$) $\equiv$ \\
+\textbf{if} vacia?(sec) \textbf{then} 0 \textbf{else} \\
+\espacio{4} \textbf{if} prim$(sec) = a$ \textbf{then} 1 + $\#$apariciones$($fin$(sec, a))$ \\
+\espacio{4} \textbf{else} 0 + $\#$apariciones$($fin$(sec, a))$ \\
+\textbf{endif}
+
+\end{interfaz}
+
+\begin{representacion}
+Se considera que un nodo esta vacío cuando su id es 0, y para que no haya conflictos con una persona con id 0, al guardar el id se le suma 1, y al devolverlo se le resta 1.
+
+Además, guardamos los índices de las personas (aquellas que están en el arreglo dimensionable de nodos) ya que nos permite tener una complejidad temporal de peor caso logarítmica a la hora de modificar un nodo (ya que, sino, tendríamos que buscar la posición del nodo a modificar, lo que nos llevaría $O(n)$).
+
+\begin{Estructura}{heap}[estrHeap]
+    \begin{Tupla}
+        \estrMiembro{nodos}{\ad[nodo]},\\%
+        \estrMiembro{indicesPersonas}{\ad[\nat]},\\%
+        \estrMiembro{tamañoActual}{\nat}
+    \end{Tupla}
+
+    \begin{Tupla}[nodo]
+        \estrMiembro{gasto}{\nat},\\%
+        \estrMiembro{id}{\persona}
+    \end{Tupla}
+\end{Estructura}
+
+Padre : \nat $\longrightarrow$ \nat\\
+Padre($i$) $\equiv$ Div(i - 1, 2)
+
+Izq : \nat $\longrightarrow$ \nat\\
+Izq($i$) $\equiv 2\; \times $ i $\; + 1$
+
+Der : \nat $\longrightarrow$ \nat\\
+Der($i$) $\equiv 2\; \times $ i $\; + 2$
+
+Div : \nat \;n $\; \times$ \nat \;k $\longrightarrow$ \nat\\
+Div(n, k) $\equiv$ \textbf{if} n $<$ k \textbf{then} 0 \textbf{else} 1 $+$ div(n $-$ k, k) \textbf{fi}
+
+Rep : estrHeap $\longrightarrow$ bool\\
+Rep(h) $\equiv$ true $\iff$ esHeap(h.nodos, 0) $\land$ coincidenIndices(h.nodos, h.indicesPersonas, h.tamañoActual)
+% nodosNoNulos(h.nodos, 0) $=$ h.tamañoActual $\yluego$ 
+
+esHeap : \ad[nodo] h $\times$ \nat[] i $\longrightarrow$ \bool \hfill \{i $<$ tam(h)\} \\
+esHeap($h, i$) $\equiv$\\
+$(h.nodos[i].id = 0 \lor (h.nodos[\text{Izq}(i)].id = 0 \land h.nodos[\text{Der}(i)].id = 0)) \;\lor$ ( \vspace{2mm} \hfill \\
+\espacio{4} $(h.nodos[\text{Der}(i)].id \neq 0 \impluego h.nodos[i].gasto \geq h.nodos[\text{Der}(i)].gasto \land esHeap(h.nodos, \text{Der}(i)) \;\land$ \\
+\espacio{4} $(h.nodos[\text{Izq}(i)].id \neq 0 \impluego h.nodos[i].gasto \geq h.nodos[\text{Izq}(i)].gasto \land esHeap(h.nodos, \text{Izq}(i)) \;\land$ \\
+\espacio{4} $(h.nodos[\text{Izq(i)}.id \neq 0 \land h.nodos[i].gasto = h.nodos[\text{Izq}(i)].gasto \implies h.nodos[i].id < h.nodos[\text{Izq}(i)].id) \;\land$ \\
+\espacio{4} $(h.nodos[\text{Der(i)}.id \neq 0 \land h.nodos[i].gasto = h.nodos[\text{Der}(i)].gasto \implies h.nodos[i].id < h.nodos[\text{Der}(i)].id)$ \\
+$)$
+
+coincidenIndices : \ad[nodo] $\times$ \diccLog[\persona, \nat] $\times$ \nat \\
+coincidenIndices(n, ind, tamActual) $\equiv$\\
+$(\forall i: \nat) (0 \leq i < tamActual \impluego ind[n[i].id - 1] = i)$
+
+% nodosNoNulos : \ad[\nodo] $\longrightarrow$ $\nat$\\
+% nodosNoNulos(n, i) $\equiv$ \\
+% \textbf{if} i $\geq$ tam(n) \textbf{then} 0 \textbf{else}\\
+% \espacio{4} \textbf{if} n[i] = $\langle 0, 0 \rangle$ \textbf{then} 1 + nodosNoNulos(n, i + 1) \\
+% \espacio{4} \textbf{else} 0 + nodosNoNulos(n, i + 1) \\
+% \espacio{4} \textbf{fi} \\
+% \textbf{fi}
+
+Abs : estrHeap h $\longrightarrow$ \ab[nodo] \hfill \{Rep(h)\}\\
+Abs(h) $\equiv$ CrearArbol(h.nodos, 0)
+
+CrearArbol : \ad[nodo] h $\times$ \nat[] i $\longrightarrow$ \ab[nodo] \hfill \{i $<$ tam(h)\} \\
+CrearArbol(h, i) $\equiv$ \textbf{if} h[i] $= 0$ \textbf{then} nil \textbf{else} bin(CrearArbol(h, Izq(i)), h[i], CrearArbol(h, Der(i)))
+\end{representacion}
+
+\begin{algoritmos}
+\begin{implementacion}{Vacio}{\In{n}{\nat}, \In{maxid}{\nat}}{res}{\estrHeap}
+\State $arr \gets crearArreglo(n)$ \Complexity{$O(1)$}
+\State $i \gets 0$ \Complexity{$O(1)$}
+\While{$i < n$} \Complexity{$O(1 * n)$}
+    \State $arr[i] \gets \langle 0, 0 \rangle$ \Complexity{$O(1)$}
+    \State $i \gets i + 1$ \Complexity{$O(1)$}
+\EndWhile
+\State $indicesP \gets crearArreglo(maxid + 1)$ \Complexity{$O(1)$}
+\State $res \gets \langle arr, indicesP, 0 \rangle$ \Complexity{$O(1)$}
+
+\complejidad{$O(n)$}\\
+\justificacion{Creamos n posiciones. Inicializar cada posición cuesta $O(1)$. Todo lo demás es $O(1)$.}
+\end{implementacion}
+
+\begin{implementacion}{Agregar}{\Inout{h}{\maxHeap}, \In{n}{\nodo}}{}{}
+\State $i \gets h.tama\tilde{n}oActual$ \Complexity{$O(1)$}
+\State $copia\_n \gets n$ \Complexity{$O(1)$}
+\State $copia\_n.id \gets copia\_n.id + 1$ \comentario{explicado en aclaraciones} \Complexity{$O(1)$}
+\State $h.nodos[i] \gets copia\_n$ \Complexity{$O(1)$}
+\State $h.indicesPersona[n.id] \gets i $ \Complexity{$O(1)$}
+\State $h.tama\tilde{n}oActual \gets h.tama\tilde{n}oActual + 1$ \Complexity{$O(1)$}
+\\
+\While{$(i \neq 0) \land (h.nodos[i].gasto > h.nodos[\text{Padre}(i)].gasto)$} \Complexity{$O(log(n))$}
+    \State $j \gets \text{Padre}(i)$ \Complexity{$O(1)$}
+    \State $\text{Swap}(h, i, j)$ \Complexity{$O(1)$}
+    \State $i \gets j$ \Complexity{$O(1)$}
+\EndWhile
+\\
+\State $j \gets \text{Padre}(i)$ \Complexity{$O(1)$}
+\\
+\While{$(i \neq 0) \land (h.nodos[i].gasto = h.nodos[j].gasto) \land (h.nodos[i].id > h.nodos[j].id)$} \Complexity{$O(log(n))$}
+    \State $j \gets \text{Padre}(i)$ \Complexity{$O(1)$}
+    \State $\text{Swap}(h, i, j)$ \Complexity{$O(1)$}
+    \State $i \gets j$ \Complexity{$O(1)$}
+\EndWhile
+
+\complejidad{$O(log(n))$}\\
+\justificacion{Agrego el nodo al final del heap y hago sift up, lo que lleva $O(log(n)).$ Cuando corta el sift up ``convencional'', sigo haciendo sift up mientras los gastos sean iguales pero el id del nodo ingresado sea menor que el de su padre (también lleva $O(log(n))$). En conclusión, tenemos dos ciclos que a lo sumo nos llevan $O(log (n))$, y todas las demás operaciones son $O(1)$, así que la complejidad final es $O(log(n))$.}
+\end{implementacion}
+
+\begin{implementacion}{Maximo}{\In{h}{\maxHeap}}{res}{\persona}
+\State $res \gets h.nodos[0].id + 1$ \Complexity{$O(1)$}
+
+\complejidad{$O(1)$}\\
+\justificacion{Únicamente accedo al valor del nodo y le sumo 1. La suma es una operacion elemental y cuesta $O(1)$}
+\end{implementacion}
+
+\begin{implementacion}{RemoverMaximo}{\Inout{h}{\maxHeap}}{}{}
+\State $h.nodos[h.tama\tilde{n}oActual] \gets \langle 0, 0\rangle$ \Complexity{$O(1)$}
+\State $h.tama\tilde{n}oActual \gets h.tama\tilde{n}oActual - 1$ \Complexity{$O(1)$}
+\State $h.nodos[0] \gets h.nodos[h.tama\tilde{n}oActual]$ \Complexity{$O(1)$}
+\State $h.nodos.\text{HacerMaxHeap}(0)$ \Complexity{$O(log(n))$} 
+
+\complejidad{$O(log(n))$}\\
+
+\justificacion{Pongo el último elemento en la raíz y hago sift down, lo que lleva $O(log(n)).$}
+\end{implementacion}
+
+\begin{implementacion}{ModificarGasto}{\Inout{h}{\maxHeap}, \In{persona}{\persona}, \In{nuevoGasto}{\nat}}{}{}
+    \State $i \gets h.indicesPersona[persona]$ \Complexity{$O(1)$}
+    \\
+    \If {$h.nodos[i].gasto < nuevoGasto$} \Complexity{$O(1)$}
+        \State $h.nodos[i] \gets nuevoGasto$ \Complexity{$O(1)$}
+        \State $h.HacerMaxHeap(i)$ \Complexity{$O(log(n))$}
+    \ElsIf{$h.nodos[i].gasto > nuevoGasto$} \Complexity{$O(1)$}
+        \While{$i \neq 0 \land h.nodos[i].gasto <  h.nodos[\text{Padre}(i)].gasto$} \Complexity{$O(1 * log(n))$}
+            \State $j \gets \text{Padre}(i)$ \Complexity{$O(1)$}
+            \State $\text{Swap}(h, i, j)$ \Complexity{$O(1)$}
+            \State $i \gets j$ \Complexity{$O(1)$} 
+        \EndWhile
+    \EndIf
+
+\complejidad{$O(log(n))$}\\
+\justificacion{Tomo el índice de la persona en el arreglo, y en base a si el valor nuevo
+es mayor o menor que el actual, realizo sift down o sift up (respectivamente).}
+\end{implementacion}
+
+\begin{implementacion}{HacerMaxHeap}{\Inout{h}{\estrHeap}, \In{i}{\nat}}{}{}
+\State $izq \gets$ Izq(i) \Complexity{$O(1)$}
+\State $der \gets$ Der(i) \Complexity{$O(1)$}
+\State $mayor \gets i$ \Complexity{$O(1)$}
+\\
+\If{$(izq < h.tama\tilde{n}oActual) \land (h.nodos[izq].gasto > h.nodos[mayor].gasto)$} \Complexity{$O(1)$}
+    \State $mayor \gets izq$ \Complexity{$O(1)$}
+\EndIf
+\\
+\If{$(der < h.tama\tilde{n}oActual) \land (h.nodos[der].gasto > h.nodos[mayor].gasto)$} \Complexity{$O(1)$}
+    \State $mayor \gets der$ \Complexity{$O(1)$}
+\EndIf
+\\
+\If{$mayor \neq i$} \Complexity{$O(1)$}
+    \State $\text{Swap}(h, i, mayor)$ \Complexity{$O(1)$}
+    \State $\text{HacerMaxHeap}(h, mayor)$ \Complexity{$O(log(n))$}
+\EndIf
+
+\complejidad{$O(log(n))$}\\
+\justificacion{Sift down lleva $O(log(n)).$}
+\end{implementacion}
+
+\begin{implementacion}{Swap}{\Inout{h}{\estrHeap}, \In{i}{\nat}, \In{j}{\nat}}{}{}
+\State $tempIndice \gets h.nodos[i].id$ \Complexity{$O(1)$}
+\State $h.indicesPersonas[h.nodos[i].id - 1] \gets h.indicesPersonas[h.nodos[j].id - 1]$ \Complexity{$O(1)$}
+\State $h.indicesPersonas[h.nodos[j].id - 1] \gets tempIndice - 1$ \Complexity{$O(1)$}
+\\
+\State $temp \gets h.nodos[i]$ \Complexity{$O(1)$}
+\State $h.nodos[i] \gets h.nodos[j]$ \Complexity{$O(1)$}
+\State $h.nodos[j] \gets temp$ \Complexity{$O(1)$}
+
+
+\complejidad{$O(1)$}\\
+\justificacion{Asignar y modificar solo cuesta $O(1)$.}
+\end{implementacion}
+
+\begin{implementacion}{Izq}{\In{i}{\nat}}{\nat}{}
+\State $res \gets 2 \times i + 1$ \Complexity{$O(1)$}
+
+\complejidad{$O(1)$}\\
+\justificacion{Solo se utilizan operaciones elementales, las cuales cuestan $O(1)$}
+\end{implementacion}
+
+\begin{implementacion}{Der}{\In{i}{\nat}}{\nat}{}
+\State $res \gets 2 \times i + 2$ \Complexity{$O(1)$}
+\complejidad{$O(1)$}\\
+\justificacion{Solo se utilizan operaciones elementales, las cuales cuestan $O(1)$}
+\end{implementacion}
+
+\begin{implementacion}{Padre}{\In{i}{\nat}}{\nat}{}
+\State $res \gets (i - 1) / 2$ \Complexity{$O(1)$}
+
+\complejidad{$O(1)$}\\
+\justificacion{Solo se utilizan operaciones elementales, las cuales cuestan $O(1)$}
+\end{implementacion}
+\end{algoritmos}
+\end{document}

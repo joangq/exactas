@@ -1,0 +1,247 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+Un heap es una estructura de datos basada en un árbol binario en donde cada nodo cumple la propiedad del heap: si un nodo C es hijo
+de otro nodo P, la clave de P es menor o igual a la clave de C (esto vale para un \textit{min-heap}, que es lo que vamos a 
+implementar; en un \textit{max-heap} ocurre lo opuesto).
+
+La idea es poder acceder a el elemento mínimo en $O(1)$, insertar un elemento en $O(log\, n)$, y eliminar el elemento mínimo en $O(log \,n)$.
+
+Implementaremos únicamente la funcionalidad básica necesitada por nuestro sistema.
+
+\begin{interfaz} 
+\textbf{se explica con: }\textsc{Árbol Binario(\tupPuesto)} \\
+\textbf{géneros: \texttt{minHeap}} \\
+%\textbf{signatura: }
+
+\InterfazFuncion{Vacio}{\In{n}{\nat}}{\minHeap}
+[true]
+{$res \igobs $nil}
+[$O(n)$][Genera un heap vacío de capacidad n.]   
+
+\InterfazFuncion{Agregar}{\Inout{h}{\minHeap}, \In{elem}{\tupPuesto}}{}
+[$h \igobs h_0 \land elem \neq 0$]
+{respetaHeap(h) $\land$ mismosElementosMasUno(h, $h_0$, elem)}
+[$O(log\,n)$][Agrega un elemento al heap.] 
+
+\InterfazFuncion{Minimo}{\In{h}{\minHeap}}{\puesto}
+[$\neg$nil?(h)]
+{alias($res =$ $\pi_2$(raiz(h)))}
+[$O(1)$][Devuelve una referencia al puesto de menor ID (por como lo implementamos, siempre es la raíz del heap).]
+[La referencia ($res$) es siempre inmutable.]
+
+\InterfazFuncion{RemoverMinimo}{\Inout{h}{\minHeap}}{}
+[$h \igobs h_0 \land \neg$nil?(h)]
+{respetaHeap(h) $\land$ mismosElementosMenosUno(h, $h_0$, elem)}
+[$O(log\,n)$][Remueve el elemento mínimo del heap (por como lo implementamos, siempre es la raíz del heap).]
+
+\textbf{otras operaciones: }
+
+\InterfazFuncion{HacerMinHeap}{\Inout{h}{\estrHeap}, \In{i}{\nat}}{}
+[$h = h_0$ y los subtrees del elemento en la posición i ya son heaps.]
+{$h$ tiene los mismos elementos que $h_0$ y cumple la propiedad del minHeap.}
+[$O(log \;n)$][Convierte a el subtree con raíz en la posición i de h.nodos en una representación válida de un minHeap.]
+
+\InterfazFuncion{Swap}{\Inout{h}{\ad[\nat]}, \In{i}{\nat}, \In{j}{\nat}}{}
+[$h = h_0 \land i < \text{tamaño}(h) \land j < \text{tamaño}(h)$]
+{$h$ es igual a $h_0$ con los elementos en las posiciones i y j intercambiados.}
+[$O(1)$][Intercambia los elementos de las posiciones i y j.]
+
+\InterfazFuncion{Izq}{\In{n}{\nat}}{\nat}
+[true]
+{$res =$ Izq(n)}
+[$O(1)$][Devuelve el índice del hijo izquierdo del nodo en la posición n.]
+
+\InterfazFuncion{Der}{\In{n}{\nat}}{\nat}
+[true]
+{$res =$ Der(n)}
+[$O(1)$][Devuelve el índice del hijo derecho del nodo en la posición n.]
+
+\InterfazFuncion{Padre}{\In{n}{\nat}}{\nat}
+[true]
+{$res =$ Padre(n)}
+[$O(1)$][Devuelve el índice del padre del nodo en la posición n.]
+
+{\nln\large\bfseries Predicados auxiliares: }
+
+respetaHeap(h : ab(\tupPuesto)) \\
+mismosElementosMasUno($h_1$: ab(\tupPuesto), $h_2$: ab(\tupPuesto), a: \tupPuesto) \\
+mismosElementosMenosUno($h_1$: ab(\tupPuesto), $h_2$: ab(\tupPuesto), a: \tupPuesto) \\
+
+respetaHeap(h) $\equiv$ \\
+\textbf{if} nil?(h) $\lor$ esHoja(h) \textbf{then} true \textbf{else} \\
+\espacio{4} \textbf{if} $\neg$nil?(der) \textbf{then} \\
+\espacio{8} $pi_1$(raiz(h)) $\leq$ $pi_1$(raiz(der(h))) $\land$ respetaHeap(der(h)) \\
+\espacio{4} \textbf{endif} \\
+\espacio{4} \textbf{if} $\neg$nil?(izq) \\
+\espacio{8} $pi_1$(raiz(h)) $\leq$ $pi_1$(raiz(izq(h))) $\land$ respetaHeap(izq(h)) \\
+\espacio{4} \textbf{endif} \\
+\textbf{endif}
+
+mismosElementosMasUno($h_1, h_2, a) \equiv$ \\
+tamaño$(h_1) =$ tamaño$(h_2) + 1$ $\land$ \\
+$(\forall x: \nat) (x \neq a \implies \#\text{apariciones}(\text{inorder}(h_1), x) = \#\text{apariciones}(\text{inorder}(h_2), x))$ $\land$ \\
+$\#\text{apariciones}(\text{inorder}(h_1), a) = \#\text{apariciones}(\text{inorder}(h_2), a) + 1$
+
+mismosElementosMenosUno($h_1, h_2, a) \equiv$ \\
+tamaño$(h_1) =$ tamaño$(h_2) - 1$ $\land$ \\
+$(\forall x: \nat) (x \neq a \implies \#\text{apariciones}(\text{inorder}(h_1), x) = \#\text{apariciones}(\text{inorder}(h_2), x))$ $\land$ \\
+$\#\text{apariciones}(\text{inorder}(h_1), a) = \#\text{apariciones}(\text{inorder}(h_2), a) - 1$
+
+{\large\bfseries Funciones auxiliares: } \\
+($\forall$ sec: secu($\nat$)) \\
+($\forall$ a: $\nat$)
+
+\#apariciones : secu($\nat$) sec $\times \nat$ a $\longleftarrow$ nat\\
+Izq, Der, Padre (definidas en la parte de representación).
+
+$\#$apariciones($sec, a$) $\equiv$ \\
+\textbf{if} vacia?(sec) \textbf{then} 0 \textbf{else} \\
+\espacio{4} \textbf{if} prim$(sec) = a$ \textbf{then} 1 + $\#$apariciones$($fin$(sec, a))$ \\
+\espacio{4} \textbf{else} 0 + $\#$apariciones$($fin$(sec, a))$ \\
+\textbf{endif}
+\end{interfaz}
+
+\begin{representacion}
+Se considera que un nodo esta vacío cuando su id es 0, y para que no haya conflictos con un puesto 
+con id 0, al guardar el puesto se le suma 1 (y al devolver estoy devolviendo directamente un puntero
+al puesto por lo que no cambia nada).
+
+\begin{Estructura}{heap}[estrHeap]
+    \begin{Tupla}[estrHeap]
+        \estrMiembro{nodos}{\ad[\tupPuesto]},\\%
+        \estrMiembro{tamañoActual}{\nat}
+    \end{Tupla}
+
+    \begin{Tupla}[tupPuesto]
+        \estrMiembro{id}{\nat},\\%
+        \estrMiembro{puesto}{\puntero[puesto]}
+    \end{Tupla}
+\end{Estructura}
+
+Padre : \nat $\longrightarrow$ \nat\\
+Padre($i$) $\equiv$ Div(i - 1, 2)
+
+Izq : \nat $\longrightarrow$ \nat\\
+Izq($i$) $\equiv 2\; \times $ i $\; + 1$
+
+Der : \nat $\longrightarrow$ \nat\\
+Der($i$) $\equiv 2\; \times $ i $\; + 2$
+
+Div : \nat \;n $\; \times$ \nat \;k $\longrightarrow$ \nat\\
+Div(n, k) $\equiv$ \textbf{if} n $<$ k \textbf{then} 0 \textbf{else} 1 $+$ div(n $-$ k, k) \textbf{fi}
+
+Rep : estrHeap $\longrightarrow$ bool\\
+Rep(h) $\equiv$ true $\iff$ esHeap(h.nodos, 0) $\land$ tam(h.nodos) $=$ h.tamañoActual
+
+esHeap : \ad[\nat] h $\times$ \nat[] i $\longrightarrow$ \bool \hfill \{i $<$ tam(h)\} \\
+esHeap($h, i$) $\equiv$\\
+$(h.nodos[i].id = 0 \lor (h.nodos[\text{Izq}(i)].id = 0 \land h.nodos[\text{Der}(i)].id = 0)) \;\lor$ ( \vspace{2mm} \hfill (si el índice actual es vacío o es una hoja, vale)\\
+(si alguno de los hijos es no nulo, su valor debe ser mayor al del índice actual y deben ser heaps)\\
+\espacio{4} $(h.nodos[\text{Der}(i)].id \neq 0 \impluego h.nodos[i].id \leq h.nodos[\text{Der}(i)].id \land esHeap(h.nodos, \text{Der}(i)) \;\land$ \\
+\espacio{4} $(h.nodos[\text{Izq}(i)].id \neq 0 \impluego h.nodos[i].id \leq h.nodos[\text{Izq}(i)] \land esHeap(h.nodos, \text{Izq}(i))$ $)$\\
+
+Abs : estrHeap h $\longrightarrow$ \ab[\nat] \hfill \{Rep(h)\}\\
+Abs(h) $\equiv$ CrearArbol(h.nodos, 0)
+
+CrearArbol : \ad[\nat] h $\times$ \nat[] i $\longleftrightarrow$ \ab[\nat] \hfill \{$i < tam(h)$\} \\
+CrearArbol(h, i) $\equiv$ \textbf{if} h[i].id $= 0$ \textbf{then} nil \textbf{else} bin(CrearArbol(h, Izq(i)), h[i], CrearArbol(h, Der(i)))
+\end{representacion}
+
+\begin{algoritmos}
+
+\begin{implementacion}{Vacio}{\In{n}{\nat}}{res}{\estrHeap}
+\State $arr \gets CrearArreglo(n)$ \Complexity{$O(1)$}
+\State $i \gets 0$ \Complexity{$O(1)$}
+\While{$i < n$}  \Complexity{$O(1) \times n$} 
+    \State $arr[i] \gets \langle 0, NULL \rangle$ \Complexity{$O(1)$}
+\EndWhile
+\\
+\State $res \gets \langle arr, 0 \rangle$ \Complexity{$O(1)$}
+
+\complejidad{$O(n)$}\\
+\justificacion{Creamos n posiciones. Inicializar cada posicion cuesta $O(1)$.}
+\end{implementacion}
+
+\begin{implementacion}{Agregar}{\Inout{h}{\minHeap}, \In{n}{\tupPuesto}}{}{}
+\State $i \gets h.tama\tilde{n}oActual$ \Complexity{$O(1)$}
+\State $h.nodos[i] \gets n$ \Complexity{$O(1)$}
+\State $h.tama\tilde{n}oActual \gets h.tama\tilde{n}oActual + 1$ \Complexity{$O(1)$}
+\\
+\While{$(i \neq 0) \land (h.nodos[i].id < h.nodos[i.\text{Padre()}].id)$} \Complexity{$O(1 * log(n))$}
+    \State $j \gets i.\text{Swap}()$ \Complexity{$O(1)$}
+    \State $h.nodos.\text{Swap}(i, j)$ \Complexity{$O(1)$}
+    \State $i \gets j$ \Complexity{$O(1)$}
+\EndWhile 
+
+\complejidad{$O(log(n))$}\\
+\justificacion{Agrego el nodo al final del heap y luego hago sift up. Esta ultimo acción se repite $log(n)$  pues no se recorre el arbol entero en el pero caso, sino que, solo se recorre un rama del arbol principal.}
+\end{implementacion}
+
+\begin{implementacion}{Minimo}{\In{h}{\minHeap}}{res}{{\puntero[puesto]}}
+\State $res \gets h.nodos[0].puesto$ \Complexity{$O(1)$}
+
+\complejidad{$O(1)$}\\ 
+\justificacion{La complejidad es $O(1)$ ya que solo se accede al valor del puntero.}
+\end{implementacion}
+
+\begin{implementacion}{RemoverMinimo}{\Inout{h}{\minHeap}}{}{}
+\State $h.tama\tilde{n}oActual \gets h.tama\tilde{n}oActual - 1$ \Complexity{$O(1)$}
+\State $h.nodos[0] \gets h.nodos[h.tama\tilde{n}oActual]$
+\State $h.nodos.\text{HacerMinHeap}(0)$
+
+\complejidad{$O(log(n))$}\\
+\justificacion{Agrego el nodo al final del heap y luego hago sift down. Esta ultimo acción se repite $log(n)$  pues no se recorre el arbol entero en el pero caso, sino que, solo se recorre un rama del arbol principal.}
+\end{implementacion}
+
+\begin{implementacion}{HacerMinHeap}{\Inout{h}{\estrHeap}, \In{i}{\nat}}{}{}
+\State $izq \gets$ i.Izq() \Complexity{$O(1)$}
+\State $der \gets$ i.Der() \Complexity{$O(1)$}
+\State $menor \gets i$ \Complexity{$O(1)$}
+\\
+\If{$(izq < h.tama\tilde{n}oActual) \land (h.nodos[izq].id < h.nodos[menor].id)$} \Complexity{$O(log(n))$}
+    \State $menor \gets izq$ \Complexity{$O(1)$}
+\EndIf
+\\
+\If{$(der < h.tama\tilde{n}oActual) \land (h.nodos[der].id < h.nodos[menor].id)$} \Complexity{$O(log(n))$}
+    \State $menor \gets der$ \Complexity{$O(1)$}
+\EndIf
+\\
+\If{$menor \neq i$} \Complexity{$O(1)$}
+    \State $h$.Swap$(i, menor)$ \Complexity{$O(1)$}
+    \State $h.\text{HacerMinHeap}(menor)$
+\EndIf
+
+\complejidad{$O(log(n))$}\\
+\justificacion{Sift down (lleva $O(log(n))$)}
+\end{implementacion}
+
+\begin{implementacion}{Swap}{\Inout{h}{\estrHeap}, \In{i}{\nat}, \In{j}{\nat}}{}{}
+    \State $temp \gets h.nodos[i]$ \Complexity{$O(1)$}
+    \State $h.nodos[i] \gets h.nodos[j]$ \Complexity{$O(1)$}
+    \State $h.nodos[j] \gets temp$ \Complexity{$O(1)$}
+
+    \complejidad{$O(1)$}\\
+    \justificacion{$O(1) + O(1) + O(1) = 3*O(1) = O(1)$}
+\end{implementacion}
+
+\begin{implementacion}{Izq}{\In{i}{\nat}}{\nat}{}
+\State $res \gets 2 \times i + 1$ \Complexity{$O(1)$}
+    \complejidad{$O(1)$}\\  
+    \justificacion{La asignacion solo cuesta $O(1)$ pues solo se realizanoperaciones elementales.} 
+\end{implementacion}
+
+\begin{implementacion}{Der}{\In{i}{\nat}}{\nat}{}
+\State $res \gets 2 \times i + 2$ \Complexity{$O(1)$}
+    \complejidad{$O(1)$}\\
+    \justificacion{La asignacion solo cuesta $O(1)$ pues solo se realizanoperaciones elementales.}
+\end{implementacion}
+
+\begin{implementacion}{Padre}{\In{i}{\nat}}{\nat}{}
+\State $res \gets (i - 1) / 2$ \Complexity{$O(1)$}
+    \complejidad{$O(1)$}\\
+    \justificacion{La asignacion solo cuesta $O(1)$ pues solo se realizan operaciones elementales.}
+\end{implementacion}
+\end{algoritmos}
+
+\end{document}

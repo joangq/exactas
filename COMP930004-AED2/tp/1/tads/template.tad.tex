@@ -1,0 +1,79 @@
+\documentclass[../main.tex]{subfiles}
+
+% Parámetros formales para no repetir código
+\newcommand{\fparf}{$\alpha$, $\beta$, $\gamma$}
+
+\newcommand{\spacing}{\vspace{5mm}} % FIXME: Espacio variable
+\newcommand{\espacio}{\hphantom{123}} % FIXME: Espacio variable
+
+% FIXME: Hice esto a mano. ¿Está definido en algún lado?
+\newcommand{\tadOperaciones}[1]{\tadEncabezado{operaciones}{#1}}
+
+\begin{document}
+
+\begin{tad}{\tadNombre{Placeholder(\fparf)}} \label{PLACEHOLDER}    % TODO
+        \tadExtiende{template, todo}                                % TODO
+        
+        \spacing
+
+        \tadParametrosFormales{                                     % TODO
+            \tadMargen \tadGeneros{\fparf}  %% FIXME: En aed-tad
+                                            %% hay definidos dos márgenes
+                                            %% tadMargen y tadSubmargen
+                                            %% ¿Cómo se usan?
+                        \tadOperaciones{$>$, \puntito, $<$}
+        }                           
+        
+        \spacing
+        
+        \tadUsa{a,b,c}                                              % TODO
+        
+        \spacing
+
+        \tadGeneros{placeholder, todo}                              % TODO
+        
+        \spacing
+
+        \tadExporta{
+            to, do
+        }                                                           % TODO
+        
+        \spacing
+
+        \tadIgualdadObservacional{a}{b}{c}{d}                       % TODO
+        
+        \spacing
+
+        %% FIXME: No sé cuál es la forma oficial de poner esto bien alineado %%
+        %% EDIT: Hay definido un tadOperacion, quizá se hace con eso. %%
+        \tadObservadores{                                           % TODO
+            \tadOperacion{f}{a, b}{c}{}
+            \tadOperacion{g}{}{d}{$\pi \neq 0$}
+        }
+        
+        \spacing
+        
+        \tadGeneradores{                                            % TODO
+            \tadOperacion{to}{\alpha}{\beta}{$\pi \neq 3$}
+            \tadOperacion{do}{}{\beta}{}
+        }
+        
+        \spacing
+        
+        \tadOtrasOperaciones{                                       % TODO
+            \tadOperacion{to}{\alpha}{\beta}{$2 \neq 0$}
+            \tadOperacion{do}{}{\beta}{}
+        }
+        
+        \spacing
+        
+        \tadAxiomas{                                                % TODO
+            \tadOperacion{to}{\alpha}{\beta}{$1 = 5 \land 0 \neq 1$}
+            \tadOperacion{do}{}{\beta}{}
+        }
+        
+        \spacing
+
+\end{tad}
+
+\end{document}

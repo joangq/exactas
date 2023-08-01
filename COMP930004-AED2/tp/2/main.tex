@@ -1,0 +1,239 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage{davinci}
+
+\ConfigurarCaratula
+\ConfigurarHyperref
+\pythonTypes
+
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+
+% J: Pido perdón por esta crotada
+\newcommand{\mybracket}{\rlap{\smash{$\left.\begin{array}{@{}c@{}}\\{}\\{}\\{}\\{}\\{}\\{}\\{}\\{}\\{}\\{}\end{array}\color{gris}\right\} \color{gris}\begin{tabular}{l}$\triangleright$ Agrego los elementos restantes\end{tabular}$}}}
+
+\setlength{\parindent}{0pt}
+
+\input{definiciones.tex}
+
+\begin{document}
+
+% TOC =========================== %
+\pagestyle{plain}
+\pagenumbering{Alph}
+\maketitle
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+% SETUP PARA EL RESTO DE PAGS === %
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+% ACLARACIONES ================== %
+\aclaraciones
+
+\begin{itemize}
+    \item $A$: cantidad de personas.
+    \item $I$: cantidad total de ítems en todo el festival.
+    \item $P$: cantidad de puestos.
+\end{itemize}
+
+{\large\bfseries Renombres}\\
+$\descuento$ es \mono{nat}\nln
+
+A pesar de que el género del \textbf{Diccionario Logarítmico} es \textbf{dicc($\kappa, \sigma$)}, utilizamos \textbf{diccLog($\kappa, \sigma$)} como un ``renombre'' de este género para explicitar el uso de la versión logarítmico, aunque técnicamente se pueden utilizar
+de manera intercambiable en la gran mayoría de casos. \nln \nln
+
+{\large\bfseries Notación}\\
+Para escribir los algoritmos, adoptamos la siguiente notación:%
+\begin{center}%
+$\typeAnnotation{\textit{identificador}}[\mono{tipo}] \gets nuevoValor$ \comentario{Comentario} \espacio{2} $\overbrace{\triangleright\; O(\dots)}^{\text{Complejidad}}$%
+\end{center}%
+
+Donde la anotación del tipo de dato la explicitamos donde hayamos considerado que no era sencillo inferirlo. \nln
+Utilizamos el operador \mono{[]} para los diccionarios, tal que: \nln
+
+\espacio{1}$\triangleright$ \textbf{Obtener} \hspace{18.6mm}{{$unDiccionario[\kappa] \equiv unDiccionario.\text{Significado}(\kappa)$}} \\
+\espacio{1}$\triangleright$ \textbf{Asignación} \espacio{2}{{$unDiccionario[\kappa] \gets \sigma \equiv unDiccionario.\text{Definir}(\kappa,\;\sigma)$}}
+\par\vspace{5mm}
+\mono{\&} y \mono{*} representan dirección de una variable y desreferenciación de un puntero, respectivamente \\(Igual que en C++).
+\nln
+Además, $|A|$ representa la \textit{longitud} de una colección (Listas, conjuntos, etc). \nln \nln
+
+{\large\bfseries Sobre complejidades}\\
+
+Para notar la complejidad de un ciclo, notamos $O(\text{guarda} \times \text{\#iteraciones})$
+
+La complejidad de acceder a un \diccLog[] es 
+$$
+    \Theta\left(log(\sum_{k'\in K}^{} equal(k',k)) + copy(k', k) + copy(s)\right)
+$$
+
+La complejidad de de $copiar(d)$, con \diccLog[] $d$ es 
+$$
+    \Theta\left( \sum_{k \in K} (copy(k) + copy(\text{significado}(k, d))) \right) \text{donde $K$ = claves($d$)}
+$$
+
+
+\vfill
+{\color[RGB]{240 240, 240}\begin{center}
+    \mono{el tp está medio feo por errores de espacio en blanco que superan nuestras habilidades de \textrm{\LaTeX{}} :´(}
+\end{center}}
+
+\clearpage
+{\large\bfseries Algoritmos auxiliares}\\
+
+\begin{implementacion}%
+    {busquedaBinaria}%
+    {\In{A}{\Vector}, %
+     \In{x}{\nat}, %
+     \In{low}{\nat}, %
+     \In{high}{\nat}%
+     }{\nat}{}%
+    \If{$high - low = 1$} \Complexity{$O(1)$}%
+        \State \Return $low$%
+    \EndIf%
+    \\%
+    \Assign{$mid$}[\nat]{(low + high)\;/\;2}   \comentario{$\bullet / \bullet$ es la división entre naturales.} \Complexity{$O(1)$}%
+    \\%
+    \If{$x < A[mid]$} \Complexity{$O(1)$}%
+        \State \Return \busquedaBinaria($A, x, low, mid$) \Complexity{$T(\frac{n}{2})$}%
+    \Else%
+        \State \Return \busquedaBinaria($A, x, mid, high$) \Complexity{$T(\frac{n}{2})$}%
+    \EndIf%
+    \\%
+    \complejidad{$\Theta(\log n)$ con $n = |A|$}\\
+    \justificacion{$T(n) = 1 \times T (\frac{n}{2})+O(1) \xRightarrow{\text{Teorema Maestro}} \Theta(\log n)$}
+\end{implementacion}%
+
+Para el módulo de \textsc{Puestos} usamos la búsqueda binaria. Ésta implementación no hace \textit{early-return}, y devuelve siempre el último índice donde se quedó, priorizando la izquierda. De ésta manera, devuelve siempre índice del valor más chico más cercano al que se buscaba. Por ejemplo, sea $A = [1,\;50,\;100]$, luego: 
+
+\begin{align*}
+    \forall x: \nat,\; \busquedaBinaria(A,\;x,\;0,\;|A|) = \left\{\begin{matrix}
+ 0& \text{Si }x \in& \hspace{-10mm}\;[0 \dots 49]\\ 
+ 1& \text{Si }x \in& \hspace{-8mm}\;[50 \dots 99]\\
+ 2& \text{Si }x \in& \hspace{-3.4mm}\;[100 \dots {\text{\small +}}\infty]
+\end{matrix}\right.
+\end{align*}
+
+{\grisOpcional{\nln\nln\hrule\nln\nln}}
+\phantomsection \label{aclaracionVacio} Suponemos que dentro del modulo \textit{vector} existe una funcion \textit{Vacio(n)} que crea un vector vacio de n elementos (como en C++) en tiempo O(n). 
+
+\begin{implementacion}%
+    {MergeSort}%
+    {\In{A}{\Vector}}{\Vector}{}%
+    \If{$|A| \leqslant 1$} \Complexity{$O(1)$}%
+        \State \Return $A$%
+    \EndIf%
+    \\%
+    \Assign{$mid$}[\nat]{|A|\;/\;2} \comentario{$\bullet / \bullet$ es la división entre naturales.} \Complexity{$O(1)$}%
+    \\%
+    \\ \comentario{$left = A[0\;\dots\;mid)$}
+    \Assign{$left$}[\Vector]{\Vacio()} \Complexity{$O(1)$}%
+    \For{$x \in [0\;\dots\;mid-1]$} \Complexity{$O(\frac{n}{2})$}%
+        \Assign{$left[x]$}{A[x]} \Complexity{$O(1)$}%
+    \EndFor%
+    \\%
+    \\ \comentario{$right = A[mid\;\dots\;|A|)$}
+    \Assign{$right$}[\Vector]{\Vacio()} \Complexity{$O(1)$}%
+    \For{$y \in [mid\;\dots\;|A|-1]$} \Complexity{$O(\frac{n}{2})$}%
+        \Assign{$right[y - mid]$}{A[y]} \Complexity{$O(1)$}%
+    \EndFor%
+    \\%
+    \Assign{$left$}[\Vector]{\MergeSort(left)} \Complexity{$T(\frac{n}{2})$}%
+    \Assign{$right$}[\Vector]{\MergeSort(right)} \Complexity{$T(\frac{n}{2})$}%
+    \\%
+    \State \Return Merge($left$, $right$) \Complexity{$\Theta(n)$}%
+    \complejidad{$O(n \log n)$}\\
+    \justificacion{$T(n) = 2 T (\frac{n}{2})+n \xRightarrow{\text{Teorema Maestro}} \Theta(n \log n)$}
+\end{implementacion}
+
+\clearpage
+
+\begin{implementacion}{Merge}{\In{A}{\Vector}, \In{B}{\Vector}}{\Vector}{}
+    \Assign{$result$}[\Vector(\nat)]{\Vacio(|A| + |B|)} \Complexity{$O(|A|+|B|)$}
+    \\%
+    \Assign{$i$}[\nat]{0} \Complexity{$O(1)$}
+    \Assign{$j$}[\nat]{0} \Complexity{$O(1)$}
+    \Assign{$k$}[\nat]{0} \Complexity{$O(1)$}
+    \\%
+    \While{$(i < |A|) \land (j < |B|)$} \Complexity{$O(|A| + |B|) \times O(1)$}
+        \If{$A[i] \leqslant B[j]$} \Complexity{$O(1)$}
+            \Assign{$result[k]$}{A[i]} \Complexity{$O(1)$}
+            \State $i{+}{+}$ \Complexity{$O(1)$}
+        \Else
+            \Assign{$result[k]$}{B[j]} \Complexity{$O(1)$}
+            \State $j{+}{+}$ \Complexity{$O(1)$}
+        \EndIf
+        \State $k{+}{+}$ \Complexity{$O(1)$}
+    \EndWhile
+    \\%
+    \While{$i < |A|$} \Complexity{$O(|A|) \times O(1)$}
+        \Assign{$result[k]$}{A[i]} \Complexity{$O(1)$}
+        \State $i{+}{+}$ \Complexity{$O(1)$}
+        \State $k{+}{+}$ \Complexity{$O(1)$}
+    \EndWhile
+    \\ \espacio{16} \mybracket{}
+    \While{$j < |B|$} \Complexity{$O(|B|) \times O(1)$}
+        \Assign{$result[k]$}{B[j]} \Complexity{$O(1)$}
+        \State $j{+}{+}$ \Complexity{$O(1)$}
+        \State $k{+}{+}$ \Complexity{$O(1)$}
+    \EndWhile
+    \\%
+    \\%
+    \State \Return $result$
+
+    \complejidad{$O(n+m)$ con $n = |A|$ y $m = |B|$}\\
+    \justificacion{Crear un vector con un tamaño fijo $\mathscr{l}$ tiene complejidad $O(\mathscr{l})$. El primer ciclo tiene complejidad\\ $O(n+m)$ y tengo dos ciclos con complejidades $O(n)$ y $O(m)$ respectivamente.\\Luego, por álgebra de órdenes: $O(3n + 3m) = O(n+m)$}
+\end{implementacion}
+
+% ACLARACIONES POST CORRECCION ==========================================================
+\clearpage
+\aclaracionesII
+\begin{itemize}
+    \item Para solucionar los problemas de lollapatuza, inicializamos todo lo que podamos en crearLolla.
+
+    \item Cambiamos puestos para que guarde los descuentos de cada item de forma ordenada, y cuando queremos buscar el descuento apropiado, realizamos búsqueda binaria sobre la lista ordenada de descuentos.
+
+    \item En cuanto al max heap, en vez de guardar un diccionario con 
+los índices de las personas, creamos un arreglo cuyo tamaño es el id
+máximo de todas las personas, y que en la posición del id de cada persona guarda el índice en el arreglo del heap.
+
+    Esto nos permite tener complejidades de acceso y modificación $O(1)$, a diferencia del diccionario que utilizábamos antes. Aprovechamos el hecho de que no tenemos ninguna restricción sobre la complejidad espacial, ya que este método utiliza mucho espacio innecesario, pero nos pareció una solución sencilla y fácil de implementar bajo las condiciones provistas.
+
+    Sin embargo, respecto a la complejidad espacial, sería bueno pedir que \textbf{persona} represente el id de una persona, donde a cada persona se le asigna un id al momento de comprar su entrada al festival, comenzando desde 0. Asumiendo que esto es realizado por un agente externo (es decir, aquel que termina utilizando el módulo lollapatuza y nos pasa el conjunto de personas a crearLolla), esto implica que nuestra solución de guardar los índices de las personas en el maxHeap es altamente eficiente, ya que tenemos garantizado que todos los elementos del array serán utilizados.
+    
+    Finalmente, para solucionar los problemas que teníamos con la modificación de índices, ahora Swap intercambia tanto los nodos en el heap como sus índice en el arreglo de índices.
+\end{itemize}
+
+\clearpage
+
+% LOLLAPATUZA =================== %
+\modulo{Lollapatuza}
+\subfile{files/lollapatuza.mod.tex}
+\clearpage
+
+% PUESTO DE COMIDA ============== %
+\modulo{Puesto de Comida} 
+\subfile{files/puesto.mod.tex}
+\clearpage
+
+% MIN HEAP ==================== %
+\modulo{MinHeap}
+\subfile{files/Heap.mod.tex}
+\clearpage
+
+% MAX HEAP ==================== %
+\modulo{MaxHeap}
+\subfile{files/maxheap.mod.tex}
+\clearpage
+
+% TESTS ========================= %
+%\section{Tests}
+%\subfile{files/test.tex}
+%\clearpage
+
+\end{document}
+ 

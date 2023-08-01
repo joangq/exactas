@@ -1,0 +1,273 @@
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
+\usepackage{amsmath}
+\usepackage{aed2/symb,
+            aed2/itef,
+            aed2/tad,
+            aed2/diseno}
+\usepackage{subfiles}
+
+\usepackage[paper=a4paper,
+            left=1.0cm, 
+            right=1.0cm, 
+            bottom=3.0cm, 
+            top=3.0cm]
+            {geometry}
+            
+\usepackage{aed2/caratula}
+\usepackage{subfiles}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[scr=boondox,  % heavily sloped
+            cal=esstix]   % slightly sloped
+           {mathalpha}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage[dvipsnames]{xcolor}
+\definecolor{gris}{RGB}{135, 147, 150}
+
+\linespread{1.3} % Espacio entre líneas
+%\setcounter{secnumdepth}{0} % Esto era para que no se vieran los números de las secciones.
+\setlength{\parindent}{2mm} % Sangría
+
+\newboolean{comentarioGris}
+\newcommand{\comentarioGris}{\setboolean{comentarioGris}{true}}
+\newcommand{\resetComentarioGris}{\setboolean{comentarioGris}{false}}
+\newcommand{\grisOpcional}[1]{{\ifthenelse{\boolean{comentarioGris}}{\color{gris}}{}#1}}
+
+\comentarioGris
+\newcommand{\comentario}[1]{%
+    \grisOpcional{$\triangleright$ \text{#1}}%
+}
+
+\newcommand{\aviso}[1]{%
+    {\color[RGB]{228, 132, 0}#1}%
+}
+
+\newcommandx{\comentariox}[2][2]{%
+    {\ifthenelse{\equal{#2}{}}%
+    {\color{black}$\triangleright$ \text{#1}}%
+    {\color[RGB]{#2}$\triangleright$ \text{#1}}}%
+}
+
+\newcommand{\Complexity}[1]{%
+    \hfill\comentariox{#1}[0,0,0]
+}
+
+\newboolean{pythonTypes}
+\newcommand{\pythonTypes}{\setboolean{pythonTypes}{true}}
+\newcommand{\cppTypes}{\setboolean{pythonTypes}{false}}
+
+% \typeAnnotation{variable}[tipo]
+\newcommandx{\typeAnnotation}[2][2]{%
+        \ifthenelse{\boolean{pythonTypes}}%
+            {\text{#1}\ifx\relax#2\relax\empty\else{\grisOpcional{\text{: #2}}}\fi}%
+            {\ifthenelse{\equal{#2}{}}{\text{#1}}{\grisOpcional{\text{#2}}\text{ #1}}}
+}
+
+% Sección sin número, pero que
+% se añada al TOC sin incrementar
+% la cantidad de secciones
+\newcommand{\emptysection}[1]{%
+    \section*{#1}%
+    \addcontentsline{toc}{section}{#1}%
+    \markright{#1}%
+}
+
+% Las aclaraciones no llevan número de sección
+\newcommand{\aclaraciones}{\emptysection{Aclaraciones}}
+
+\newcommand{\aclaracionesII}{\emptysection{Aclaraciones post-corrección}}
+
+% Sección "módulo" sólo por claridad del código
+\newcommand{\modulo}[1]{%
+    \section{Módulo #1}%
+}
+
+% Texto en monoespacio
+\newcommand{\mono}[1]{\texttt{#1}}
+
+% bool implementativa
+\newcommand{\bool}{\mono{bool}}
+
+% Nuevo párrafo+espacio
+\newcommand{\nln}{\par\vspace{2mm}}
+
+% Funcion para repetir un caracter n veces. 
+\newcommand\myrepeat[2]{
+  \begingroup
+  \lccode`m=`#2\relax
+  \lowercase\expandafter{\romannumeral#1000}
+  \endgroup
+}
+
+% Repito n veces un caracter y lo paso por hphantom.
+\newcommand\espacio[1]{\hphantom{\myrepeat{#1}{d}}}
+
+% Valores default de la carátula
+\newcommand{\ConfigurarCaratula} {
+    \titulo{Trabajo Práctico II}
+    \subtitulo{Primer Cuatrimestre 2023}
+    \materia{Algoritmos y Estructuras de Datos II}
+    \date{\today}
+    \integrante{Culaciati, Dante}{351/22}{mellidante@gmail.com}
+    \integrante{Gonzalez, Joan}{51/22}{jgquiroga@dc.uba.ar}
+    \integrante{Lista, Melanie}{516/21}{melaalista@gmail.com}
+    \integrante{Suter, Lucia}{579/21}{lsuter@dc.uba.ar}
+}
+
+% Para que los links sean de color negro,
+% el default es que tengan una caja roja
+% alrededor del texto que tiene hyperref.
+\newcommand{\ConfigurarHyperref} {
+    \hypersetup{ % Hyperref negro
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+    }
+}
+
+% Environments para la Interfaz, Representación y los Algoritmos
+% Son una versión "corregida" de los que se encuentran en aed2-diseno
+% Agregan una subsection a cada environment, respetando el tamaño del
+% título según el archivo original.
+
+\newenvironment{interfaz}{%
+  \stepcounter{subsection}%
+  \addcontentsline{toc}{subsection}{\thesubsection\text{ }Interfaz}%
+  \markright{Interfaz}%
+  \parskip=2ex%
+  \noindent\textbf{\Large\thesubsection\text{ }Interfaz}%
+  \par%
+}{}
+
+\newenvironment{representacion}{%
+  \stepcounter{subsection}
+  \addcontentsline{toc}{subsection}{\thesubsection\text{ }Representaci\'on}%
+  \markright{Representación}%
+  \parskip=2ex%
+  \noindent\textbf{\Large\thesubsection\text{ }Representaci\'on}%
+  \par%
+}{}
+
+\newenvironment{algoritmos}{%
+  \stepcounter{subsection}
+  \addcontentsline{toc}{subsection}{\thesubsection\text{ }Algoritmos}%
+  \markright{Algoritmos}%
+  \parskip=2ex%
+  \noindent\textbf{\Large\thesubsection\text{ }Algoritmos}%
+  \par%
+}{}
+
+\newenvironment{servicios}{%
+  \stepcounter{subsection}
+  \addcontentsline{toc}{subsection}{\thesubsection\text{ }Servicios usados}%
+  \markright{Servicios usados}%
+  \parskip=2ex%
+  \noindent\textbf{\Large\thesubsection\text{ }Servicios usados}%
+  \par%
+}{}
+
+% ==================================================================================== %
+
+% Notación de "nombre: significado"
+% para las tuplas, en particular es para
+% ser usado dentro del environment de Tupla.
+% Es una versión "corregida" de \tupItem 
+% \tupItem seteaba una variable interna del environment Tupla para
+% que si hay items vaya poniendo comas. Pero esto se rompe
+% si se ponen múltiples líneas. Mejor que lo decida el que
+% escribe la tupla.
+
+\newcommandx{\estrMiembro}[3][1={\ }]{%
+    %\hspace*{3mm}%
+    \emph{#2}: \TipoVariable{#3}%
+    \setboolean{EstructuraHayItems}{true}%
+}
+
+% ==================================================================================== %
+
+% Si el parámetro no es nulo, le pone paréntesis
+\newcommandx{\optionalParentheses}[1][1]{%
+    \ifx\relax#1\relax\empty\else(#1)\fi%
+}
+
+% Toma un parámetro (#1) y crea un comando que tiene de nombre al parámetro.
+% El nuevo comando toma un argumento opcional (##1). Imprime el nombre del
+% comando en monoespacio y, si el parámetro no fue nulo, lo pone con paréntesis.
+\newcommand{\tipoImperativo}[1]{%
+  % El newcommandx tiene nombre #1 y toma 1 parametro, 
+  % y el parametro 1 es opcional con valor default nulo
+  \expandafter\newcommandx\csname #1\endcsname[1][1]{%
+    % Cuerpo del nuevo comando
+    \mono{#1}\optionalParentheses[##1]%
+  }%
+}
+
+% Toma un parámetro (#1) y crea un comando que tiene de nombre al parámetro.
+% El nuevo comando toma un argumento opcional (##1). Imprime el nombre del
+% comando en texto común y, si el parámetro no fue nulo, lo pone con paréntesis.
+\newcommand{\funcionImperativa}[1]{%
+  \expandafter\newcommandx\csname #1\endcsname[1][1]{%
+    \text{#1}\optionalParentheses[##1]%
+  }%
+}
+
+% Signatura de una función 
+% Es una versión "corregida" de TipoFuncion
+% Toma cuatro parámetros.
+% \signatura <nombre de la función><parámetros><nombre del resultado><tipo del resultado>
+% Los últimos dos parámetros son opcionales.
+% El cuarto parámetro sólo puede estar presente si está el tercero, pues no se puede especificar sólo
+% el tipo del resultado sin dar el nombre.
+\newcommandx{\signatura}[4][3=\res,4]{%
+  \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ #3\,{\ifx\relax#4\relax\empty\else{: \TipoVariable{#4}}\fi}\fi%
+}
+
+% Environment para escribir implementaciones de algoritmos
+% Usa los environments algorithm y algorithmic anidados para no
+% tener que declararlos cada vez. Aparte pone automáticamente la
+% \signatura de la función dados los parámetros. (Ver \signatura)
+% Todos sus parámetros son obligatorios, aunque puedan ser vacíos.
+\newenvironment{implementacion}[4]{%
+    \begin{algorithm}%
+        \signatura{\textup{i}#1}{#2}[#3][#4]%
+    \begin{algorithmic}%
+  }{%
+    \end{algorithmic}\end{algorithm}%
+  }
+
+\newcommandx{\Declare}[2][2]{\State $\typeAnnotation{#1}[#2]$}%
+\newcommandx{\Assign}[3][2={}]{\State $\typeAnnotation{#1}[#2] \gets #3$}%
+
+\newcommand\mathmacro[1][A]{{#1}_1}
+
+\newcommand{\complejidad}[1]{%
+{\grisOpcional{\nln\nln\hrule\nln\nln}}%
+\noindent \textsc{Complejidad: } #1%
+}
+\newcommand{\justificacion}[1]{%
+\noindent \textsc{Justificacion: } #1%
+\nln
+}
+
+% k-upla
+% \tupleOf{parametro-1}{parametro-2}...{parametro-k}
+% Sólo puede usarse en un math environment
+\makeatletter
+\def\tupleLeft{\left\langle}
+\def\tupleRight{\right\rangle}
+\newcommand{\checknextarg}{\@ifnextchar\bgroup{\gobblenextarg}{\tupleRight}}
+\newcommand{\gobblenextarg}[1]{\text{, }#1\@ifnextchar\bgroup{\gobblenextarg}{\tupleRight}}
+\newcommand{\tupleOf}[1]{\tupleLeft#1\checknextarg}
+\makeatother
+
+\newcommand{\IfThenElse}[3]{%
+    \text{{\bfseries if} #1 {\bfseries then} #2 {\bfseries else} #3}
+}
