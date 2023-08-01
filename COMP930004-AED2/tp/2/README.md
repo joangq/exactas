@@ -90,16 +90,26 @@ MergeSort{A} \\
 
 El output generado es:
 
+$$ 
+\text{\texttt{tupla}} 
 $$
 
-\texttt{tupla} \\
-\texttt{tupla(\texttt{int})} \\
+$$ 
+\text{\texttt{tupla(\texttt{int})}} 
+$$
+
+$$ 
+\text{MergeSort} 
+$$
+
+$$ 
+A.\text{MergeSort()} 
 $$
 
 $$
-\text{MergeSort} \\
-A.\text{MergeSort()} \\
-\text{MergeSort($A$)}
+\text{MergeSort($A$)} 
 $$
+
+
 
 Teniendo ésto en cuenta, en `definiciones.tex` están todas las definiciones de funciones y tipos que usamos para escribir el trabajo.
