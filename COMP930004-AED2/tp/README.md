@@ -4,7 +4,7 @@ La temática de los trabajos prácticos de 2022 fue entorno a un festival fictic
 
 - [Trabajo Práctico 1 - Especificación](./1/)
 - [Trabajo Práctico 2 - Diseño](./2/)
-- [Trabajo Práctico 3 - Implementación y Testing](./3/)
+- [Trabajo Práctico 3 - Implementación y Testing](https://github.com/joangq/tp3-algo2-test/tree/d51007f06f4fdf4a03f86be843e24dfbecd607e5)
 
 Los trabajos prácticos fueron grupales y, en éste caso los hice junto con:
 
