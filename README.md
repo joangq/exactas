@@ -9,3 +9,4 @@
 - [Álgebra](./COMP930001-Álgebra-1/)
 - [Algoritmos y Estructuras de Datos I](./COMP930003-AED1/)
 - [Algoritmos y Estructuras de Datos II](./COMP930004-AED2/)
+- [Paradigmas de Programación](./COMP930015-PLP/)
